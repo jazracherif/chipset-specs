@@ -9,7 +9,7 @@ specs/
   _index.yaml              # Fast-lookup index — all chips, ~8 key metrics + spec_file pointer
   _schema.json             # JSON Schema for all spec file formats
   nvidia/gpus/
-    blackwell.yaml         # GB10, GB200 NVL72, RTX 5070
+    blackwell.yaml         # GB10, GB200_NVL72, RTX 5070
     hopper.yaml            # H100, GH200
     rubin.yaml             # VR200 (Vera Rubin Superchip)
     turing.yaml            # T4
@@ -23,6 +23,9 @@ specs/
 terminology/
   amd-nvidia.md            # AMD ↔ NVIDIA concept mapping table
 comparisons/               # Pre-written side-by-side chip comparisons
+scripts/
+  validate-data.mjs        # Node.js validation script — runs AJV against all spec files
+package.json               # Node dependencies (ajv, ajv-formats, js-yaml)
 .github/skills/            # Copilot agent skills (see below)
 ```
 
@@ -33,7 +36,7 @@ comparisons/               # Pre-written side-by-side chip comparisons
 | Name | Generation | Type | Memory | TDP |
 |------|-----------|------|--------|-----|
 | GB10 | Blackwell | Desktop superchip | 128 GB LPDDR5x | 140 W |
-| GB200 NVL72 | Blackwell | Datacenter rack (72 GPUs) | 13.8 TB HBM3e | 132 kW |
+| GB200_NVL72 | Blackwell | Datacenter rack (72 GPUs) | 13.8 TB HBM3e | 132 kW |
 | RTX 5070 | Blackwell | Consumer GPU | 12 GB GDDR7 | 220 W |
 | H100 SXM5 | Hopper | Datacenter GPU | 80 GB HBM3 | 700 W |
 | GH200 | Hopper | Superchip | 624 GB unified (HBM3e + LPDDR5X) | 1.0 kW |
@@ -66,7 +69,7 @@ comparisons/               # Pre-written side-by-side chip comparisons
 
 ## Agent Skills
 
-Four Copilot agent skills are available under `.github/skills/`:
+Five Copilot agent skills are available under `.github/skills/`:
 
 | Skill | Description |
 |-------|-------------|
@@ -74,10 +77,25 @@ Four Copilot agent skills are available under `.github/skills/`:
 | `chip-comparison` | Compare two or more chips side-by-side using spec files and pre-written comparison documents. |
 | `chip-spec-update` | Add a new chip or update an existing chip's specifications. |
 | `chip-terminology-translation` | Translate GPU concepts between AMD and NVIDIA terminology (CU↔SM, LDS↔Shared Memory, XGMI↔NVLink, etc.). |
+| `validate-specs` | Validate all spec YAML files against the JSON Schema; interpret and fix AJV errors. |
+
+## Validation
+
+Run the validator to check all spec files against the JSON Schema:
+
+```bash
+npm run validate
+# or
+node scripts/validate-data.mjs
+```
+
+Exit code `0` = all valid. Exit code `1` = one or more errors, printed with file, chip name, and field path.
+
+Dependencies: `ajv` (JSON Schema 2020-12), `ajv-formats`, `js-yaml`. Install with `npm install`.
 
 ## Design Notes
 
-- **`specs/_index.yaml` first**: Always load the index for filter or list queries; it has ~8 key metrics per chip and a `spec_file` pointer. Load the full spec file only for deep-dive queries.
+- **`specs/_index.yaml` first**: Always load the index for filter or list queries; it has ~8 key metrics per chip and a `spec_file` pointer. Load the full spec file only for deep-dive queries. The index carries a `schema_version` and `last_updated` date.
 - **`specs/_schema.json`**: JSON Schema 2020-12 covering all entry types (`nvidia_gpu_entry`, `amd_gpu_entry`, `cpu_entry`). Use for validation and field discovery.
 - **NVIDIA schema**: SM-based (`streaming_multiprocessors`, `cuda_cores_fp32_per_gpu`).
 - **AMD schema**: CU-based (`compute_units`, `cu_execution_model`, `lds_per_cu`).

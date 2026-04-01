@@ -3,6 +3,9 @@
 # Each entry has ~8 key metrics + a pointer to the full spec file.
 # Load this file first for filter/list queries; load the spec_file only for deep-dive queries.
 
+schema_version: 1
+last_updated: "2026-03-31"
+
 gpus:
 
   - name: GB10
@@ -30,8 +33,8 @@ gpus:
     year: 2025
     type: datacenter rack (72 GPUs)
     form_factor: Liquid-cooled rack
-    memory_gb: 13400        # total HBM3e across 72 GPUs
-    memory_type: HBM3e
+    memory_gb: 13400        # total HBM3E across 72 GPUs
+    memory_type: HBM3E
     memory_bw_tbs: 576      # total across 72 GPUs
     fp16_tflops: 360000     # 360 PFLOPS total rack
     fp32_tflops: 5760       # 5.76 PFLOPS total rack
@@ -133,7 +136,7 @@ gpus:
     type: superchip
     form_factor: NVL32 rack
     memory_gb: 624           # total unified (144 HBM3e + 480 LPDDR5X)
-    memory_type: HBM3e
+    memory_type: HBM3E
     memory_bw_tbs: 4.9
     fp16_tflops: null
     fp32_tflops: 67

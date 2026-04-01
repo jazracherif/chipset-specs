@@ -45,7 +45,8 @@ gpus:
       cpu_gpu_interconnect_bw_tbs: 1.8         # announced; 2× GB200 NVLink-C2C
 
       gpu_memory:
-        capacity_total: "576 GB HBM4 (288 GB × 2 R100 GPUs per superchip)"
+        capacity: "576 GB HBM4 (288 GB \u00d7 2 R100 GPUs per superchip)"
+        capacity_total: "576 GB HBM4 (288 GB \u00d7 2 R100 GPUs per superchip)"
         capacity_per_gpu: "288 GB HBM4"
         memory_type: HBM4
         bandwidth_total: "44 TB/s (22 TB/s × 2 R100 GPUs per superchip)"

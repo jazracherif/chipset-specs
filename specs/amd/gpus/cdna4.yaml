@@ -55,6 +55,8 @@ gpus:
 
     memory_specifications:
       architecture: "Dedicated HBM3E per GPU; flat coherent address space intra-node via XGMI; cross-node via RDMA"
+      total_capacity: "~18.4 TB HBM3E (288 GB × 64 GPUs)"
+      memory_type: HBM3E
       ecc_support: true
 
       per_gpu_memory:
@@ -130,6 +132,7 @@ gpus:
       tdp_per_gpu: "~1000 W (OAM socket limit, estimated)"
       tdp_per_node: "~10 kW (8 GPUs + 2 CPUs + interconnects)"
       tdp_per_rack: "~80–100 kW (64 GPUs + CPUs + networking, estimated)"
+      form_factor: "Rack-mount nodes (8-node, 64 GPUs)"
       cooling: "Direct liquid cooling mandatory for all compute nodes"
       power_distribution: "Three-phase datacenter power (240V AC or 48V DC OCP rack standard)"
 
@@ -152,7 +155,7 @@ gpus:
 
     software_and_ecosystem:
       rocm_version: "ROCm 6.x+"
-      programming_model: "HIP C++ (compiled with hipcc)"
+      programming_model: "HIP C++"
       collective_comms: "RCCL (topology-aware for Infinity Fabric multi-GPU and multi-node)"
       mpi: "OpenMPI / Cray MPICH with ROCm-aware MPI"
       math_libraries: "rocBLAS, rocFFT, rocSPARSE"

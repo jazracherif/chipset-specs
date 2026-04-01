@@ -1,0 +1,19 @@
+{
+  "name": "chipset-specs",
+  "version": "1.0.0",
+  "description": "A structured repository of GPU and CPU specifications, optimized for querying by AI agents. Specs are organized into per-generation YAML files with a fast-lookup index, a JSON Schema for validation, and a set of Copilot agent skills for common workflows.",
+  "main": "index.js",
+  "scripts": {
+    "prepare": "git config core.hooksPath .githooks",
+    "validate": "node scripts/validate-data.mjs",
+    "test": "node scripts/validate-data.mjs"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "ajv": "^8.18.0",
+    "ajv-formats": "^3.0.1",
+    "js-yaml": "^4.1.1"
+  }
+}

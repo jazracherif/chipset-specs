@@ -47,6 +47,7 @@ gpus:
 
       gpu_memory:
         capacity: 128 GB (shared pool)
+        memory_type: LPDDR5x
         l2_cache: 24 MB
         l2_cache_max: 128 MB
         # ~301 GB/s cited in GB200 comparison; ~273 GB/s cited in T4 comparison (different measurement contexts)
@@ -194,7 +195,7 @@ gpus:
       nvlink_domain_bandwidth: "130 TB/s (all-to-all across 72 GPUs)"
 
       gpu_memory:
-        total_capacity: "13.8 TB HBM3e (192 GB per GPU × 72)"
+        capacity: "13.8 TB HBM3e (192 GB per GPU × 72)"
         capacity_per_gpu: 192 GB HBM3e
         memory_type: HBM3e
         l2_cache_total: "6912 MB (96 MB per GPU × 72)"

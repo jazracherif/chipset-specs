@@ -43,7 +43,7 @@
         "type":          { "type": "string", "description": "e.g. datacenter GPU, consumer GPU, superchip, datacenter rack (72 GPUs)" },
         "form_factor":   { "type": "string" },
         "memory_gb":     { "type": "number", "description": "Total memory capacity in GB" },
-        "memory_type":   { "type": "string", "enum": ["HBM3E", "HBM3", "HBM2e", "GDDR7", "GDDR6", "LPDDR5x"] },
+        "memory_type":   { "type": "string", "enum": ["HBM4", "HBM3E", "HBM3", "HBM2e", "GDDR7", "GDDR6", "LPDDR5x"] },
         "memory_bw_tbs": { "type": "number", "description": "Memory bandwidth in TB/s (use for >= 1 TB/s)" },
         "memory_bw_gbs": { "type": "number", "description": "Memory bandwidth in GB/s (use for < 1 TB/s)" },
         "fp16_tflops":   { "type": ["number", "null"] },
@@ -317,8 +317,10 @@
       "title": "_index.yaml",
       "description": "Top-level structure of specs/_index.yaml",
       "type": "object",
-      "required": ["gpus"],
+      "required": ["schema_version", "last_updated", "gpus"],
       "properties": {
+        "schema_version": { "type": "integer", "minimum": 1 },
+        "last_updated": { "type": "string", "format": "date" },
         "gpus": {
           "type": "array",
           "items": { "$ref": "#/$defs/index_entry" }

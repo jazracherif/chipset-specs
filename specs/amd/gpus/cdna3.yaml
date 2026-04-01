@@ -156,7 +156,7 @@ gpus:
 
     software_and_ecosystem:
       rocm_version: "ROCm 6.0+"
-      programming_model: "HIP (Heterogeneous Interface for Portability) — C++ GPU kernel language"
+      programming_model: "HIP C++"
       kernel_language: "HIP C++ (mirrors CUDA C++ syntax; compile with hipcc)"
       math_libraries: "rocBLAS, rocFFT, rocSPARSE, rocRAND"
       dnn_library: "MIOpen (deep neural network primitives)"
