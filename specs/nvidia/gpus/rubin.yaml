@@ -1,0 +1,95 @@
+common_references:
+  - name: NVIDIA Vera Rubin NVL72 Product Page
+    url: https://www.nvidia.com/en-us/data-center/vera-rubin-nvl72/
+  - name: CUDA C++ Programming Guide
+    url: https://docs.nvidia.com/cuda/cuda-c-programming-guide/index.html
+
+gpus:
+
+  VR200:
+    name: NVIDIA VR200 Vera Rubin Superchip
+    references:
+      - name: NVIDIA Vera Rubin NVL72 Product Page
+        url: https://www.nvidia.com/en-us/data-center/vera-rubin-nvl72/
+
+    # VR200 = 1× Vera CPU (Arm Neoverse-based, successor to Grace) + 2× R100 GPUs (Rubin architecture).
+    # Announced at GTC March 2025; product documentation and full microarchitecture specs are
+    # not yet fully published as of Q1 2026. Fields marked (estimated) or TBD are derived from
+    # NVIDIA announcement slides and industry sources.
+    # Deployed in NVL72 rack (36 VR200 superchips = 72 R100 GPUs + 36 Vera CPUs).
+
+    core_specifications:
+      release_date: "2025 (announced GTC March 2025)"
+      architecture: "Rubin (R100 GPU)"
+      compute_capability: "~13.0 (estimated; not officially confirmed as of Q1 2026)"
+      gpu_count: 2                             # per superchip (2× R100 GPUs)
+      cpu: "1× Vera CPU (Arm Neoverse-based, Grace successor; core count TBD)"
+      streaming_multiprocessors: "TBD"
+      cuda_cores_fp32_per_sm: 128              # expected; consistent with Blackwell
+      cuda_cores_fp32_per_gpu: "TBD"
+      max_clock_speed: "TBD"
+      form_factor: "Superchip on NVL72 liquid-cooled rack"
+
+    sm_execution_model:
+      shared_memory_per_sm: "TBD"
+      notes: "Rubin SM microarchitecture details not publicly available as of Q1 2026"
+
+    memory_specifications:
+      # VR200 uses HBM4 — first NVIDIA GPU generation to adopt HBM4.
+      # Memory hierarchy details (L1/L2 sizes, shared memory per SM) not yet disclosed.
+      architecture: "Separate HBM4 (R100 GPUs) + LPDDR5X (Vera CPU); coherent via NVLink-C2C"
+      total_unified_memory_gb: 2150            # ~576 GB HBM4 + ~1536 GB LPDDR5X (announced)
+      total_unified_memory_note: "up to ~2.1 TB"
+      ecc_support: true
+      cpu_gpu_interconnect: NVLink-C2C
+      cpu_gpu_interconnect_bw_tbs: 1.8         # announced; 2× GB200 NVLink-C2C
+
+      gpu_memory:
+        capacity_total: "576 GB HBM4 (288 GB × 2 R100 GPUs per superchip)"
+        capacity_per_gpu: "288 GB HBM4"
+        memory_type: HBM4
+        bandwidth_total: "44 TB/s (22 TB/s × 2 R100 GPUs per superchip)"
+        bandwidth_per_gpu: "22 TB/s"
+        notes: "First NVIDIA GPU to use HBM4; ~2.75× bandwidth vs B200 (8 TB/s per GPU)"
+
+      cpu_memory:
+        capacity: "~1536 GB LPDDR5X (Vera CPU; up to 1.5 TB)"
+        capacity_note: "up to 1.5 TB"
+        memory_type: LPDDR5X
+
+      memory_hierarchy:
+        notes: "Detailed memory hierarchy (registers, L1/L2, shared memory per SM) not publicly disclosed as of Q1 2026"
+
+    compute_performance:
+      fp32: "~260 TFLOPS (total superchip, 2× R100 = ~130 TFLOPS per GPU, estimated)"
+      fp16_bf16: "TBD"
+      fp8: "TBD"
+      fp4: "TBD (expected; NVIDIA continued FP4 support from Blackwell)"
+      tensor_core_generation: "6th Gen (Rubin, estimated)"
+      fp8_support: true                        # expected
+      fp4_fp6_tensor_core_support: true        # expected, consistent with Blackwell
+      notes: "Full precision breakdown not publicly available as of Q1 2026"
+
+    power_and_thermal:
+      tdp_kw: 5.0                              # per superchip (announced)
+      form_factor: "Superchip on NVL72 liquid-cooled rack"
+      cooling: "Direct liquid cooling required"
+
+    advanced_features:
+      nvlink: "NVLink-C2C (CPU↔GPU within superchip, 1.8 TB/s — 2× GB200)"
+      nvswitch: "Via NVL72 rack"
+      hardware_coherency: "Yes (ATS via NVLink-C2C)"
+      transformer_engine: "Yes (expected)"
+      thread_block_clusters: true              # expected; consistent with Hopper+ lineage
+      unified_memory: "Hardware-coherent CPU+GPU via NVLink-C2C"
+
+    networking_and_connectivity:
+      cpu_gpu_interconnect: "NVLink-C2C — 1.8 TB/s bidirectional (CPU↔GPU within superchip)"
+      high_speed_interconnect: "TBD (expected NDR/XDR InfiniBand or 800GbE)"
+      platform: NVL72
+      chips_per_platform: 36                  # 36 VR200 superchips = 72 R100 GPUs
+
+    software_and_ecosystem:
+      cuda_toolkit: "13.x+ (expected)"
+      minimum_driver: "TBD"
+      notes: "Full software stack details pending product release documentation"

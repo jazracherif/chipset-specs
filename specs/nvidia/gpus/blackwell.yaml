@@ -1,0 +1,444 @@
+common_references:
+  - name: CUDA C++ Programming Guide - Memory Hierarchy
+    url: https://docs.nvidia.com/cuda/cuda-c-programming-guide/index.html#memory-hierarchy
+  - name: CUDA C++ Programming Guide - Thread Block Clusters (Distributed Shared Memory)
+    url: https://docs.nvidia.com/cuda/cuda-c-programming-guide/index.html#thread-block-cluster
+
+gpus:
+  GB10:
+    name: NVIDIA GB10 (DGX Spark)
+    references:
+      - name: NVIDIA DGX Spark GB10
+        url: https://www.nvidia.com/en-us/products/workstations/dgx-spark/
+      - name: DGX Spark GB10 Datasheet
+        url: https://nvdam.widen.net/s/tlzm8smqjx/workstation-datasheet-dgx-spark-gtc25-spring-nvidia-us-3716899-web/
+      - name: Blackwell Architecture Technical Brief
+        url: https://resources.nvidia.com/en-us-blackwell-architecture/blackwell-architecture-technical-brief
+
+    core_specifications:
+      release_date: Q4 2025
+      architecture: Blackwell
+      compute_capability: 12.1
+      gpu_count: 1
+      cpu: "1x Grace CPU (20-core Arm Neoverse V2)"
+      streaming_multiprocessors: 48
+      cuda_cores_fp32_per_sm: 128
+      cuda_cores_fp32_per_gpu: 6144  # 128 × 48 SMs
+      max_clock_speed: 3003 MHz
+      form_factor: Desktop / workstation APU
+
+    sm_execution_model:
+      shared_memory_per_sm: 100 KB
+      shared_memory_per_block: 99 KB
+      max_resident_threads_per_sm: 1536
+      max_resident_blocks_per_sm: 24
+
+    memory_specifications:
+      # GB10 uses a single unified LPDDR5x pool shared between CPU and GPU — bandwidth is not additive
+      architecture: Unified (Grace CPU + Blackwell GPU share same LPDDR5x pool)
+      total_capacity: 128 GB LPDDR5x
+      memory_type: LPDDR5x
+      ecc_support: true
+      addressing_mode: ATS (Address Translation Services)
+      pageable_memory_access_via_host_page_tables: true
+      concurrent_managed_access: true
+      cpu_gpu_transfer: Zero-copy (unified memory via ATS)
+      pcie_generation: Gen 5 (64 GB/s per direction)
+
+      gpu_memory:
+        capacity: 128 GB (shared pool)
+        l2_cache: 24 MB
+        l2_cache_max: 128 MB
+        # ~301 GB/s cited in GB200 comparison; ~273 GB/s cited in T4 comparison (different measurement contexts)
+        bandwidth: ~273–301 GB/s
+        bus_width: "256-bit (unified with Grace CPU)"
+
+      cpu_memory:
+        capacity: 128 GB (shared pool)
+        bandwidth: "Shared with GPU (same LPDDR5x pool — not additive)"
+
+      memory_hierarchy:
+        # Hierarchy from fastest/smallest to slowest/largest (per GPU, 48 SMs)
+        registers:
+          capacity_per_sm: "256 KB (64K × 32-bit registers)"
+          total_per_gpu: "~12 MB (256 KB × 48 SMs)"
+          throughput: "On-chip, not bandwidth-bound; effectively hundreds of TB/s aggregate"
+          latency: "~1 cycle (zero-overhead within a warp when no RAW hazards)"
+
+        l1_cache_shared_memory:
+          # Unified SRAM pool; configurable split between L1 data cache and shared memory
+          capacity_per_sm: "~128 KB unified (max 100 KB addressable as shared memory)"
+          total_per_gpu: "~6 MB (128 KB × 48 SMs)"
+          throughput: "~18 TB/s aggregate (48 SMs × 128 B/cycle × 3003 MHz)"
+          latency: "~28–32 cycles (shared memory, bank-conflict-free)"
+          notes: "L1 cache uses remaining SRAM not allocated to shared memory"
+
+        distributed_shared_memory:
+          # Thread block clusters allow SMs to directly read/write peer-SM shared memory
+          available: true
+          capacity_per_cluster: "up to ~800 KB (up to 8 SMs × 100 KB per SM)"
+          throughput: "Lower than local shared memory; constrained by inter-SM L2 crossbar"
+          latency: "~50–100 cycles (peer-SM access within a thread block cluster)"
+          notes: "Available on SM 12.1 (Blackwell); enabled via cooperative distributed SMEM API"
+
+        l2_cache:
+          capacity: "24 MB (max 128 MB configurable)"
+          throughput: "~1.5–2 TB/s (estimated; shared between CPU and GPU on unified LPDDR5x path)"
+          latency: "~150–200 cycles"
+          notes: "L2 is shared between CPU and GPU in the Grace unified memory pool"
+
+        global_dram:
+          capacity: "128 GB LPDDR5x (shared CPU+GPU pool)"
+          memory_type: LPDDR5x
+          throughput: "~273–301 GB/s (peak; shared CPU+GPU — not additive)"
+          latency: "~200–400 cycles (LPDDR5x; higher than HBM due to off-chip bus protocol)"
+          notes: "Unified memory: zero-copy CPU↔GPU via ATS; no separate device memory"
+
+    compute_performance:
+      fp4: ~1.28 PFLOPS
+      fp8_fp6: ~640 TFLOPS
+      fp16_bf16: ~320 TFLOPS (Tensor Cores)
+      tf32: ~160 TFLOPS
+      fp32: ~40 TFLOPS
+      fp64: ~20 TFLOPS
+      int8: ~640 TOPS
+      tensor_core_generation: "5th Gen (Blackwell)"
+      fp4_fp6_tensor_core_support: true
+      rt_cores: "3rd Gen (48 cores)"
+
+    power_and_thermal:
+      total_system_tdp: 140 W
+      gpu_tdp: ~100 W (estimated)
+      idle_power: ~4.6 W
+      form_factor: Compact APU (Desktop)
+      cooling: Active air cooling
+      power_efficiency_fp16: ~229 GFLOPS/W
+      power_connector: System power
+
+    advanced_features:
+      mig: "Yes (up to 7 instances)"
+      nvlink: NVLink 5.0 (optional)
+      dynamic_programming: Full support
+      thread_block_clusters: true
+      tensor_memory_accelerator: true
+      hardware_coherency: "Yes (ATS/PASID support)"
+      transformer_engine: "Yes (FP8 optimized)"
+      distributed_shared_memory: true
+      ray_tracing: "3rd Gen RT Cores"
+      dlss: "4.0"
+      unified_memory: Hardware-coherent (ATS)
+      confidential_computing: Limited
+      atomic_caps_outbound: [FETCHADD_64, CAS_64]
+
+    networking_and_connectivity:
+      pcie_interface: PCIe 5.0 x16
+      high_speed_interconnect: "ConnectX-7 (200 Gb/s InfiniBand / Ethernet)"
+      multi_node_clustering: "Native support via ConnectX-7"
+      nvlink_fabric: Optional
+      nvswitch: Not included
+      rdma: "Integrated with ConnectX-7"
+      gpu_to_gpu_direct: "Yes (GPUDirect RDMA)"
+      sharp: true
+
+    software_and_ecosystem:
+      cuda_toolkit: "13.0+"
+      minimum_driver: "570.00+"
+      cublas: cuBLAS 13.x with FP8
+      cudnn: "9.x"
+      tensorrt: "11.x+ (FP8 support)"
+      nccl: "2.28+"
+      pytorch: "2.x+ (Arm + CUDA)"
+      tensorflow: "2.x+"
+
+
+  NVL72_GB200:
+    name: NVIDIA GB200 NVL72
+    references:
+      - name: NVIDIA GB200 NVL72
+        url: https://www.nvidia.com/en-us/data-center/gb200-nvl72/
+      - name: datasheet
+        url: https://nvdam.widen.net/s/wwnsxrhm2w/blackwell-datasheet-3384703
+      - name: nvl performance tuning guide
+        url: https://docs.nvidia.com/multi-node-nvlink-systems/multi-node-tuning-guide/index.html
+      - name: grace cpu tuning
+        url: https://docs.nvidia.com/dccpu/grace-perf-tuning-guide/index.html
+      - name: Blackwell Architecture Technical Brief
+        url: https://resources.nvidia.com/en-us-blackwell-architecture/blackwell-architecture-technical-brief
+
+    core_specifications:
+      release_date: Q1 2025
+      architecture: Blackwell
+      compute_capability: 10.0
+      gpu_count: 72
+      cpu: "36x Grace CPUs (72-core Arm Neoverse V2 each = 2592 total cores)"
+      streaming_multiprocessors: "~10368 (144 per GPU × 72)"
+      cuda_cores_fp32_per_sm: 128
+      cuda_cores_fp32_per_gpu: 18432  # 128 × 144 SMs
+      cuda_cores_total: 1327104  # 18432 × 72 GPUs
+      max_clock_speed: ~2800 MHz
+      form_factor: Liquid-cooled rack (9 chassis)
+
+    sm_execution_model:
+      shared_memory_per_sm: 228 KB
+      shared_memory_per_block: 227 KB
+      max_resident_threads_per_sm: 2048
+      max_resident_blocks_per_sm: 32
+
+    memory_specifications:
+      architecture: "Separate HBM3e (GPU) + LPDDR5x (CPU); unified within each Grace-Blackwell superchip via NVLink-C2C"
+      total_fast_memory: "31 TB (HBM3e + LPDDR5x)"
+      ecc_support: true
+      addressing_mode: ATS (Address Translation Services)
+      pageable_memory_access_via_host_page_tables: true
+      concurrent_managed_access: true
+      nvlink_domain_bandwidth: "130 TB/s (all-to-all across 72 GPUs)"
+
+      gpu_memory:
+        total_capacity: "13.8 TB HBM3e (192 GB per GPU × 72)"
+        capacity_per_gpu: 192 GB HBM3e
+        memory_type: HBM3e
+        l2_cache_total: "6912 MB (96 MB per GPU × 72)"
+        l2_cache_max_per_gpu: 256 MB
+        bandwidth_total: "576 TB/s (8 TB/s per GPU × 72)"
+        bandwidth_per_gpu: 8 TB/s
+        bus_width_per_gpu: 6144-bit
+        
+        memory_hierarchy:
+          # Per-GPU metrics (one of 72 GPUs in the rack); 144 SMs per GPU
+          registers:
+            capacity_per_sm: "256 KB (64K × 32-bit registers)"
+            total_per_gpu: "~36 MB (256 KB × 144 SMs)"
+            total_all_gpus: "~2.6 GB (256 KB × 144 SMs × 72 GPUs)"
+            throughput: "On-chip, not bandwidth-bound; effectively hundreds of TB/s aggregate per GPU"
+            latency: "~1 cycle (zero-overhead within a warp when no RAW hazards)"
+
+          l1_cache_shared_memory:
+            # 256 KB unified L1+shared SRAM per SM; up to 228 KB configurable as shared memory
+            capacity_per_sm: "256 KB unified (max 228 KB addressable as shared memory)"
+            total_per_gpu: "~32 MB (228 KB × 144 SMs, shared-only accounting)"
+            throughput_per_gpu: "~52 TB/s aggregate (144 SMs × 128 B/cycle × 2800 MHz)"
+            latency: "~28–32 cycles (shared memory, bank-conflict-free)"
+            notes: "L1 cache occupies SRAM not allocated to shared memory"
+
+          distributed_shared_memory:
+            # Thread block clusters allow SMs to directly read/write peer-SM shared memory
+            available: true
+            capacity_per_cluster: "up to ~1.8 MB (up to 8 SMs × 228 KB per SM)"
+            throughput: "Lower than local shared memory; constrained by SM2SM crossbar bandwidth"
+            latency: "~50–100 cycles (peer-SM access within a thread block cluster)"
+            notes: "Key feature for large tile accumulations in transformer/LLM kernels on GB200"
+
+          l2_cache:
+            capacity_per_gpu: "96 MB (max 256 MB configurable)"
+            capacity_total_72gpu: "6,912 MB (96 MB × 72)"
+            throughput_per_gpu: "~10–15 TB/s (estimated)"
+            latency: "~150–200 cycles"
+
+          global_dram:
+            capacity_per_gpu: "192 GB HBM3e"
+            capacity_total: "13.8 TB HBM3e (192 GB × 72)"
+            memory_type: HBM3e
+            throughput_per_gpu: "8 TB/s"
+            throughput_total: "576 TB/s (8 TB/s × 72)"
+            latency: "~500–600 cycles"
+            bus_width_per_gpu: 6144-bit
+
+      cpu_memory:
+        total_capacity: "~17.3 TB LPDDR5x (480 GB per CPU × 36)"
+        capacity_per_cpu: 480 GB LPDDR5x
+        bandwidth_aggregate: "~4.7 TB/s"     
+
+    compute_performance:
+      fp4: "1440 PFLOPS (1.44 exaFLOPS)"
+      fp8_fp6: 720 PFLOPS
+      fp16_bf16: "360 PFLOPS (5 PFLOPS per GPU × 72)"
+      tf32: "180 PFLOPS (2.5 PFLOPS per GPU × 72)"
+      fp32: "5.76 PFLOPS (80 TFLOPS per GPU × 72)"
+      fp64: "2.88 PFLOPS (40 TFLOPS per GPU × 72)"
+      int8: "720 POPS (10 POPS per GPU × 72)"
+      tensor_core_generation: "5th Gen (Blackwell)"
+      fp4_fp6_tensor_core_support: true
+
+    power_and_thermal:
+      total_rack_tdp: ~132 kW
+      max_configurable_tdp_per_component: 1200 W
+      idle_power: ~2000 W (estimated)
+      form_factor: Liquid-cooled rack (9 chassis)
+      cooling: Direct liquid cooling required
+      power_efficiency_fp16: "~273 GFLOPS/W (360 PFLOPS / 132 kW)"
+      power_distribution: Three-phase datacenter power
+
+    advanced_features:
+      mig: "Yes (up to 7 instances per GPU)"
+      mig_instances_per_gpu: 7
+      nvlink: "NVLink 5.0 (130 TB/s domain bandwidth)"
+      nvswitch_count: 18
+      nvswitch_integration: "18 NVSwitches (fully-connected GPU topology)"
+      nvdec_per_gpu: 7
+      nvjpeg_per_gpu: 7
+      dynamic_programming: Full support
+      thread_block_clusters: true
+      tensor_memory_accelerator: true
+      hardware_coherency: "Yes (ATS/PASID support)"
+      transformer_engine: "Yes (FP8 + FP4 optimized)"
+      distributed_shared_memory: true
+      confidential_computing: "Full support with TEE"
+
+    networking_and_connectivity:
+      high_speed_interconnect: "ConnectX-8 (400 Gb/s InfiniBand / 800 Gb/s Ethernet)"
+      nic_count: 36
+      nvlink_fabric: "130 TB/s internal NVLink domain"
+      nvswitch: "18 NVSwitches (full GPU interconnect)"
+      rdma: "Integrated with ConnectX-8"
+      gpu_to_gpu_direct: "Yes (GPUDirect RDMA + NVLink)"
+      sharp: "Yes (enhanced)"
+      scale: 72 GPUs in unified fabric
+
+    software_and_ecosystem:
+      cuda_toolkit: "13.0+"
+      minimum_driver: "570.00+"
+      cublas: cuBLAS 13.x with FP8
+      cudnn: "9.x (optimized for large scale)"
+      tensorrt: "11.x+ (FP8 support)"
+      nccl: "2.28+ (NVLink topology-aware)"
+      nemo_framework: Optimized for NVL72
+      megatron_lm: Primary target platform
+
+
+
+  RTX5070:
+    name: NVIDIA GeForce RTX 5070
+    references:
+      - name: NVIDIA GeForce RTX 5070
+        url: https://www.nvidia.com/en-us/geforce/graphics-cards/compare/#50-series
+      - name: Blackwell Architecture Technical Brief
+        url: https://resources.nvidia.com/en-us-blackwell-architecture/blackwell-architecture-technical-brief
+
+    core_specifications:
+      release_date: Q1 2025
+      architecture: Blackwell
+      compute_capability: 12.1
+      gpu_count: 1
+      cpu: "Host CPU (user-supplied)"
+      streaming_multiprocessors: 48
+      cuda_cores_fp32_per_sm: 128
+      cuda_cores_fp32_per_gpu: 6144  # 128 × 48 SMs
+      max_clock_speed: 2640 MHz
+      form_factor: Discrete PCIe card (dual-slot)
+
+    sm_execution_model:
+      shared_memory_per_sm: 100 KB
+      shared_memory_per_block: 99 KB
+      max_resident_threads_per_sm: 1536
+      max_resident_blocks_per_sm: 24
+
+    memory_specifications:
+      architecture: Discrete (dedicated GDDR7 GPU memory; host CPU memory separate)
+      ecc_support: false
+      addressing_mode: Standard PCIe
+      pageable_memory_access_via_host_page_tables: false
+      concurrent_managed_access: true
+      cpu_gpu_transfer: "PCIe 5.0 (~128 GB/s bi-directional)"
+
+      gpu_memory:
+        capacity: 12 GB
+        memory_type: GDDR7
+        l2_cache: 48 MB
+        l2_cache_type: GPU-exclusive
+        bandwidth: 560 GB/s
+        bus_width: 192-bit
+
+      cpu_memory:
+        capacity: Host system RAM (user-supplied)
+        bandwidth: "~128 GB/s effective (PCIe 5.0 x16 CPU↔GPU transfer)"
+
+      memory_hierarchy:
+        # 48 SMs; discrete GDDR7; host RAM reachable via PCIe 5.0 only
+        registers:
+          capacity_per_sm: "256 KB (64K × 32-bit registers)"
+          total_per_gpu: "~12 MB (256 KB × 48 SMs)"
+          throughput: "On-chip, not bandwidth-bound; effectively hundreds of TB/s aggregate"
+          latency: "~1 cycle (zero-overhead within a warp when no RAW hazards)"
+
+        l1_cache_shared_memory:
+          # Unified SRAM pool; configurable split between L1 data cache and shared memory
+          capacity_per_sm: "~128 KB unified (max 100 KB addressable as shared memory)"
+          total_per_gpu: "~6 MB (128 KB × 48 SMs)"
+          throughput: "~16 TB/s aggregate (48 SMs × 128 B/cycle × 2640 MHz)"
+          latency: "~28–32 cycles (shared memory, bank-conflict-free)"
+          notes: "L1 cache occupies remaining SRAM not allocated to shared memory"
+
+        distributed_shared_memory:
+          available: true
+          capacity_per_cluster: "up to ~800 KB (up to 8 SMs × 100 KB per SM)"
+          throughput: "Lower than local shared memory; constrained by inter-SM L2 crossbar"
+          latency: "~50–100 cycles (peer-SM access within a thread block cluster)"
+          notes: "Available on SM 12.1 (Blackwell)"
+
+        l2_cache:
+          capacity: "48 MB (GPU-exclusive)"
+          throughput: "~3–5 TB/s (estimated)"
+          latency: "~150–200 cycles"
+
+        global_dram:
+          capacity: "12 GB GDDR7"
+          memory_type: GDDR7
+          throughput: "560 GB/s"
+          latency: "~400–500 cycles"
+          bus_width: 192-bit
+          notes: "Host RAM accessible via PCIe 5.0 at ~128 GB/s bidirectional; adds ~microsecond latency"
+
+    compute_performance:
+      fp4: ~1.28 PFLOPS
+      fp8_fp6: ~640 TFLOPS
+      fp16_bf16: ~320 TFLOPS (Tensor Cores)
+      tf32: ~160 TFLOPS
+      fp32: ~40 TFLOPS
+      fp64: ~20 TFLOPS
+      int8: ~640 TOPS
+      tensor_core_generation: "5th Gen (Blackwell)"
+      fp4_fp6_tensor_core_support: true
+      rt_cores: "3rd Gen (48 cores)"
+
+    power_and_thermal:
+      gpu_tdp: 220 W
+      idle_power: ~15 W
+      form_factor: Dual-slot PCIe card
+      cooling: Active air cooling (dual/triple fan)
+      power_efficiency_fp16_gpu_only: ~145 GFLOPS/W
+      power_connector: "PCIe 5.0 (12VHPWR, 16-pin)"
+
+    advanced_features:
+      mig: false
+      nvlink: false
+      dynamic_programming: Full support
+      thread_block_clusters: true
+      tensor_memory_accelerator: true
+      hardware_coherency: false
+      transformer_engine: "Yes (FP8 optimized)"
+      distributed_shared_memory: true
+      ray_tracing: "3rd Gen RT Cores (gaming-optimized)"
+      dlss: "4.0 (gaming-focused, multi-frame generation)"
+      unified_memory: "Software-managed (CUDA UVM)"
+      display_outputs: "4x DisplayPort 2.1, 1x HDMI 2.1"
+      atomic_caps_outbound: Standard
+
+    networking_and_connectivity:
+      pcie_interface: PCIe 5.0 x16
+      high_speed_interconnect: None (relies on host system)
+      multi_gpu: "NVLink (not typically available)"
+      rdma: Not available
+      gpu_to_gpu_direct: Via host CPU
+
+    software_and_ecosystem:
+      cuda_toolkit: "13.0+"
+      minimum_driver: "570.00+"
+      cublas: cuBLAS 13.x with FP8
+      cudnn: "9.x"
+      tensorrt: "11.x+ (FP8 support)"
+      pytorch: "2.x+"
+      tensorflow: "2.x+"
+      gaming_apis: "DirectX 12 Ultimate, Vulkan"
+      geforce_experience: true
+      studio_drivers: true
+

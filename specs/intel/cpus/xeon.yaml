@@ -1,0 +1,59 @@
+# Intel Xeon Server CPU Specifications
+# Each entry covers one CPU SKU (single-socket figures unless noted).
+# Source data from chip_specs.yml.
+
+cpus:
+
+  - name: Xeon 8490H
+    full_name: Intel Xeon Platinum 8490H
+    brand: Intel
+    family: Xeon Scalable
+    generation: Sapphire Rapids
+    gen_number: 4
+    year: 2023
+    max_cores: 60
+    memory_channels: 8
+    memory_type: DDR5-4800
+    memory_bandwidth_gbs: 307
+    best_simd: AVX-512
+    simd_width_bits: 512
+    avx_fp_units: 120
+    peak_fp32_tflops: 4.8
+    peak_fp32_clock_ghz: 2.5
+    source: https://www.intel.com/content/www/us/en/products/sku/231747/intel-xeon-platinum-8490h-processor-112-5m-cache-1-90-ghz/specifications.html
+
+  - name: Xeon 8592+
+    full_name: Intel Xeon Platinum 8592+
+    brand: Intel
+    family: Xeon Scalable
+    generation: Emerald Rapids
+    gen_number: 5
+    year: 2024
+    max_cores: 64
+    memory_channels: 8
+    memory_type: DDR5-5600
+    memory_bandwidth_gbs: 358
+    best_simd: AVX-512
+    simd_width_bits: 512
+    avx_fp_units: 128
+    peak_fp32_tflops: 5.1
+    peak_fp32_clock_ghz: 2.5
+    source: https://www.intel.com/content/www/us/en/products/sku/237261/intel-xeon-platinum-8592-processor-320m-cache-1-90-ghz/specifications.html
+
+  - name: Xeon 6980P
+    full_name: Intel Xeon 6980P
+    brand: Intel
+    family: Xeon 6
+    generation: Granite Rapids
+    gen_number: 6
+    year: 2024
+    max_cores: 128
+    memory_channels: 8
+    memory_type: DDR5-6400
+    memory_bandwidth_gbs: 409
+    best_simd: AVX-512
+    simd_width_bits: 512
+    avx_fp_units: 256
+    peak_fp32_tflops: 10.0
+    peak_fp32_clock_ghz: 2.5
+    source: https://www.intel.com/content/www/us/en/products/sku/240777/intel-xeon-6980p-processor-504m-cache-2-00-ghz/specifications.html

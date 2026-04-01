@@ -1,0 +1,170 @@
+# AMD Instinct GPU Specifications
+# Terminology is native AMD/ROCm throughout.
+# See amd-nvidia-terminology.md for a concept-level mapping to NVIDIA terms.
+
+common_references:
+  - name: ROCm Documentation
+    url: https://rocm.docs.amd.com/en/latest/
+  - name: AMD Instinct Accelerator Tech Docs (ISA, Whitepapers)
+    url: https://www.amd.com/en/products/accelerators/instinct.html#documentation
+  - name: HIP Programming Guide
+    url: https://rocm.docs.amd.com/projects/HIP/en/latest/user_guide/hip_programming_guide.html
+  - name: AMD CDNA 3 Architecture
+    url: https://www.amd.com/content/dam/amd/en/documents/instinct-tech-docs/white-papers/amd-cdna-3-white-paper.pdf
+  - name: AMD CDNA 4 Architecture
+    url: https://www.amd.com/content/dam/amd/en/documents/instinct-tech-docs/white-papers/amd-cdna-4-architecture-whitepaper.pdf
+
+gpus:
+  MI300X:
+    name: AMD Instinct MI300X
+    references:
+      - name: AMD Instinct MI300X Product Page
+        url: https://www.amd.com/en/products/accelerators/instinct/mi300/mi300x.html
+      - name: AMD Instinct MI300X Datasheet
+        url: https://www.amd.com/content/dam/amd/en/documents/instinct-tech-docs/data-sheets/amd-instinct-mi300x-data-sheet.pdf
+
+    # MI300X uses a 3D chiplet design:
+    # 3× GCD (GPU Compute Die, TSMC 5nm) + 4× MCD (Memory Cache Die, TSMC 6nm)
+    # All 3 GCDs appear as a single unified GPU device with shared 192 GB HBM3.
+
+    core_specifications:
+      release_date: Q4 2023
+      architecture: "CDNA 3"
+      target_id: gfx942
+      gpu_count: 1
+      host_cpu: "User-supplied (AMD EPYC Genoa recommended for full Infinity Fabric coherency)"
+      chiplet_topology: "3× GCD (5nm TSMC) + 4× MCD (6nm TSMC)"
+      compute_units: 304               # total across all 3 GCDs
+      stream_processors_per_cu: 64     # 64 Stream Processors per CU (4 SIMD-16 units × 16 lanes)
+      stream_processors_per_gpu: 19456 # 64 × 304 CUs
+      wavefront_size: 64               # AMD execution unit: 64 work-items issued together
+      max_clock_speed: "2100 MHz (boost)"
+      form_factor: "OAM (OCP Accelerator Module)"
+      process_node: "5nm TSMC (GCD) / 6nm TSMC (MCD)"
+
+    cu_execution_model:
+      # CU = Compute Unit (AMD's fundamental execution building block)
+      lds_per_cu: "64 KB LDS (Local Data Share)"
+      max_wavefronts_per_cu: 32         # 32 × 64 work-items = 2048 work-items resident per CU
+      max_workitems_per_cu: 2048        # maximum resident work-items per CU
+      simd_units_per_cu: 4              # 4 × SIMD-16 units per CU
+      vgpr_per_cu: "256 KB VGPR (64K × 32-bit Vector General Purpose Registers)"
+      sgpr_per_cu: "12.5 KB SGPR (Scalar General Purpose Registers)"
+
+      # Per-cycle throughput per CU (assuming a fully convergent wavefront)
+      # Each SIMD-16 unit issues 16 lanes per cycle; CU has 4 SIMD-16 = 64 lanes total.
+      per_cycle_throughput_per_cu:
+        fp64_vector_per_cycle: "64 FP64 ops/cycle (4 SIMD-16 units × 16 lanes)"
+        fp32_vector_per_cycle: "64 FP32 ops/cycle (4 SIMD-16 units × 16 lanes)"
+        fp64_matrix_mfma_per_cycle: "512 FP64 FLOP/cycle (MFMA – Matrix Fused Multiply-Add)"
+        fp16_bf16_matrix_mfma_per_cycle: "1024 FLOP/cycle (MFMA)"
+        fp8_matrix_mfma_per_cycle: "2048 FLOP/cycle (MFMA)"
+        int8_matrix_mfma_per_cycle: "2048 OPS/cycle (MFMA)"
+      matrix_core_instruction: "MFMA (Matrix Fused Multiply-Add) — v_mfma_* ISA instructions"
+
+    memory_specifications:
+      architecture: "Dedicated HBM3; coherent with AMD EPYC CPUs via Infinity Fabric"
+      total_capacity: "192 GB HBM3"
+      memory_type: HBM3
+      ecc_support: true
+      addressing_mode: "Flat (unified virtual address space); coherent via XGMI/Infinity Fabric"
+      pageable_memory_access: true
+      concurrent_managed_access: true
+      host_transfer: "PCIe 5.0 x16 (~128 GB/s) with standard x86 host; zero-copy via Infinity Fabric with EPYC"
+
+      gpu_memory:
+        capacity: "192 GB HBM3"
+        memory_type: HBM3
+        infinity_cache: "256 MB (last-level on-die cache across all 3 GCDs via Infinity Cache crossbar)"
+        bandwidth: "5.3 TB/s"
+        bus_width: "8192-bit (8 HBM3 stacks × 1024-bit)"
+
+      memory_hierarchy:
+        # Hierarchy from fastest/smallest to slowest/largest — per GPU, 304 CUs total
+
+        vgpr_registers:
+          capacity_per_cu: "256 KB VGPR (64K × 32-bit vector registers)"
+          total_per_gpu: "~76 MB (256 KB × 304 CUs)"
+          throughput: "On-chip; not bandwidth-bound — hundreds of TB/s aggregate"
+          latency: "~1 cycle (within a wavefront, no RAW hazards)"
+
+        lds_local_data_share:
+          # LDS is the per-CU fast scratchpad; programmer-managed via HIP __shared__
+          capacity_per_cu: "64 KB LDS"
+          total_per_gpu: "~19 MB (64 KB × 304 CUs)"
+          throughput: "~28 TB/s aggregate (304 CUs × 128 B/cycle × 2100 MHz)"
+          latency: "~30–40 cycles (bank-conflict-free)"
+          bank_count: 32
+          bank_width: "4 bytes"
+
+        l1_cache:
+          capacity_per_cu: "32 KB L1 data cache"
+          total_per_gpu: "~9.5 MB (32 KB × 304 CUs)"
+          latency: "~20–30 cycles"
+
+        infinity_cache:
+          # Infinity Cache = last-level GPU cache; spans all 3 GCDs via the Infinity Cache crossbar
+          capacity: "256 MB"
+          throughput: "~27 TB/s (estimated)"
+          latency: "~200–250 cycles"
+          notes: "Reduces HBM3 traffic significantly for AI/HPC workloads with temporal locality"
+
+        hbm_global_memory:
+          capacity: "192 GB HBM3"
+          memory_type: HBM3
+          throughput: "5.3 TB/s"
+          latency: "~400–500 cycles"
+          bus_width: "8192-bit (8 stacks; HBM3 stacks on MCD chiplets)"
+
+    compute_performance:
+      fp64_vector: "81.7 TFLOPS"
+      fp64_mfma_matrix: "163.4 TFLOPS"
+      fp32_vector: "81.7 TFLOPS"
+      fp32_mfma_matrix: "163.4 TFLOPS"
+      tf32_mfma_matrix: "163.4 TFLOPS"
+      fp16_bf16_mfma_dense: "1307.4 TFLOPS"
+      fp16_bf16_mfma_sparse: "2614.9 TFLOPS"
+      fp8_mfma_dense: "2614.9 TFLOPS"
+      fp8_mfma_sparse: "5229.8 TFLOPS"
+      int8_mfma_dense: "2614.9 TOPS"
+      int8_mfma_sparse: "5229.8 TOPS"
+      fp4_support: false
+      fp6_support: false
+      fp8_support: true
+      matrix_core_generation: "3rd Gen CDNA Matrix Cores (MFMA)"
+
+    power_and_thermal:
+      socket_tdp: "750 W (OAM socket power)"
+      idle_power: "~50 W (estimated)"
+      form_factor: OAM
+      cooling: "Direct liquid cooling via OAM socket (ASIC cooling integral to rack design)"
+      compute_efficiency_fp16: "~1743 GFLOPS/W (1307 TFLOPS FP16 dense / 750 W)"
+
+    advanced_features:
+      compute_partitioning: "Yes — Accelerator Partitioning Mode (splits 3 GCDs into 1, 3, or 6 partitions)"
+      xgmi_infinity_fabric: "4th Gen XGMI / Infinity Fabric — intra-node GPU-to-GPU bandwidth ~896 GB/s (8-GPU node)"
+      ray_tracing: false
+      fp8_native: true
+      unified_virtual_address_space: true
+      peer_memory_access: "Direct XGMI peer access within an OAM node (no PCIe round-trip)"
+
+    networking_and_connectivity:
+      pcie_interface: PCIe 5.0 x16
+      intra_node_interconnect: "XGMI / Infinity Fabric 4th Gen (direct GPU-to-GPU links, up to 8 GPUs per OAM node)"
+      rdma: "ROCEv2 via external NIC (e.g., AMD Pensando, Broadcom BCM57508)"
+      gpu_memory_rdma: "HIPDirect RDMA (direct NIC DMA to/from HBM3 GPU memory)"
+
+    software_and_ecosystem:
+      rocm_version: "ROCm 6.0+"
+      programming_model: "HIP (Heterogeneous Interface for Portability) — C++ GPU kernel language"
+      kernel_language: "HIP C++ (mirrors CUDA C++ syntax; compile with hipcc)"
+      math_libraries: "rocBLAS, rocFFT, rocSPARSE, rocRAND"
+      dnn_library: "MIOpen (deep neural network primitives)"
+      inference_runtime: "MIGraphX (model execution and optimization)"
+      collective_comms: "RCCL (multi-GPU collectives; topology-aware for Infinity Fabric)"
+      pytorch: "PyTorch 2.0+ (native ROCm backend)"
+      tensorflow: "TensorFlow 2.12+ (ROCm backend)"
+      jax: "JAX with ROCm backend"
+      triton: "OpenAI Triton (ROCm/gfx942 support)"
+      profiler: "ROCProfiler, ROCTracer, Omniperf"
+

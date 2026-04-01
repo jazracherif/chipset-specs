@@ -1,0 +1,63 @@
+# AMD EPYC Server CPU Specifications
+# Terminology: native AMD/x86 throughout.
+# Each entry covers one CPU SKU (single-socket figures unless noted).
+# Source data from chip_specs.yml.
+
+cpus:
+
+  - name: EPYC 7763
+    full_name: AMD EPYC 7763
+    brand: AMD
+    family: EPYC
+    generation: Milan
+    microarch: Zen 3
+    gen_number: 3
+    year: 2021
+    max_cores: 64
+    memory_channels: 8
+    memory_type: DDR4-3200
+    memory_bandwidth_gbs: 205
+    best_simd: AVX2
+    simd_width_bits: 256
+    avx_fp_units: 128
+    peak_fp32_tflops: 2.5
+    peak_fp32_clock_ghz: 2.4
+    source: https://www.amd.com/en/products/processors/server/epyc/7003-series/amd-epyc-7763.html
+
+  - name: EPYC 9654
+    full_name: AMD EPYC 9654
+    brand: AMD
+    family: EPYC
+    generation: Genoa
+    microarch: Zen 4
+    gen_number: 4
+    year: 2022
+    max_cores: 96
+    memory_channels: 12
+    memory_type: DDR5-4800
+    memory_bandwidth_gbs: 461
+    best_simd: AVX-512
+    simd_width_bits: 512
+    avx_fp_units: 192
+    peak_fp32_tflops: 3.7
+    peak_fp32_clock_ghz: 2.4
+    source: https://www.amd.com/en/products/processors/server/epyc/4th-generation-9004-and-8004-series/amd-epyc-9654.html
+
+  - name: EPYC 9965
+    full_name: AMD EPYC 9965X
+    brand: AMD
+    family: EPYC
+    generation: Turin
+    microarch: Zen 5
+    gen_number: 5
+    year: 2024
+    max_cores: 192
+    memory_channels: 12
+    memory_type: DDR5-6000
+    memory_bandwidth_gbs: 576
+    best_simd: AVX-512
+    simd_width_bits: 512
+    avx_fp_units: 384
+    peak_fp32_tflops: 7.4
+    peak_fp32_clock_ghz: 2.4
+    source: https://www.amd.com/en/products/processors/server/epyc/9005-series/amd-epyc-9965.html

@@ -1,0 +1,414 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/jazracherif/chipset-specs/specs/_schema.json",
+  "title": "Chip Specifications Schema",
+  "description": "JSON Schema for all spec files in this repository. Covers _index.yaml, specs/nvidia/gpus/*.yaml, specs/amd/gpus/*.yaml, specs/amd/cpus/*.yaml, and specs/intel/cpus/*.yaml.",
+
+  "$defs": {
+
+    "reference": {
+      "type": "object",
+      "required": ["name", "url"],
+      "properties": {
+        "name": { "type": "string" },
+        "url":  { "type": "string", "format": "uri" }
+      },
+      "additionalProperties": false
+    },
+
+    "cost_range": {
+      "oneOf": [
+        { "type": "null" },
+        {
+          "type": "array",
+          "items": { "type": "number" },
+          "minItems": 2,
+          "maxItems": 2,
+          "description": "[low_usd, high_usd]"
+        }
+      ]
+    },
+
+    "index_entry": {
+      "type": "object",
+      "description": "One row in specs/_index.yaml — key metrics + spec_file pointer.",
+      "required": ["name", "full_name", "vendor", "architecture", "generation", "year", "type", "form_factor", "memory_gb", "memory_type", "fp16_tflops", "spec_file"],
+      "properties": {
+        "name":          { "type": "string", "description": "Short identifier, e.g. GB200" },
+        "full_name":     { "type": "string" },
+        "vendor":        { "type": "string", "enum": ["NVIDIA", "AMD", "Intel"] },
+        "architecture":  { "type": "string", "description": "e.g. Blackwell, Hopper, CDNA 4" },
+        "generation":    { "type": "string" },
+        "year":          { "type": "integer", "minimum": 2010 },
+        "type":          { "type": "string", "description": "e.g. datacenter GPU, consumer GPU, superchip, datacenter rack (72 GPUs)" },
+        "form_factor":   { "type": "string" },
+        "memory_gb":     { "type": "number", "description": "Total memory capacity in GB" },
+        "memory_type":   { "type": "string", "enum": ["HBM3E", "HBM3", "HBM2e", "GDDR7", "GDDR6", "LPDDR5x"] },
+        "memory_bw_tbs": { "type": "number", "description": "Memory bandwidth in TB/s (use for >= 1 TB/s)" },
+        "memory_bw_gbs": { "type": "number", "description": "Memory bandwidth in GB/s (use for < 1 TB/s)" },
+        "fp16_tflops":   { "type": ["number", "null"] },
+        "fp32_tflops":   { "type": ["number", "null"] },
+        "tdp_w":         { "type": ["number", "null"], "description": "TDP in watts (single chip/card)" },
+        "tdp_kw":        { "type": ["number", "null"], "description": "TDP in kilowatts (rack/system total)" },
+        "cost_usd_range": { "$ref": "#/$defs/cost_range" },
+        "spec_file":     { "type": "string", "description": "Relative path from repo root to the full spec YAML, e.g. specs/nvidia/gpus/blackwell.yaml" }
+      },
+      "additionalProperties": false
+    },
+
+    "cpu_entry": {
+      "type": "object",
+      "description": "One CPU entry in specs/amd/cpus/*.yaml or specs/intel/cpus/*.yaml.",
+      "required": ["name", "full_name", "brand", "family", "generation", "year", "max_cores", "memory_channels", "memory_type", "memory_bandwidth_gbs", "best_simd", "simd_width_bits", "avx_fp_units", "peak_fp32_tflops", "peak_fp32_clock_ghz", "source"],
+      "properties": {
+        "name":               { "type": "string" },
+        "full_name":          { "type": "string" },
+        "brand":              { "type": "string", "enum": ["AMD", "Intel"] },
+        "family":             { "type": "string", "description": "e.g. EPYC, Xeon Scalable, Xeon 6" },
+        "generation":         { "type": "string", "description": "e.g. Milan, Genoa, Turin, Sapphire Rapids" },
+        "microarch":          { "type": "string", "description": "AMD only — e.g. Zen 3, Zen 4, Zen 5" },
+        "gen_number":         { "type": "integer" },
+        "year":               { "type": "integer", "minimum": 2010 },
+        "max_cores":          { "type": "integer", "description": "Per-socket core count" },
+        "memory_channels":    { "type": "integer" },
+        "memory_type":        { "type": "string", "description": "e.g. DDR4-3200, DDR5-4800, DDR5-6000" },
+        "memory_bandwidth_gbs": { "type": "number", "description": "Peak single-socket memory bandwidth in GB/s" },
+        "best_simd":          { "type": "string", "enum": ["AVX2", "AVX-512"] },
+        "simd_width_bits":    { "type": "integer", "enum": [256, 512] },
+        "avx_fp_units":       { "type": "integer", "description": "Number of FP32 lanes across all AVX units" },
+        "peak_fp32_tflops":   { "type": "number", "description": "Peak single-socket FP32 TFLOPS" },
+        "peak_fp32_clock_ghz": { "type": "number", "description": "Clock speed at which peak FP32 is measured" },
+        "source":             { "type": "string", "format": "uri" }
+      },
+      "additionalProperties": false
+    },
+
+    "nvidia_gpu_entry": {
+      "type": "object",
+      "description": "Full NVIDIA GPU spec entry (one chip inside gpus: in a specs/nvidia/gpus/*.yaml file).",
+      "required": ["name", "references", "core_specifications", "memory_specifications", "compute_performance", "power_and_thermal", "software_and_ecosystem"],
+      "properties": {
+        "name":       { "type": "string" },
+        "references": { "type": "array", "items": { "$ref": "#/$defs/reference" }, "minItems": 1 },
+
+        "core_specifications": {
+          "type": "object",
+          "required": ["release_date", "architecture", "form_factor"],
+          "properties": {
+            "release_date":            { "type": "string" },
+            "architecture":            { "type": "string" },
+            "compute_capability":      { "type": ["number", "string"] },
+            "gpu_count":               { "type": "integer" },
+            "cpu":                     { "type": "string" },
+            "streaming_multiprocessors": { "type": ["integer", "string"] },
+            "cuda_cores_fp32_per_sm":  { "type": "integer" },
+            "cuda_cores_fp32_per_gpu": { "type": ["integer", "string"] },
+            "max_clock_speed":         { "type": ["integer", "string"] },
+            "form_factor":             { "type": "string" }
+          }
+        },
+
+        "sm_execution_model": {
+          "type": "object",
+          "properties": {
+            "shared_memory_per_sm":          { "type": "string" },
+            "shared_memory_per_block":       { "type": "string" },
+            "max_resident_threads_per_sm":   { "type": "integer" },
+            "max_resident_blocks_per_sm":    { "type": "integer" }
+          }
+        },
+
+        "memory_specifications": {
+          "type": "object",
+          "required": ["architecture", "ecc_support"],
+          "properties": {
+            "architecture":    { "type": "string" },
+            "total_capacity":  { "type": "string" },
+            "memory_type":     { "type": "string" },
+            "ecc_support":     { "type": "boolean" },
+            "addressing_mode": { "type": "string" },
+            "pageable_memory_access_via_host_page_tables": { "type": "boolean" },
+            "concurrent_managed_access": { "type": "boolean" },
+            "gpu_memory": {
+              "type": "object",
+              "required": ["capacity", "memory_type"],
+              "properties": {
+                "capacity":     { "type": "string" },
+                "memory_type":  { "type": "string" },
+                "l2_cache":     { "type": ["string", "number"] },
+                "bandwidth":    { "type": "string" },
+                "bus_width":    { "type": "string" }
+              }
+            },
+            "cpu_memory": { "type": "object" },
+            "memory_hierarchy": { "type": "object" }
+          }
+        },
+
+        "compute_performance": {
+          "type": "object",
+          "required": ["fp32"],
+          "properties": {
+            "fp64":              { "type": ["string", "number"] },
+            "fp32":              { "type": ["string", "number"] },
+            "tf32":              { "type": ["string", "number"] },
+            "fp16_bf16":         { "type": ["string", "number"] },
+            "fp8":               { "type": ["string", "boolean"] },
+            "fp6":               { "type": ["string", "boolean"] },
+            "fp4":               { "type": ["string", "boolean"] },
+            "int8":              { "type": ["string", "number"] },
+            "tensor_core_generation": { "type": "string" },
+            "fp4_fp6_tensor_core_support": { "type": ["boolean", "string"] },
+            "fp8_support":       { "type": "boolean" }
+          }
+        },
+
+        "power_and_thermal": {
+          "type": "object",
+          "required": ["form_factor", "cooling"],
+          "properties": {
+            "tdp":          { "type": ["number", "string"] },
+            "gpu_tdp":      { "type": ["number", "string"] },
+            "total_system_tdp": { "type": ["number", "string"] },
+            "total_rack_tdp":   { "type": ["number", "string"] },
+            "idle_power":   { "type": ["number", "string"] },
+            "form_factor":  { "type": "string" },
+            "cooling":      { "type": "string" }
+          }
+        },
+
+        "advanced_features": { "type": "object" },
+        "networking_and_connectivity": { "type": "object" },
+        "software_and_ecosystem": {
+          "type": "object",
+          "required": ["cuda_toolkit", "minimum_driver"],
+          "properties": {
+            "cuda_toolkit":    { "type": "string" },
+            "minimum_driver":  { "type": "string" },
+            "cublas":          { "type": "string" },
+            "cudnn":           { "type": "string" },
+            "tensorrt":        { "type": "string" },
+            "nccl":            { "type": "string" },
+            "pytorch":         { "type": "string" },
+            "tensorflow":      { "type": "string" }
+          }
+        }
+      }
+    },
+
+    "amd_gpu_entry": {
+      "type": "object",
+      "description": "Full AMD GPU spec entry (one chip inside gpus: in a specs/amd/gpus/*.yaml file).",
+      "required": ["name", "references", "core_specifications", "memory_specifications", "compute_performance", "power_and_thermal", "software_and_ecosystem"],
+      "properties": {
+        "name":       { "type": "string" },
+        "references": { "type": "array", "items": { "$ref": "#/$defs/reference" }, "minItems": 1 },
+
+        "core_specifications": {
+          "type": "object",
+          "required": ["release_date", "architecture", "form_factor"],
+          "properties": {
+            "release_date":         { "type": "string" },
+            "architecture":         { "type": "string", "description": "e.g. CDNA 4" },
+            "target_id":            { "type": "string", "description": "e.g. gfx942, gfx950" },
+            "gpu_count":            { "type": "integer" },
+            "host_cpu":             { "type": "string" },
+            "compute_units":        { "type": ["integer", "string"] },
+            "stream_processors_per_cu":  { "type": "integer", "const": 64 },
+            "stream_processors_per_gpu": { "type": ["integer", "string"] },
+            "wavefront_size":       { "type": "integer", "const": 64 },
+            "max_clock_speed":      { "type": "string" },
+            "form_factor":          { "type": "string", "description": "OAM or PCIe" },
+            "process_node":         { "type": "string" }
+          }
+        },
+
+        "cu_execution_model": {
+          "type": "object",
+          "properties": {
+            "lds_per_cu":            { "type": "string", "description": "e.g. '64 KB LDS'" },
+            "max_wavefronts_per_cu": { "type": "integer" },
+            "max_workitems_per_cu":  { "type": "integer", "const": 2048 },
+            "simd_units_per_cu":     { "type": "integer", "const": 4 },
+            "vgpr_per_cu":           { "type": "string" },
+            "sgpr_per_cu":           { "type": "string" }
+          }
+        },
+
+        "memory_specifications": {
+          "type": "object",
+          "required": ["architecture", "total_capacity", "memory_type", "ecc_support"],
+          "properties": {
+            "architecture":    { "type": "string" },
+            "total_capacity":  { "type": "string" },
+            "memory_type":     { "type": "string" },
+            "ecc_support":     { "type": "boolean" },
+            "addressing_mode": { "type": "string" },
+            "gpu_memory": {
+              "type": "object",
+              "required": ["capacity", "memory_type"],
+              "properties": {
+                "capacity":        { "type": "string" },
+                "memory_type":     { "type": "string" },
+                "infinity_cache":  { "type": "string" },
+                "bandwidth":       { "type": "string" },
+                "bus_width":       { "type": "string" }
+              }
+            },
+            "memory_hierarchy": { "type": "object" }
+          }
+        },
+
+        "compute_performance": {
+          "type": "object",
+          "required": ["matrix_core_generation"],
+          "properties": {
+            "fp64_vector":              { "type": ["string", "number"] },
+            "fp64_mfma_matrix":         { "type": ["string", "number"] },
+            "fp32_vector":              { "type": ["string", "number"] },
+            "fp32_mfma_matrix":         { "type": ["string", "number"] },
+            "fp16_bf16_mfma_dense":     { "type": ["string", "number"] },
+            "fp16_bf16_mfma_sparse":    { "type": ["string", "number"] },
+            "fp8_mfma_dense":           { "type": ["string", "number"] },
+            "fp8_mfma_sparse":          { "type": ["string", "number"] },
+            "fp6_mfma_dense":           { "type": ["string", "number"] },
+            "fp4_mfma_dense":           { "type": ["string", "number"] },
+            "int8_mfma_dense":          { "type": ["string", "number"] },
+            "fp8_support":              { "type": "boolean" },
+            "fp6_support":              { "type": "boolean" },
+            "fp4_support":              { "type": "boolean" },
+            "matrix_core_generation":   { "type": "string", "description": "e.g. '4th Gen CDNA Matrix Cores (MFMA)'" }
+          }
+        },
+
+        "power_and_thermal": {
+          "type": "object",
+          "required": ["form_factor", "cooling"],
+          "properties": {
+            "socket_tdp":   { "type": "string" },
+            "tdp_per_gpu":  { "type": "string" },
+            "form_factor":  { "type": "string" },
+            "cooling":      { "type": "string" }
+          }
+        },
+
+        "advanced_features": { "type": "object" },
+        "networking_and_connectivity": { "type": "object" },
+        "software_and_ecosystem": {
+          "type": "object",
+          "required": ["rocm_version", "programming_model"],
+          "properties": {
+            "rocm_version":       { "type": "string" },
+            "programming_model":  { "type": "string", "const": "HIP C++" },
+            "math_libraries":     { "type": "string" },
+            "dnn_library":        { "type": "string", "description": "Should be MIOpen" },
+            "inference_runtime":  { "type": "string" },
+            "collective_comms":   { "type": "string", "description": "Should be RCCL" },
+            "pytorch":            { "type": "string" },
+            "tensorflow":         { "type": "string" }
+          }
+        }
+      }
+    }
+  },
+
+  "oneOf": [
+    {
+      "title": "_index.yaml",
+      "description": "Top-level structure of specs/_index.yaml",
+      "type": "object",
+      "required": ["gpus"],
+      "properties": {
+        "gpus": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/index_entry" }
+        },
+        "cpus": {
+          "type": "array",
+          "description": "CPU summary entries — key fields + spec_file pointer.",
+          "items": {
+            "type": "object",
+            "required": ["name", "full_name", "vendor", "family", "generation", "year", "max_cores", "memory_bw_gbs", "memory_type", "peak_fp32_tflops", "spec_file"],
+            "properties": {
+              "name":             { "type": "string" },
+              "full_name":        { "type": "string" },
+              "vendor":           { "type": "string", "enum": ["AMD", "Intel"] },
+              "family":           { "type": "string" },
+              "generation":       { "type": "string" },
+              "microarch":        { "type": "string" },
+              "year":             { "type": "integer" },
+              "max_cores":        { "type": "integer" },
+              "memory_bw_gbs":    { "type": "number" },
+              "memory_type":      { "type": "string" },
+              "peak_fp32_tflops": { "type": "number" },
+              "tdp_w":            { "type": ["number", "null"] },
+              "spec_file":        { "type": "string" }
+            },
+            "additionalProperties": false
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    {
+      "title": "NVIDIA GPU spec file",
+      "description": "Top-level structure of specs/nvidia/gpus/*.yaml",
+      "type": "object",
+      "required": ["gpus"],
+      "properties": {
+        "common_references": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/reference" }
+        },
+        "gpus": {
+          "type": "object",
+          "additionalProperties": { "$ref": "#/$defs/nvidia_gpu_entry" }
+        }
+      },
+      "additionalProperties": false
+    },
+    {
+      "title": "AMD GPU spec file",
+      "description": "Top-level structure of specs/amd/gpus/*.yaml",
+      "type": "object",
+      "required": ["gpus"],
+      "properties": {
+        "common_references": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/reference" }
+        },
+        "gpus": {
+          "type": "object",
+          "additionalProperties": { "$ref": "#/$defs/amd_gpu_entry" }
+        }
+      },
+      "additionalProperties": false
+    },
+    {
+      "title": "AMD CPU spec file",
+      "description": "Top-level structure of specs/amd/cpus/*.yaml",
+      "type": "object",
+      "required": ["cpus"],
+      "properties": {
+        "cpus": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/cpu_entry" }
+        }
+      },
+      "additionalProperties": false
+    },
+    {
+      "title": "Intel CPU spec file",
+      "description": "Top-level structure of specs/intel/cpus/*.yaml",
+      "type": "object",
+      "required": ["cpus"],
+      "properties": {
+        "cpus": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/cpu_entry" }
+        }
+      },
+      "additionalProperties": false
+    }
+  ]
+}

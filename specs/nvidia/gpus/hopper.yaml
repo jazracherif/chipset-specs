@@ -1,0 +1,296 @@
+common_references:
+  - name: CUDA C++ Programming Guide - Memory Hierarchy
+    url: https://docs.nvidia.com/cuda/cuda-c-programming-guide/index.html#memory-hierarchy
+  - name: CUDA C++ Programming Guide - Thread Block Clusters (Distributed Shared Memory)
+    url: https://docs.nvidia.com/cuda/cuda-c-programming-guide/index.html#thread-block-cluster
+
+gpus:
+  H100:
+    name: NVIDIA H100 Tensor Core GPU
+    references:
+      - name: NVIDIA H100 GPU Whitepaper
+        url: https://resources.nvidia.com/en-us-hopper-architecture/nvidia-h100-tensor-c?ncid=no-ncid
+      - name: NVIDIA H100 GPU Datasheet
+        url: https://resources.nvidia.com/en-us-hopper-architecture/nvidia-tensor-core-gpu-datasheet?ncid=no-ncid
+      - name: NVIDIA H100 Product Page
+        url: https://www.nvidia.com/en-us/data-center/h100/
+
+    # Two variants ship: SXM5 (high-density 8-GPU server boards) and PCIe (NVL dual-slot card).
+    # Specs below note variant differences where they exist; SXM5 is the primary datacenter form factor.
+
+    core_specifications:
+      release_date: March 2023
+      architecture: Hopper (GH100)
+      compute_capability: 9.0
+      gpu_count: 1
+      cpu: "Host CPU (user-supplied)"
+      streaming_multiprocessors: "132 (SXM5) / 114 (PCIe)"
+      cuda_cores_fp32_per_sm: 128
+      cuda_cores_fp32_per_gpu: "16896 (SXM5, 128 × 132 SMs) / 14592 (PCIe, 128 × 114 SMs)"
+      max_clock_speed: "~1830 MHz boost (SXM5)"
+      form_factor: "SXM5 board (server) / PCIe dual-slot air-cooled card"
+
+    sm_execution_model:
+      shared_memory_per_sm: 228 KB
+      shared_memory_per_block: 227 KB
+      max_resident_threads_per_sm: 2048
+      max_resident_blocks_per_sm: 32
+
+    memory_specifications:
+      # SXM5 uses HBM3; PCIe / NVL uses HBM2e
+      architecture: Discrete HBM GPU memory; host CPU memory separate
+      ecc_support: true
+      addressing_mode: "Standard PCIe (standalone) / NVLink fabric (SXM5 in HGX/DGX)"
+      pageable_memory_access_via_host_page_tables: false
+      concurrent_managed_access: true
+      pcie_generation: Gen 5 (128 GB/s bi-directional)
+
+      gpu_memory:
+        capacity: "80 GB HBM3 (SXM5) / 94 GB HBM2e (NVL PCIe)"
+        memory_type: "HBM3 (SXM5) / HBM2e (PCIe/NVL)"
+        l2_cache: 50 MB
+        bandwidth: "3.35 TB/s (SXM5) / 3.9 TB/s (NVL PCIe)"
+        bus_width: 5120-bit
+
+      cpu_memory:
+        capacity: Host system RAM (user-supplied)
+        bandwidth: "~128 GB/s effective (PCIe 5.0 x16 CPU↔GPU transfer)"
+
+      memory_hierarchy:
+        # SXM5 primary; PCIe/NVL differences noted where they exist. 132 SMs (SXM5)
+        registers:
+          capacity_per_sm: "256 KB (64K × 32-bit registers)"
+          total_per_gpu: "~33 MB (256 KB × 132 SMs, SXM5)"
+          throughput: "On-chip, not bandwidth-bound; effectively hundreds of TB/s aggregate"
+          latency: "~1 cycle (zero-overhead within a warp when no RAW hazards)"
+
+        l1_cache_shared_memory:
+          # 256 KB unified L1+shared per SM; up to 228 KB configurable as shared memory
+          capacity_per_sm: "256 KB unified (max 228 KB addressable as shared memory)"
+          total_per_gpu: "~29 MB (228 KB × 132 SMs, SXM5, shared-only accounting)"
+          throughput: "~31 TB/s aggregate (132 SMs × 128 B/cycle × 1830 MHz, SXM5)"
+          latency: "~28–32 cycles (shared memory, bank-conflict-free)"
+          notes: "First GPU with 228 KB max shared memory per SM; L1 occupies remaining SRAM"
+
+        distributed_shared_memory:
+          # Introduced in Hopper; thread block clusters can access peer-SM shared memory
+          available: true
+          capacity_per_cluster: "up to ~1.8 MB (up to 8 SMs × 228 KB per SM)"
+          throughput: "Lower than local shared memory; bounded by SM2SM crossbar bandwidth"
+          latency: "~50–100 cycles (peer-SM access within a thread block cluster)"
+          notes: "First GPU architecture to support distributed shared memory (SM 9.0, Hopper)"
+
+        l2_cache:
+          capacity: "50 MB"
+          throughput: "~10–12 TB/s (estimated, SXM5)"
+          latency: "~150–200 cycles"
+          notes: "Large 50 MB L2 introduced in Hopper to reduce HBM pressure on large working sets"
+
+        global_dram:
+          capacity: "80 GB HBM3 (SXM5) / 94 GB HBM2e (NVL PCIe)"
+          memory_type: "HBM3 (SXM5) / HBM2e (NVL PCIe)"
+          throughput: "3.35 TB/s (SXM5) / 3.9 TB/s (NVL PCIe)"
+          latency: "~500–600 cycles"
+          bus_width: 5120-bit
+
+    compute_performance:
+      # * = with sparsity
+      fp64: "34 TFLOPS (SXM5) / 30 TFLOPS (PCIe)"
+      fp64_tensor_core: "67 TFLOPS (SXM5) / 60 TFLOPS (PCIe)"
+      fp32: "67 TFLOPS (SXM5) / 60 TFLOPS (PCIe)"
+      tf32_tensor_core: "989 TFLOPS* (SXM5) / 835 TFLOPS* (PCIe)"
+      fp16_bf16_tensor_core: "1979 TFLOPS* (SXM5) / 1671 TFLOPS* (PCIe)"
+      fp8_tensor_core: "3958 TFLOPS* (SXM5) / 3341 TFLOPS* (PCIe)"
+      int8_tensor_core: "3958 TOPS* (SXM5) / 3341 TOPS* (PCIe)"
+      fp4: Not supported
+      fp6: Not supported
+      tensor_core_generation: "4th Gen (Hopper)"
+      fp8_support: true
+      fp4_fp6_tensor_core_support: false
+
+    power_and_thermal:
+      tdp: "Up to 700 W configurable (SXM5) / 350–400 W configurable (PCIe/NVL)"
+      form_factor: "SXM5 server board / PCIe dual-slot air-cooled"
+      cooling: "Liquid-cooled (SXM5 in HGX/DGX) / Air-cooled (PCIe)"
+      power_efficiency_fp16: "~141 GFLOPS/W (SXM5, 989 TFLOPS TF32 / 700 W)"
+
+    advanced_features:
+      mig: "Yes (up to 7 instances — 10 GB each on SXM5 / 12 GB each on PCIe NVL)"
+      mig_instances_per_gpu: 7
+      nvlink: "4th Gen NVLink — 900 GB/s (SXM5) / 600 GB/s (PCIe)"
+      nvswitch: "Via HGX/DGX board (NVSwitch 3.0) — not on standalone PCIe card"
+      nvdec_per_gpu: 7
+      nvjpeg_per_gpu: 7
+      dynamic_programming: Full support
+      thread_block_clusters: true
+      tensor_memory_accelerator: true
+      hardware_coherency: false
+      transformer_engine: "Yes (FP8 optimized — first generation)"
+      distributed_shared_memory: true
+      confidential_computing: "Full support with TEE (first GPU with hardware TEE)"
+      dpx_instructions: "Yes (7× faster dynamic programming vs A100)"
+      atomic_caps_outbound: Standard
+
+    networking_and_connectivity:
+      pcie_interface: PCIe Gen 5 x16 (128 GB/s bi-directional)
+      high_speed_interconnect: "NDR InfiniBand (400 Gb/s) / Ethernet (400 Gb/s) via external NIC"
+      nvlink_fabric: "900 GB/s per GPU via NVSwitch 3.0 in HGX H100 8-GPU server"
+      multi_node_clustering: "Native support via InfiniBand / Ethernet"
+      rdma: "Yes (GPUDirect RDMA)"
+      gpu_to_gpu_direct: "Yes (GPUDirect RDMA + NVLink within node)"
+      sharp: true
+
+    software_and_ecosystem:
+      cuda_toolkit: "11.8+"
+      minimum_driver: "520.61.05+"
+      cublas: "cuBLAS 11.x+ with FP8"
+      cudnn: "8.6+ (FP8 support)"
+      tensorrt: "8.6+ (FP8 support)"
+      nccl: "2.16+ (NVLink 4.0 optimized)"
+      pytorch: "2.0+"
+      tensorflow: "2.12+"
+
+  GH200:
+    name: NVIDIA GH200 Grace Hopper Superchip
+    references:
+      - name: NVIDIA GH200 Grace Hopper Superchip Product Page
+        url: https://www.nvidia.com/en-us/data-center/grace-hopper-superchip/
+      - name: NVIDIA H200 GPU Datasheet
+        url: https://resources.nvidia.com/en-us-data-center-overview-mc/en-us-data-center-overview/h200-datasheet
+      - name: NVIDIA Hopper Architecture Technical Brief
+        url: https://resources.nvidia.com/en-us-hopper-architecture/nvidia-h100-tensor-c?ncid=no-ncid
+
+    # GH200 = 1× Grace CPU (72-core Arm Neoverse V2) + 1× H200 GPU (Hopper GH100 die).
+    # The H200 GPU is the same GH100 silicon as H100 SXM5, upgraded with 141 GB HBM3e instead of 80 GB HBM3.
+    # Grace CPU and H200 GPU share a coherent flat address space via NVLink-C2C at 900 GB/s.
+    # Deployed in NVL32 rack (32 superchips, 32 H200 GPUs, 32 Grace CPUs).
+    # Note: chip_specs.yml lists 144 GB HBM3e; NVIDIA H200 official datasheet states 141 GB.
+
+    core_specifications:
+      release_date: "November 2023 (GA)"
+      architecture: Hopper (GH100)
+      compute_capability: 9.0
+      gpu_count: 1
+      cpu: "1× Grace CPU (72-core Arm Neoverse V2)"
+      streaming_multiprocessors: 132     # same GH100 die as H100 SXM5
+      cuda_cores_fp32_per_sm: 128
+      cuda_cores_fp32_per_gpu: 16896     # 128 × 132 SMs
+      max_clock_speed: "~1980 MHz boost (H200 GPU)"
+      form_factor: "Superchip on NVL32 liquid-cooled rack"
+
+    sm_execution_model:
+      shared_memory_per_sm: 228 KB
+      shared_memory_per_block: 227 KB
+      max_resident_threads_per_sm: 2048
+      max_resident_blocks_per_sm: 32
+
+    memory_specifications:
+      # GH200 uses a coherent unified address space across H200 HBM3e and Grace LPDDR5X.
+      # GPU can page-fault into host CPU memory via ATS; zero-copy via NVLink-C2C.
+      architecture: "Separate HBM3e (H200 GPU) + LPDDR5X (Grace CPU); coherent via NVLink-C2C"
+      total_unified_memory_gb: 621       # 141 GB HBM3e + 480 GB LPDDR5X
+      ecc_support: true
+      addressing_mode: ATS (Address Translation Services)
+      pageable_memory_access_via_host_page_tables: true
+      concurrent_managed_access: true
+      cpu_gpu_interconnect: NVLink-C2C
+      cpu_gpu_interconnect_bw_gbs: 900
+
+      gpu_memory:
+        capacity: "141 GB HBM3e"
+        memory_type: HBM3e
+        l2_cache: 50 MB
+        bandwidth: "4.8 TB/s"
+        bus_width: 5120-bit
+
+      cpu_memory:
+        capacity: "480 GB LPDDR5X (Grace CPU)"
+        bandwidth: "~512 GB/s (Grace CPU LPDDR5X subsystem)"
+
+      memory_hierarchy:
+        # Per-GPU metrics; 132 SMs; HBM3e (identical SM microarchitecture to H100 SXM5)
+        registers:
+          capacity_per_sm: "256 KB (64K × 32-bit registers)"
+          total_per_gpu: "~33 MB (256 KB × 132 SMs)"
+          throughput: "On-chip, not bandwidth-bound; effectively hundreds of TB/s aggregate"
+          latency: "~1 cycle (zero-overhead within a warp when no RAW hazards)"
+
+        l1_cache_shared_memory:
+          capacity_per_sm: "256 KB unified (max 228 KB addressable as shared memory)"
+          total_per_gpu: "~29 MB (228 KB × 132 SMs, shared-only accounting)"
+          throughput: "~34 TB/s aggregate (132 SMs × 128 B/cycle × 1980 MHz)"
+          latency: "~28–32 cycles (shared memory, bank-conflict-free)"
+          notes: "Same Hopper SM design as H100 SXM5"
+
+        distributed_shared_memory:
+          available: true
+          capacity_per_cluster: "up to ~1.8 MB (up to 8 SMs × 228 KB per SM)"
+          throughput: "Lower than local shared memory; bounded by SM2SM crossbar bandwidth"
+          latency: "~50–100 cycles (peer-SM access within a thread block cluster)"
+
+        l2_cache:
+          capacity: "50 MB"
+          throughput: "~10–12 TB/s (estimated)"
+          latency: "~150–200 cycles"
+
+        global_dram:
+          capacity: "141 GB HBM3e"
+          memory_type: HBM3e
+          throughput: "4.8 TB/s"
+          latency: "~500–600 cycles"
+          bus_width: 5120-bit
+          notes: "Grace LPDDR5X (480 GB) accessible via NVLink-C2C at 900 GB/s; ~microsecond penalty vs local HBM3e"
+
+    compute_performance:
+      # * = with sparsity; same compute die as H100 SXM5 — identical TFLOPS figures
+      fp64: "34 TFLOPS"
+      fp64_tensor_core: "67 TFLOPS"
+      fp32: "67 TFLOPS"
+      tf32_tensor_core: "989 TFLOPS*"
+      fp16_bf16_tensor_core: "1979 TFLOPS*"
+      fp8_tensor_core: "3958 TFLOPS*"
+      int8_tensor_core: "3958 TOPS*"
+      fp4: Not supported
+      fp6: Not supported
+      tensor_core_generation: "4th Gen (Hopper)"
+      fp8_support: true
+      fp4_fp6_tensor_core_support: false
+
+    power_and_thermal:
+      tdp: "~1000 W (superchip total, estimated)"
+      gpu_tdp: "700 W (H200 GPU component)"
+      form_factor: "Superchip on NVL32 liquid-cooled rack"
+      cooling: "Direct liquid cooling required (NVL32 rack)"
+
+    advanced_features:
+      mig: "Yes (up to 7 instances — same as H100 SXM5)"
+      nvlink: "NVLink-C2C (CPU↔GPU within superchip, 900 GB/s)"
+      nvswitch: "Via NVL32 rack (NVSwitch 3.0)"
+      nvdec_per_gpu: 7
+      nvjpeg_per_gpu: 7
+      dynamic_programming: Full support
+      thread_block_clusters: true
+      tensor_memory_accelerator: true
+      hardware_coherency: "Yes (ATS/PASID via NVLink-C2C)"
+      transformer_engine: "Yes (FP8 optimized)"
+      distributed_shared_memory: true
+      confidential_computing: "Full support with TEE"
+      unified_memory: "Hardware-coherent CPU+GPU via NVLink-C2C (zero-copy)"
+
+    networking_and_connectivity:
+      cpu_gpu_interconnect: "NVLink-C2C — 900 GB/s bidirectional (CPU↔GPU within superchip)"
+      pcie_interface: "PCIe 5.0 x16 (scale-out / host management path)"
+      high_speed_interconnect: "ConnectX-7 (200 Gb/s InfiniBand / Ethernet)"
+      nvlink_fabric: "Via NVL32 rack NVSwitches (NVSwitch 3.0)"
+      rdma: "Yes (GPUDirect RDMA)"
+      gpu_to_gpu_direct: "Yes (NVLink via NVSwitch 3.0 within NVL32)"
+
+    software_and_ecosystem:
+      cuda_toolkit: "12.0+"
+      minimum_driver: "525.85.12+"
+      cublas: "cuBLAS 12.x with FP8"
+      cudnn: "8.8+ (FP8 support)"
+      tensorrt: "8.6+ (FP8 support)"
+      nccl: "2.17+ (NVLink-C2C topology-aware)"
+      pytorch: "2.0+"
+      tensorflow: "2.12+"

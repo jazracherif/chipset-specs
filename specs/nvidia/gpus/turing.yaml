@@ -1,0 +1,130 @@
+common_references:
+  - name: CUDA C++ Programming Guide - Memory Hierarchy
+    url: https://docs.nvidia.com/cuda/cuda-c-programming-guide/index.html#memory-hierarchy
+  - name: CUDA C++ Programming Guide - Thread Block Clusters (Distributed Shared Memory)
+    url: https://docs.nvidia.com/cuda/cuda-c-programming-guide/index.html#thread-block-cluster
+
+gpus:
+  T4:
+    name: NVIDIA Tesla T4
+    references:
+      - name: NVIDIA Tesla T4
+        url: https://www.nvidia.com/en-us/data-center/tesla-t4/
+      - name: Tesla T4 Datasheet
+        url: https://www.nvidia.com/content/dam/en-zz/Solutions/Data-Center/tesla-t4/t4-tensor-core-datasheet-951643.pdf
+      - name: NVIDIA Turing Architecture Whitepaper
+        url: https://www.nvidia.com/content/dam/en-zz/Solutions/design-visualization/technologies/turing-architecture/NVIDIA-Turing-Architecture-Whitepaper.pdf
+
+    core_specifications:
+      release_date: September 2018
+      architecture: Turing
+      compute_capability: 7.5
+      gpu_count: 1
+      streaming_multiprocessors: 40
+      cuda_cores_fp32_per_sm: 64
+      cuda_cores_fp32_per_gpu: 2560  # 64 × 40 SMs
+      max_clock_speed: 1590 MHz
+      form_factor: Single-slot, low-profile
+
+    sm_execution_model:
+      shared_memory_per_sm: 64 KB
+
+    memory_specifications:
+      architecture: Discrete (dedicated GDDR6 GPU memory; host CPU memory separate)
+      ecc_support: true
+      # Supports concurrent managed access but lacks hardware-level pageable memory access
+      addressing_mode: Standard
+      concurrent_managed_access: true
+      hardware_pageable_memory_access: false
+      pcie_generation: Gen 3 (16 GB/s per direction)
+
+      gpu_memory:
+        capacity: 16 GB
+        memory_type: GDDR6
+        l2_cache: 4 MB
+        bandwidth: 320 GB/s
+        bus_width: 256-bit
+
+      cpu_memory:
+        capacity: Host system RAM (user-supplied)
+        bandwidth: "~16 GB/s per direction (PCIe 3.0 x16 CPU↔GPU transfer)"
+
+      memory_hierarchy:
+        # 40 SMs; discrete GDDR6; no thread block clusters (Turing, SM 7.5)
+        registers:
+          capacity_per_sm: "256 KB (64K × 32-bit registers)"
+          total_per_gpu: "~10 MB (256 KB × 40 SMs)"
+          throughput: "On-chip, not bandwidth-bound; effectively hundreds of TB/s aggregate"
+          latency: "~1 cycle (zero-overhead within a warp when no RAW hazards)"
+
+        l1_cache_shared_memory:
+          # Turing: 96 KB unified L1+shared per SM; up to 64 KB configurable as shared memory
+          capacity_per_sm: "96 KB unified (max 64 KB addressable as shared memory)"
+          total_per_gpu: "~3.75 MB (96 KB × 40 SMs)"
+          throughput: "~8 TB/s aggregate (40 SMs × 128 B/cycle × 1590 MHz)"
+          latency: "~28–32 cycles (shared memory, bank-conflict-free)"
+          notes: "L1 cache uses remaining SRAM not allocated to shared memory"
+
+        distributed_shared_memory:
+          available: false
+          notes: "Not available on Turing (SM 7.5); thread block clusters introduced in Hopper (SM 9.0)"
+
+        l2_cache:
+          capacity: "4 MB"
+          throughput: "~1.5–2 TB/s (estimated)"
+          latency: "~250–300 cycles"
+          notes: "Smallest L2 among modern GPUs; high miss rate for large working sets"
+
+        global_dram:
+          capacity: "16 GB GDDR6"
+          memory_type: GDDR6
+          throughput: "320 GB/s"
+          latency: "~500–600 cycles"
+          bus_width: 256-bit
+          notes: "Host RAM accessible via PCIe 3.0 at ~16 GB/s per direction"
+
+    compute_performance:
+      fp32: 8.1 TFLOPS
+      fp16: "65 TFLOPS (Tensor Cores)"
+      bf16: Not supported
+      fp8: Not supported
+      fp6: Not supported
+      fp4: Not supported
+      int8: 130 TOPS
+      tensor_core_generation: "2nd Gen (Turing)"
+
+    power_and_thermal:
+      tdp: 70 W
+      idle_power: ~9.2 W
+      form_factor: Single-slot, low-profile
+      cooling: Passive capable
+      power_efficiency_fp16: "~116 GFLOPS/W (65 TFLOPS / ~560W system)"
+
+    advanced_features:
+      mig: false
+      nvlink: false
+      dynamic_programming: Limited
+      thread_block_clusters: false
+      tensor_memory_accelerator: false
+      hardware_coherency: false
+      transformer_engine: false
+      distributed_shared_memory: false
+      atomic_caps_outbound: Limited
+      fp4_support: false
+      fp6_support: false
+      fp8_support: false
+
+    networking_and_connectivity:
+      high_speed_interconnect: "Not supported (relies on host PCIe/network)"
+      multi_node_clustering: "Limited (via PCIe/network only)"
+      rdma: Via external NICs
+      gpu_to_gpu_direct: false
+
+    software_and_ecosystem:
+      cuda_toolkit: "10.0 – 12.x"
+      minimum_driver: "410.48+"
+      cublas: Standard
+      cudnn: "7.x – 8.x"
+      tensorrt: "5.x – 10.x"
+      nccl: "2.x"
+
