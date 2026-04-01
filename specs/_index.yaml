@@ -22,7 +22,7 @@ gpus:
     cost_usd_range: null
     spec_file: specs/nvidia/gpus/blackwell.yaml
 
-  - name: GB200
+  - name: GB200_NVL72
     full_name: NVIDIA GB200 NVL72
     vendor: NVIDIA
     architecture: Blackwell
