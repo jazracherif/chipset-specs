@@ -9,6 +9,7 @@ specs/
   _index.yaml              # Fast-lookup index — all chips, ~8 key metrics + spec_file pointer
   _schema.json             # JSON Schema for all spec file formats
   nvidia/gpus/
+    ampere.yaml            # A100, DGX A100
     blackwell.yaml         # GB10, GB200_NVL72, RTX 5070
     hopper.yaml            # H100, GH200
     rubin.yaml             # VR200 (Vera Rubin Superchip)
@@ -19,7 +20,7 @@ specs/
   amd/cpus/
     epyc.yaml              # EPYC 7763 (Milan), 9654 (Genoa), 9965 (Turin)
   intel/cpus/
-    xeon.yaml              # Xeon 8490H (Sapphire Rapids), 8592+ (Emerald Rapids), 6980P (Granite Rapids)
+    xeon.yaml              # Xeon 8380 (Ice Lake), 8490H (Sapphire Rapids), 8592+ (Emerald Rapids), 6980P (Granite Rapids)
 terminology/
   amd-nvidia.md            # AMD ↔ NVIDIA concept mapping table
 comparisons/               # Pre-written side-by-side chip comparisons
@@ -38,6 +39,8 @@ package.json               # Node dependencies (ajv, ajv-formats, js-yaml)
 | GB10 | Blackwell | Desktop superchip | 128 GB LPDDR5x | 140 W |
 | GB200_NVL72 | Blackwell | Datacenter rack (72 GPUs) | 13.8 TB HBM3e | 132 kW |
 | RTX 5070 | Blackwell | Consumer GPU | 12 GB GDDR7 | 220 W |
+| A100 | Ampere | Datacenter GPU | 80 GB HBM2e | 400 W |
+| DGXA100 | Ampere | Datacenter server (8 GPUs) | 640 GB HBM2e | 6.5 kW |
 | H100 SXM5 | Hopper | Datacenter GPU | 80 GB HBM3 | 700 W |
 | GH200 | Hopper | Superchip | 624 GB unified (HBM3e + LPDDR5X) | 1.0 kW |
 | VR200 | Rubin | Superchip | 2,150 GB unified (HBM4 + LPDDR5X) | 5.0 kW |
@@ -63,6 +66,7 @@ package.json               # Node dependencies (ajv, ajv-formats, js-yaml)
 
 | Name | Generation | Cores | Memory BW |
 |------|-----------|-------|----------|
+| Xeon 8380 | Ice Lake | 40 | 205 GB/s |
 | Xeon 8490H | Sapphire Rapids | 60 | 307 GB/s |
 | Xeon 8592+ | Emerald Rapids | 64 | 358 GB/s |
 | Xeon 6980P | Granite Rapids | 128 | 409 GB/s |

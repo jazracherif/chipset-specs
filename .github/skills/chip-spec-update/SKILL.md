@@ -215,6 +215,83 @@ Every spec update touches **three** locations — do all three, in order:
     spec_file: specs/<vendor>/gpus/<file>.yaml
 ```
 
+## Source Annotation Convention
+
+Every entry must annotate the provenance of each field using inline YAML comments. Follow the same pattern used in [`specs/nvidia/gpus/ampere.yaml`](../../specs/nvidia/gpus/ampere.yaml):
+
+### Rules
+
+1. **Declare a default source** with a comment block directly above the `references:` list:
+   ```yaml
+   # Default source: [1] <Source Name>
+   # Fields from other sources are annotated with [n]
+   ```
+
+2. **Number the references list** — add `# [n]` after each entry:
+   ```yaml
+   references:
+     - name: NVIDIA A100 GPU Datasheet    # [1] default
+       url: https://...
+     - name: NVIDIA Ampere Whitepaper     # [2]
+       url: https://...
+   ```
+
+3. **Fields from the default source ([1])** — no annotation needed (they are implicitly from [1]).
+
+4. **Fields from secondary sources** — annotate inline with `# [n] <brief note>`:
+   ```yaml
+   l2_cache: 40 MB                        # [2] whitepaper p.27
+   pcie_interface: PCIe Gen 4             # [3] whitepaper p.38
+   ```
+
+5. **Derived / computed fields** — annotate with `# derived` and include the formula or reasoning:
+   ```yaml
+   memory_bandwidth_gbs: 205              # derived: 8 channels × 25.6 GB/s (DDR4-3200 per channel)
+   cuda_cores_total: 55296                # derived: 6912 × 8 GPUs
+   peak_fp32_tflops: 2.9                  # derived: 80 FMA units × 16 FP32/unit × 2.3 GHz / 1000
+   ```
+
+6. **Fields from another chip's spec** (e.g. a system entry reusing single-chip data) — annotate with `# derived from <chip> spec`:
+   ```yaml
+   shared_memory_per_sm: 164 KB           # derived from A100 spec
+   ```
+
+### CPU Entry Example
+
+```yaml
+  - name: Xeon 8380                    # source
+    full_name: Intel Xeon Platinum 8380 # source
+    generation: Ice Lake                # source (Code Name: "Products formerly Ice Lake")
+    year: 2021                          # source (Launch Date: Q2'21)
+    max_cores: 40                       # source (Total Cores: 40)
+    memory_channels: 8                  # source (Max # of Memory Channels: 8)
+    memory_type: DDR4-3200              # source (Memory Types: DDR4-3200)
+    memory_bandwidth_gbs: 205           # derived: 8 channels × 25.6 GB/s (DDR4-3200 per channel)
+    avx_fp_units: 80                    # derived: 40 cores × 2 AVX-512 FMA units per core
+    peak_fp32_tflops: 2.9               # derived: 80 FMA units × 16 FP32/unit × 2.3 GHz / 1000
+    peak_fp32_clock_ghz: 2.3            # source (Processor Base Frequency: 2.30 GHz)
+    source: https://...
+```
+
+### GPU Entry Example (NVIDIA)
+
+```yaml
+  A100:
+    name: NVIDIA A100 Tensor Core GPU
+    # Default source: [1] NVIDIA A100 GPU Datasheet
+    # Fields from other sources are annotated with [n]
+    references:
+      - name: NVIDIA A100 GPU Datasheet          # [1] default
+        url: https://...
+      - name: NVIDIA Ampere Architecture Whitepaper  # [2]
+        url: https://...
+
+    core_specifications:
+      streaming_multiprocessors: 108             # [2] whitepaper p.20
+      cuda_cores_fp32_per_gpu: 6912              # derived: 64 × 108 SMs
+      max_clock_speed: ~1410 MHz                 # [1] datasheet
+```
+
 ## Validation Checklist
 
 Before finishing, confirm:

@@ -1,13 +1,17 @@
 # AMD EPYC Server CPU Specifications
 # Terminology: native AMD/x86 throughout.
 # Each entry covers one CPU SKU (single-socket figures unless noted).
-# Source data from chip_specs.yml.
 
 cpus:
 
   - name: EPYC 7763
     full_name: AMD EPYC 7763
     brand: AMD
+    # Default source: [1] AMD EPYC 7763 Product Page
+    # Fields from other sources are annotated with [n]
+    references:
+      - name: AMD EPYC 7763 Product Page                        # [1] default
+        url: https://www.amd.com/en/products/processors/server/epyc/7003-series/amd-epyc-7763.html
     family: EPYC
     generation: Milan
     microarch: Zen 3
@@ -16,17 +20,21 @@ cpus:
     max_cores: 64
     memory_channels: 8
     memory_type: DDR4-3200
-    memory_bandwidth_gbs: 205
+    memory_bandwidth_gbs: 205           # derived: 8 channels × 25.6 GB/s (DDR4-3200 per channel)
     best_simd: AVX2
     simd_width_bits: 256
-    avx_fp_units: 128
-    peak_fp32_tflops: 2.5
+    avx_fp_units: 128                   # derived: 64 cores × 2 AVX2 FMA units per core
+    peak_fp32_tflops: 2.5               # derived: 128 FMA units × 8 FP32/unit × 2.4 GHz / 1000
     peak_fp32_clock_ghz: 2.4
-    source: https://www.amd.com/en/products/processors/server/epyc/7003-series/amd-epyc-7763.html
 
   - name: EPYC 9654
     full_name: AMD EPYC 9654
     brand: AMD
+    # Default source: [1] AMD EPYC 9654 Product Page
+    # Fields from other sources are annotated with [n]
+    references:
+      - name: AMD EPYC 9654 Product Page                        # [1] default
+        url: https://www.amd.com/en/products/processors/server/epyc/4th-generation-9004-and-8004-series/amd-epyc-9654.html
     family: EPYC
     generation: Genoa
     microarch: Zen 4
@@ -35,17 +43,21 @@ cpus:
     max_cores: 96
     memory_channels: 12
     memory_type: DDR5-4800
-    memory_bandwidth_gbs: 461
+    memory_bandwidth_gbs: 461           # derived: 12 channels × 38.4 GB/s (DDR5-4800 per channel)
     best_simd: AVX-512
     simd_width_bits: 512
-    avx_fp_units: 192
-    peak_fp32_tflops: 3.7
+    avx_fp_units: 192                   # derived: 96 cores × 2 AVX-512 FMA units per core
+    peak_fp32_tflops: 3.7               # derived: 192 FMA units × 16 FP32/unit × 2.4 GHz / 1000 (approx; Zen 4 AVX-512 width)
     peak_fp32_clock_ghz: 2.4
-    source: https://www.amd.com/en/products/processors/server/epyc/4th-generation-9004-and-8004-series/amd-epyc-9654.html
 
   - name: EPYC 9965
     full_name: AMD EPYC 9965X
     brand: AMD
+    # Default source: [1] AMD EPYC 9965 Product Page
+    # Fields from other sources are annotated with [n]
+    references:
+      - name: AMD EPYC 9965 Product Page                        # [1] default
+        url: https://www.amd.com/en/products/processors/server/epyc/9005-series/amd-epyc-9965.html
     family: EPYC
     generation: Turin
     microarch: Zen 5
@@ -54,10 +66,10 @@ cpus:
     max_cores: 192
     memory_channels: 12
     memory_type: DDR5-6000
-    memory_bandwidth_gbs: 576
+    memory_bandwidth_gbs: 576           # derived: 12 channels × 48.0 GB/s (DDR5-6000 per channel)
     best_simd: AVX-512
     simd_width_bits: 512
-    avx_fp_units: 384
-    peak_fp32_tflops: 7.4
+    avx_fp_units: 384                   # derived: 192 cores × 2 AVX-512 FMA units per core
+    peak_fp32_tflops: 7.4               # derived: 384 FMA units × 16 FP32/unit × 2.4 GHz / 1000 (approx; Zen 5 512-bit AVX)
     peak_fp32_clock_ghz: 2.4
-    source: https://www.amd.com/en/products/processors/server/epyc/9005-series/amd-epyc-9965.html
+

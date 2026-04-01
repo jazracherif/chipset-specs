@@ -4,7 +4,7 @@
 # Load this file first for filter/list queries; load the spec_file only for deep-dive queries.
 
 schema_version: 1
-last_updated: "2026-03-31"
+last_updated: "2026-04-01"
 
 gpus:
 
@@ -75,6 +75,40 @@ gpus:
     tdp_w: 700               # max configurable, SXM5
     cost_usd_range: null
     spec_file: specs/nvidia/gpus/hopper.yaml
+
+  - name: A100
+    full_name: NVIDIA A100 Tensor Core GPU (SXM4 80GB)
+    vendor: NVIDIA
+    architecture: Ampere
+    generation: Ampere
+    year: 2020
+    type: datacenter GPU
+    form_factor: "SXM4 / PCIe"
+    memory_gb: 80
+    memory_type: HBM2e
+    memory_bw_tbs: 2.0
+    fp16_tflops: 312             # with sparsity
+    fp32_tflops: 19.5
+    tdp_w: 400                   # SXM4
+    cost_usd_range: null
+    spec_file: specs/nvidia/gpus/ampere.yaml
+
+  - name: DGXA100
+    full_name: NVIDIA DGX A100 (640 GB)
+    vendor: NVIDIA
+    architecture: Ampere
+    generation: Ampere
+    year: 2020
+    type: datacenter server (8 GPUs)
+    form_factor: 6U Rackmount
+    memory_gb: 640               # total HBM2e across 8 GPUs
+    memory_type: HBM2e
+    memory_bw_tbs: 16            # 2.0 TB/s × 8 GPUs
+    fp16_tflops: 2496            # 312 × 8, with sparsity
+    fp32_tflops: 156             # 19.5 × 8
+    tdp_kw: 6.5
+    cost_usd_range: null
+    spec_file: specs/nvidia/gpus/ampere.yaml
 
   - name: T4
     full_name: NVIDIA Tesla T4
@@ -221,6 +255,19 @@ cpus:
     peak_fp32_tflops: 7.4
     tdp_w: null
     spec_file: specs/amd/cpus/epyc.yaml
+
+  - name: Xeon 8380
+    full_name: Intel Xeon Platinum 8380
+    vendor: Intel
+    family: Xeon Scalable
+    generation: Ice Lake
+    year: 2021
+    max_cores: 40
+    memory_bw_gbs: 205
+    memory_type: DDR4-3200
+    peak_fp32_tflops: 2.9
+    tdp_w: 270
+    spec_file: specs/intel/cpus/xeon.yaml
 
   - name: Xeon 8490H
     full_name: Intel Xeon Platinum 8490H

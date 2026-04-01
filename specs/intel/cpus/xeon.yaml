@@ -1,12 +1,38 @@
 # Intel Xeon Server CPU Specifications
 # Each entry covers one CPU SKU (single-socket figures unless noted).
-# Source data from chip_specs.yml.
 
 cpus:
+
+  - name: Xeon 8380
+    full_name: Intel Xeon Platinum 8380
+    brand: Intel
+    # Default source: [1] Intel ARK — Xeon Platinum 8380 Specifications
+    # Fields from other sources are annotated with [n]
+    references:
+      - name: Intel ARK — Xeon Platinum 8380 Specifications     # [1] default
+        url: https://www.intel.com/content/www/us/en/products/sku/212287/intel-xeon-platinum-8380-processor-60m-cache-2-30-ghz/specifications.html
+    family: Xeon Scalable
+    generation: Ice Lake
+    gen_number: 3
+    year: 2021
+    max_cores: 40
+    memory_channels: 8
+    memory_type: DDR4-3200
+    memory_bandwidth_gbs: 205           # derived: 8 channels × 25.6 GB/s (DDR4-3200 per channel)
+    best_simd: AVX-512
+    simd_width_bits: 512
+    avx_fp_units: 80                    # derived: 40 cores × 2 AVX-512 FMA units per core
+    peak_fp32_tflops: 2.9               # derived: 80 FMA units × 16 FP32/unit × 2.3 GHz / 1000
+    peak_fp32_clock_ghz: 2.3
 
   - name: Xeon 8490H
     full_name: Intel Xeon Platinum 8490H
     brand: Intel
+    # Default source: [1] Intel ARK — Xeon Platinum 8490H Specifications
+    # Fields from other sources are annotated with [n]
+    references:
+      - name: Intel ARK — Xeon Platinum 8490H Specifications    # [1] default
+        url: https://www.intel.com/content/www/us/en/products/sku/231747/intel-xeon-platinum-8490h-processor-112-5m-cache-1-90-ghz/specifications.html
     family: Xeon Scalable
     generation: Sapphire Rapids
     gen_number: 4
@@ -14,17 +40,21 @@ cpus:
     max_cores: 60
     memory_channels: 8
     memory_type: DDR5-4800
-    memory_bandwidth_gbs: 307
+    memory_bandwidth_gbs: 307           # derived: 8 channels × 38.4 GB/s (DDR5-4800 per channel)
     best_simd: AVX-512
     simd_width_bits: 512
-    avx_fp_units: 120
-    peak_fp32_tflops: 4.8
+    avx_fp_units: 120                   # derived: 60 cores × 2 AVX-512 FMA units per core
+    peak_fp32_tflops: 4.8               # derived: 120 FMA units × 16 FP32/unit × 2.5 GHz / 1000
     peak_fp32_clock_ghz: 2.5
-    source: https://www.intel.com/content/www/us/en/products/sku/231747/intel-xeon-platinum-8490h-processor-112-5m-cache-1-90-ghz/specifications.html
 
   - name: Xeon 8592+
     full_name: Intel Xeon Platinum 8592+
     brand: Intel
+    # Default source: [1] Intel ARK — Xeon Platinum 8592+ Specifications
+    # Fields from other sources are annotated with [n]
+    references:
+      - name: Intel ARK — Xeon Platinum 8592+ Specifications    # [1] default
+        url: https://www.intel.com/content/www/us/en/products/sku/237261/intel-xeon-platinum-8592-processor-320m-cache-1-90-ghz/specifications.html
     family: Xeon Scalable
     generation: Emerald Rapids
     gen_number: 5
@@ -32,17 +62,21 @@ cpus:
     max_cores: 64
     memory_channels: 8
     memory_type: DDR5-5600
-    memory_bandwidth_gbs: 358
+    memory_bandwidth_gbs: 358           # derived: 8 channels × 44.8 GB/s (DDR5-5600 per channel)
     best_simd: AVX-512
     simd_width_bits: 512
-    avx_fp_units: 128
-    peak_fp32_tflops: 5.1
+    avx_fp_units: 128                   # derived: 64 cores × 2 AVX-512 FMA units per core
+    peak_fp32_tflops: 5.1               # derived: 128 FMA units × 16 FP32/unit × 2.5 GHz / 1000
     peak_fp32_clock_ghz: 2.5
-    source: https://www.intel.com/content/www/us/en/products/sku/237261/intel-xeon-platinum-8592-processor-320m-cache-1-90-ghz/specifications.html
 
   - name: Xeon 6980P
     full_name: Intel Xeon 6980P
     brand: Intel
+    # Default source: [1] Intel ARK — Xeon 6980P Specifications
+    # Fields from other sources are annotated with [n]
+    references:
+      - name: Intel ARK — Xeon 6980P Specifications             # [1] default
+        url: https://www.intel.com/content/www/us/en/products/sku/240777/intel-xeon-6980p-processor-504m-cache-2-00-ghz/specifications.html
     family: Xeon 6
     generation: Granite Rapids
     gen_number: 6
@@ -50,10 +84,10 @@ cpus:
     max_cores: 128
     memory_channels: 8
     memory_type: DDR5-6400
-    memory_bandwidth_gbs: 409
+    memory_bandwidth_gbs: 409           # derived: 8 channels × 51.2 GB/s (DDR5-6400 per channel)
     best_simd: AVX-512
     simd_width_bits: 512
-    avx_fp_units: 256
-    peak_fp32_tflops: 10.0
+    avx_fp_units: 256                   # derived: 128 cores × 2 AVX-512 FMA units per core
+    peak_fp32_tflops: 10.0              # derived: 256 FMA units × 16 FP32/unit × 2.5 GHz / 1000
     peak_fp32_clock_ghz: 2.5
-    source: https://www.intel.com/content/www/us/en/products/sku/240777/intel-xeon-6980p-processor-504m-cache-2-00-ghz/specifications.html
+

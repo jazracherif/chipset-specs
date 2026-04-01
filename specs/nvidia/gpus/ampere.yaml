@@ -1,0 +1,240 @@
+common_references:
+  - name: CUDA C++ Programming Guide - Memory Hierarchy
+    url: https://docs.nvidia.com/cuda/cuda-c-programming-guide/index.html#memory-hierarchy
+
+gpus:
+
+  A100:
+    name: NVIDIA A100 Tensor Core GPU
+    # Default source: [1] NVIDIA A100 GPU Datasheet
+    # Fields from other sources are annotated with [n]
+    references:
+      - name: NVIDIA A100 GPU Datasheet                          # [1] default
+        url: https://www.nvidia.com/content/dam/en-zz/Solutions/Data-Center/a100/pdf/nvidia-a100-datasheet-us-nvidia-1758950-r4-web.pdf
+      - name: NVIDIA A100 Product Page                           # [2]
+        url: https://www.nvidia.com/en-us/data-center/a100/
+      - name: NVIDIA Ampere Architecture Whitepaper              # [3]
+        url: https://www.nvidia.com/content/dam/en-zz/Solutions/Data-Center/nvidia-ampere-architecture-whitepaper.pdf
+      - name: NVIDIA Ampere Architecture In-Depth                # [4]
+        url: https://developer.nvidia.com/blog/nvidia-ampere-architecture-in-depth/
+
+    # SXM4 is the primary datacenter form factor (used in DGX A100, HGX A100).
+    # PCIe variant ships 40 GB or 80 GB; SXM4 ships 40 GB or 80 GB HBM2e.
+    # Specs below are for the SXM4 80 GB variant unless otherwise noted.
+
+    core_specifications:
+      release_date: "May 2020 (SXM4 GA)"
+      architecture: Ampere (GA100)
+      compute_capability: 8.0
+      gpu_count: 1
+      cpu: "Host CPU (user-supplied)"
+      streaming_multiprocessors: 108                             # [3] whitepaper p.20
+      cuda_cores_fp32_per_sm: 64                                 # [3] whitepaper p.20
+      cuda_cores_fp32_per_gpu: 6912                              # derived: 64 × 108 SMs
+      max_clock_speed: ~1410 MHz                                 # [2] product page
+      form_factor: "SXM4 board (server) / PCIe dual-slot"
+
+    sm_execution_model:
+      shared_memory_per_sm: 164 KB                               # [3] whitepaper p.22; 192 KB unified L1+shared pool, up to 164 KB as shared
+      shared_memory_per_block: 163 KB                            # [3] whitepaper p.22
+      max_resident_threads_per_sm: 2048                          # [3] whitepaper, Table 2
+      max_resident_blocks_per_sm: 32                             # [3] whitepaper, Table 2
+
+    memory_specifications:
+      architecture: Discrete HBM GPU memory; host CPU memory separate
+      ecc_support: true
+      addressing_mode: "Standard PCIe (standalone) / NVLink fabric (SXM4 in HGX/DGX)"
+      pageable_memory_access_via_host_page_tables: false
+      concurrent_managed_access: true
+      pcie_generation: Gen 4 (64 GB/s bi-directional)           # [3] whitepaper p.38
+
+      gpu_memory:
+        capacity: "80 GB HBM2e (SXM4) / 40 GB HBM2e (SXM4 low-cap)"
+        memory_type: HBM2e
+        l2_cache: 40 MB                                          # [3] whitepaper p.27
+        bandwidth: "2.0 TB/s (SXM4 80 GB)"
+        bus_width: 5120-bit                                      # [3] whitepaper p.26
+
+      cpu_memory:
+        capacity: Host system RAM (user-supplied)
+        bandwidth: "~64 GB/s effective (PCIe 4.0 x16 CPU↔GPU transfer)"  # [3] whitepaper p.38
+
+      memory_hierarchy:
+        registers:
+          capacity_per_sm: "256 KB (64K × 32-bit registers)"    # [3] whitepaper, Table 2
+          total_per_gpu: "~27 MB (256 KB × 108 SMs)"            # derived
+          throughput: "On-chip, not bandwidth-bound; effectively hundreds of TB/s aggregate"
+          latency: "~1 cycle (zero-overhead within a warp when no RAW hazards)"
+
+        l1_cache_shared_memory:
+          # 192 KB unified SRAM pool per SM; up to 164 KB configurable as shared memory [3]
+          capacity_per_sm: "192 KB unified (max 164 KB addressable as shared memory)"  # [3] whitepaper p.22
+          total_per_gpu: "~17.7 MB (164 KB × 108 SMs, shared-only accounting)"         # derived
+          throughput: "~13.5 TB/s aggregate (108 SMs × ~128 B/cycle × ~978 MHz effective)"  # estimated
+          latency: "~28–32 cycles (shared memory, bank-conflict-free)"
+          notes: "L1 cache occupies SRAM not allocated to shared memory; 164 KB max shared introduced in Ampere"
+
+        l2_cache:
+          capacity: "40 MB"                                      # [3] whitepaper p.27
+          throughput: "~4–6 TB/s (estimated, SXM4)"
+          latency: "~150–200 cycles"
+          notes: "40 MB L2 is ~5× larger than Volta V100 (6 MB)"  # [4] in-depth blog
+
+        global_dram:
+          capacity: "80 GB HBM2e (SXM4)"
+          memory_type: HBM2e
+          throughput: "2.0 TB/s"
+          latency: "~500–600 cycles"
+          bus_width: 5120-bit                                    # [3] whitepaper p.26
+
+    compute_performance:
+      # * = with sparsity
+      fp64: "9.7 TFLOPS"
+      fp64_tensor_core: "19.5 TFLOPS"
+      fp32: "19.5 TFLOPS"
+      tf32_tensor_core: "156 TFLOPS* (312 TFLOPS with sparsity)"
+      fp16_bf16_tensor_core: "312 TFLOPS*"
+      fp8: Not supported                                         # FP8 introduced in Hopper [3]
+      int8_tensor_core: "624 TOPS*"
+      tensor_core_generation: "3rd Gen (Ampere)"                # [3] whitepaper p.14
+      fp8_support: false
+      fp4_fp6_tensor_core_support: false
+
+    power_and_thermal:
+      tdp: "400 W (SXM4) / 300 W (PCIe 80 GB)"
+      form_factor: "SXM4 server board / PCIe dual-slot"
+      cooling: "Liquid-cooled (SXM4 in HGX/DGX) / Air-cooled (PCIe)"
+
+    advanced_features:
+      mig: "Yes (up to 7 instances — 10 GB each on SXM4 80 GB)" # [3] whitepaper p.39
+      mig_instances_per_gpu: 7                                   # [3] whitepaper p.39
+      nvlink: "3rd Gen NVLink — 600 GB/s (SXM4, via NVSwitch)"  # [3] whitepaper p.34
+      nvswitch: "Via HGX/DGX board (NVSwitch 2nd Gen) — not on standalone PCIe card"  # [3] whitepaper p.35
+      nvdec_per_gpu: 5                                           # [3] whitepaper p.37
+      nvjpeg_per_gpu: 1                                          # [3] whitepaper p.37
+      dynamic_programming: Full support
+      thread_block_clusters: false                               # Introduced in Hopper
+      tensor_memory_accelerator: false
+      hardware_coherency: false
+      transformer_engine: false                                  # Introduced in Hopper
+      distributed_shared_memory: false                           # Introduced in Hopper
+
+    networking_and_connectivity:
+      pcie_interface: PCIe Gen 4 x16 (64 GB/s bi-directional)   # [3] whitepaper p.38
+      high_speed_interconnect: "HDR InfiniBand (200 Gb/s) via external NIC"
+      nvlink_fabric: "600 GB/s per GPU via NVSwitch 2nd Gen in HGX/DGX A100"  # [3] whitepaper p.35
+      rdma: "Yes (GPUDirect RDMA)"
+      gpu_to_gpu_direct: "Yes (GPUDirect RDMA + NVLink within node)"
+      sharp: true
+
+    software_and_ecosystem:
+      cuda_toolkit: "11.0+"
+      minimum_driver: "450.36.06+"                               # [2] product page
+      cublas: "cuBLAS 11.x+"
+      cudnn: "8.0+"
+      tensorrt: "7.2+"
+      nccl: "2.8+"
+      pytorch: "1.7+"
+      tensorflow: "2.4+"
+
+
+  DGXA100:
+    name: NVIDIA DGX A100
+    # Default source: [1] NVIDIA DGX A100 User Guide
+    # Fields from other sources are annotated with [n]
+    references:
+      - name: NVIDIA DGX A100 User Guide — Introduction          # [1] default
+        url: https://docs.nvidia.com/dgx/dgxa100-user-guide/introduction-to-dgxa100.html
+      - name: NVIDIA DGX A100 Product Page                       # [2]
+        url: https://www.nvidia.com/en-us/data-center/dgx-a100/
+
+    # The DGX A100 is a purpose-built AI training server with 8× A100 SXM4 GPUs
+    # fully interconnected via 6× NVSwitch 2nd Gen at 600 GB/s all-to-all.
+    # Two models ship: 640 GB (8× 80 GB A100) and 320 GB (8× 40 GB A100).
+    # Host CPUs: 2× AMD EPYC 7742 (64-core, 128 total cores).
+
+    core_specifications:
+      release_date: "May 2020"
+      architecture: Ampere (GA100)
+      compute_capability: 8.0
+      gpu_count: 8                                               # [1] Model Differentiation table
+      cpu: "2× AMD EPYC 7742 (64-core Zen 2, 128 total cores)"  # [1] Component Description table
+      cuda_cores_fp32_per_gpu: 6912                              # derived from A100 spec (64 × 108 SMs)
+      cuda_cores_total: 55296                                    # derived: 6912 × 8 GPUs
+      streaming_multiprocessors: "864 total (108 per GPU × 8)"  # derived from A100 spec
+      max_clock_speed: ~1410 MHz                                 # derived from A100 spec
+      form_factor: "6U Rackmount"                                # [1] Mechanical Specifications table
+
+    sm_execution_model:
+      shared_memory_per_sm: 164 KB                               # derived from A100 spec
+      shared_memory_per_block: 163 KB                            # derived from A100 spec
+      max_resident_threads_per_sm: 2048                          # derived from A100 spec
+      max_resident_blocks_per_sm: 32                             # derived from A100 spec
+
+    memory_specifications:
+      architecture: "Discrete HBM2e per GPU; all-to-all NVLink via NVSwitch"
+      total_capacity: "640 GB HBM2e (80 GB × 8 GPUs)"           # [1] Model Differentiation table
+      total_capacity_low: "320 GB HBM2e (40 GB × 8 GPUs)"       # [1] Model Differentiation table
+      memory_type: HBM2e
+      ecc_support: true
+      system_memory: "1 TB DDR4 (factory default; expandable to 2 TB)"  # [1] Model Differentiation table
+
+      gpu_memory:
+        capacity: "640 GB HBM2e total (80 GB × 8)"              # [1] Model Differentiation table
+        memory_type: HBM2e
+        bandwidth: "16 TB/s aggregate (2.0 TB/s × 8 GPUs)"      # derived from A100 spec
+        bus_width: "5120-bit per GPU"                            # derived from A100 spec
+        nvswitch_bandwidth: "600 GB/s all-to-all GPU interconnect (6× NVSwitch 2nd Gen)"  # [1] Component Description table
+
+      memory_hierarchy:
+        notes: "Per-GPU memory hierarchy identical to A100 SXM4 entry; see A100 entry for detail"
+
+    compute_performance:
+      # Per system (8× A100 SXM4 80 GB); all figures derived from A100 datasheet × 8
+      # * = with sparsity
+      fp64: "77.6 TFLOPS (9.7 × 8)"                             # derived
+      fp64_tensor_core: "156 TFLOPS (19.5 × 8)"                 # derived
+      fp32: "156 TFLOPS (19.5 × 8)"                             # derived
+      tf32_tensor_core: "2496 TFLOPS* (312 × 8)"                # derived
+      fp16_bf16_tensor_core: "2496 TFLOPS* (312 × 8)"           # derived
+      int8_tensor_core: "4992 TOPS* (624 × 8)"                  # derived
+      fp8: Not supported
+      tensor_core_generation: "3rd Gen (Ampere)"
+      fp8_support: false
+      fp4_fp6_tensor_core_support: false
+
+    power_and_thermal:
+      tdp: "6.5 kW max (200–240 V AC)"                          # [1] Power Specifications table
+      form_factor: "6U Rackmount"                                # [1] Mechanical Specifications table
+      cooling: "Active air cooling (840 CFM @ 80% fan PWM)"     # [1] Environmental Specifications table
+      power_supplies: "6× PSU in 3+3 redundancy"                # [1] Power Specifications — N+N Redundancy section
+      heat_output: "22,179 BTU/hr"                              # [1] Environmental Specifications table
+
+    advanced_features:
+      mig: "Yes (up to 7 instances per GPU, 56 total)"           # derived from A100 spec
+      mig_instances_total: 56                                    # derived: 7 × 8 GPUs
+      nvlink: "3rd Gen NVLink (600 GB/s per GPU all-to-all via NVSwitch)"  # [1] Component Description table
+      nvswitch_count: 6                                          # [1] Model Differentiation table
+      nvswitch_generation: "2nd Gen NVSwitch"                   # [1] Model Differentiation table
+      nvdec_per_gpu: 5                                           # derived from A100 spec
+      nvjpeg_per_gpu: 1                                          # derived from A100 spec
+      transformer_engine: false
+      distributed_shared_memory: false
+
+    networking_and_connectivity:
+      high_speed_interconnect: "Up to 10× NVIDIA ConnectX-6 or ConnectX-7 (200 Gb/s InfiniBand / Ethernet)"  # [1] Model Differentiation table
+      storage: "15–30 TB U.2 NVMe (factory config; expandable to 60 TB)"  # [1] Model Differentiation table
+      os_storage: "2× 1.92 TB NVMe M.2 SSD (RAID 1)"           # [1] Component Description table
+      rdma: "GPUDirect RDMA via ConnectX"
+      gpu_to_gpu_direct: "Yes (GPUDirect RDMA + NVLink within system)"
+
+    software_and_ecosystem:
+      cuda_toolkit: "11.0+"
+      minimum_driver: "450.36.06+"
+      cublas: "cuBLAS 11.x+"
+      cudnn: "8.0+"
+      tensorrt: "7.2+"
+      nccl: "2.8+"
+      pytorch: "1.7+"
+      tensorflow: "2.4+"
+

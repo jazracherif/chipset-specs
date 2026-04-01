@@ -59,7 +59,7 @@
     "cpu_entry": {
       "type": "object",
       "description": "One CPU entry in specs/amd/cpus/*.yaml or specs/intel/cpus/*.yaml.",
-      "required": ["name", "full_name", "brand", "family", "generation", "year", "max_cores", "memory_channels", "memory_type", "memory_bandwidth_gbs", "best_simd", "simd_width_bits", "avx_fp_units", "peak_fp32_tflops", "peak_fp32_clock_ghz", "source"],
+      "required": ["name", "full_name", "brand", "family", "generation", "year", "max_cores", "memory_channels", "memory_type", "memory_bandwidth_gbs", "best_simd", "simd_width_bits", "avx_fp_units", "peak_fp32_tflops", "peak_fp32_clock_ghz", "references"],
       "properties": {
         "name":               { "type": "string" },
         "full_name":          { "type": "string" },
@@ -78,7 +78,7 @@
         "avx_fp_units":       { "type": "integer", "description": "Number of FP32 lanes across all AVX units" },
         "peak_fp32_tflops":   { "type": "number", "description": "Peak single-socket FP32 TFLOPS" },
         "peak_fp32_clock_ghz": { "type": "number", "description": "Clock speed at which peak FP32 is measured" },
-        "source":             { "type": "string", "format": "uri" }
+        "references":         { "type": "array", "items": { "$ref": "#/$defs/reference" }, "minItems": 1 }
       },
       "additionalProperties": false
     },
