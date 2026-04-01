@@ -1,93 +1,379 @@
 # Intel Xeon Server CPU Specifications
 # Each entry covers one CPU SKU (single-socket figures unless noted).
+# Groups mirror Intel ARK sections: Essentials / CPU Specifications / Memory Specifications /
+# Expansion Options / Package Specifications / Advanced Technologies / Security & Reliability.
 
 cpus:
 
   - name: Xeon 8380
     full_name: Intel Xeon Platinum 8380
     brand: Intel
-    # Default source: [1] Intel ARK — Xeon Platinum 8380 Specifications
+    # Default source: [1] Intel ARK CSV export — Xeon Platinum 8380 (downloaded 2026-04-01)
     # Fields from other sources are annotated with [n]
     references:
       - name: Intel ARK — Xeon Platinum 8380 Specifications     # [1] default
         url: https://www.intel.com/content/www/us/en/products/sku/212287/intel-xeon-platinum-8380-processor-60m-cache-2-30-ghz/specifications.html
-    family: Xeon Scalable
-    generation: Ice Lake
-    gen_number: 3
-    year: 2021
-    max_cores: 40
-    memory_channels: 8
-    memory_type: DDR4-3200
-    memory_bandwidth_gbs: 205           # derived: 8 channels × 25.6 GB/s (DDR4-3200 per channel)
-    best_simd: AVX-512
-    simd_width_bits: 512
-    avx_fp_units: 80                    # derived: 40 cores × 2 AVX-512 FMA units per core
-    peak_fp32_tflops: 2.9               # derived: 80 FMA units × 16 FP32/unit × 2.3 GHz / 1000
-    peak_fp32_clock_ghz: 2.3
+
+    essentials:
+      product_collection: 3rd Gen Intel® Xeon® Scalable Processors
+      code_name: Ice Lake
+      lithography: 10 nm
+      launch_date: Q2'21
+      recommended_customer_price_usd: 9359.00
+
+    cpu_specifications:
+      total_cores: 40
+      total_threads: 80
+      base_frequency_ghz: 2.30
+      max_turbo_frequency_ghz: 3.40
+      cache_mb: 60
+      upi_speed_gts: 11.2
+      max_upi_links: 3
+      tdp_w: 270
+
+    memory_specifications:
+      max_memory_size_tb: 6
+      memory_types: DDR4-3200
+      max_memory_speed_mhz: 3200
+      memory_channels: 8
+      memory_bandwidth_gbs: 205         # derived: 8 channels × 25.6 GB/s (DDR4-3200 per channel)
+      optane_pmem_supported: true
+      ecc_supported: true
+
+    expansion_options:
+      scalability: 2S
+      pcie_revision: "4.0"
+      max_pcie_lanes: 64
+
+    package_specifications:
+      socket: FCLGA4189
+      tcase_c: 83
+      package_size_mm: 77.5 x 56.5
+
+    advanced_technologies:
+      instruction_set_extensions: "SSE4.2, AVX, AVX2, AVX-512"
+      avx512_fma_units: 2
+      best_simd: AVX-512
+      simd_width_bits: 512
+      avx_fp_units: 80                  # derived: 40 cores × 2 AVX-512 FMA units per core
+      peak_fp32_tflops: 2.9             # derived: 80 FMA units × 16 FP32/unit × 2.3 GHz / 1000
+      peak_fp32_clock_ghz: 2.3
+      hyper_threading: true
+      turbo_boost_version: "2.0"
+      amx: false
+      dl_boost: true
+      speed_select_core_power: true
+      speed_select_turbo_freq: true
+      speed_select_base_freq: true
+      high_priority_cores: 16
+      high_priority_core_freq_ghz: 2.40
+      low_priority_cores: 24
+      low_priority_core_freq_ghz: 2.20
+      resource_director_rdt: true
+      speed_shift: true
+      transactional_sync_extensions: true
+      volume_management_device_vmd: true
+
+    security_and_reliability:
+      aes_ni: true
+      sgx: "Yes with Intel® SPS"
+      sgx_epc_max_gb: 512
+      trusted_execution_technology: true
+      execute_disable_bit: true
+      vt_x: true
+      vt_d: true
+      ept: true
+      total_memory_encryption: true
+      crypto_acceleration: true
+      platform_firmware_resilience: true
+      run_sure: true
+      mbec: true
+
 
   - name: Xeon 8490H
     full_name: Intel Xeon Platinum 8490H
     brand: Intel
-    # Default source: [1] Intel ARK — Xeon Platinum 8490H Specifications
+    # Default source: [1] Intel ARK CSV export — Xeon Platinum 8490H (downloaded 2026-04-01)
     # Fields from other sources are annotated with [n]
     references:
       - name: Intel ARK — Xeon Platinum 8490H Specifications    # [1] default
         url: https://www.intel.com/content/www/us/en/products/sku/231747/intel-xeon-platinum-8490h-processor-112-5m-cache-1-90-ghz/specifications.html
-    family: Xeon Scalable
-    generation: Sapphire Rapids
-    gen_number: 4
-    year: 2023
-    max_cores: 60
-    memory_channels: 8
-    memory_type: DDR5-4800
-    memory_bandwidth_gbs: 307           # derived: 8 channels × 38.4 GB/s (DDR5-4800 per channel)
-    best_simd: AVX-512
-    simd_width_bits: 512
-    avx_fp_units: 120                   # derived: 60 cores × 2 AVX-512 FMA units per core
-    peak_fp32_tflops: 4.8               # derived: 120 FMA units × 16 FP32/unit × 2.5 GHz / 1000
-    peak_fp32_clock_ghz: 2.5
+
+    essentials:
+      product_collection: 4th Gen Intel® Xeon® Scalable Processors
+      code_name: Sapphire Rapids
+      lithography: Intel 7
+      launch_date: Q1'23
+      recommended_customer_price_usd: 19040.00
+
+    cpu_specifications:
+      total_cores: 60
+      total_threads: 120
+      base_frequency_ghz: 1.90
+      max_turbo_frequency_ghz: 3.50
+      cache_mb: 112.5
+      upi_speed_gts: 16
+      max_upi_links: 4
+      tdp_w: 350
+
+    memory_specifications:
+      max_memory_size_tb: 4
+      memory_types: "DDR5-4800 (1DPC) / DDR5-4400 (2DPC)"
+      memory_channels: 8
+      memory_bandwidth_gbs: 307         # derived: 8 channels × 38.4 GB/s (DDR5-4800 per channel)
+      ecc_supported: true
+
+    expansion_options:
+      scalability: S8S
+      pcie_revision: "5.0"
+      max_pcie_lanes: 80
+
+    package_specifications:
+      socket: FCLGA4677
+      package_carrier: E1A
+      dts_max_c: 96
+      tcase_c: 79
+      package_size_mm: 77.5 x 56.5
+
+    advanced_technologies:
+      instruction_set_extensions: "AMX, SSE4.2, AVX, AVX2, AVX-512"
+      avx512_fma_units: 2
+      best_simd: AVX-512
+      simd_width_bits: 512
+      avx_fp_units: 120                 # derived: 60 cores × 2 AVX-512 FMA units per core
+      peak_fp32_tflops: 4.8             # derived: 120 FMA units × 16 FP32/unit × 2.5 GHz / 1000
+      peak_fp32_clock_ghz: 2.5
+      hyper_threading: true
+      turbo_boost_version: "2.0"
+      amx: true
+      dl_boost: true
+      speed_select_core_power: true
+      speed_select_turbo_freq: true
+      speed_select_base_freq: true
+      high_priority_cores: 16
+      high_priority_core_freq_ghz: 2.00
+      low_priority_cores: 44
+      low_priority_core_freq_ghz: 1.60
+      resource_director_rdt: true
+      speed_shift: true
+      transactional_sync_extensions: true
+      qat_devices: 4
+      dlb_devices: 4
+      dsa_devices: 4
+      iaa_devices: 4
+      on_demand_activation: false
+
+    security_and_reliability:
+      aes_ni: true
+      sgx: "Yes with Intel® SPS"
+      sgx_epc_max_gb: 512
+      trusted_execution_technology: true
+      execute_disable_bit: true
+      vt_x: true
+      vt_d: true
+      ept: true
+      total_memory_encryption: true
+      crypto_acceleration: true
+      platform_firmware_resilience: true
+      control_flow_enforcement: true
+      os_guard: true
+      boot_guard: true
+      run_sure: true
+      mbec: true
+      quickassist_sw_acceleration: true
+
 
   - name: Xeon 8592+
     full_name: Intel Xeon Platinum 8592+
     brand: Intel
-    # Default source: [1] Intel ARK — Xeon Platinum 8592+ Specifications
+    # Default source: [1] Intel ARK CSV export — Xeon Platinum 8592+ (downloaded 2026-04-01)
     # Fields from other sources are annotated with [n]
     references:
       - name: Intel ARK — Xeon Platinum 8592+ Specifications    # [1] default
         url: https://www.intel.com/content/www/us/en/products/sku/237261/intel-xeon-platinum-8592-processor-320m-cache-1-90-ghz/specifications.html
-    family: Xeon Scalable
-    generation: Emerald Rapids
-    gen_number: 5
-    year: 2024
-    max_cores: 64
-    memory_channels: 8
-    memory_type: DDR5-5600
-    memory_bandwidth_gbs: 358           # derived: 8 channels × 44.8 GB/s (DDR5-5600 per channel)
-    best_simd: AVX-512
-    simd_width_bits: 512
-    avx_fp_units: 128                   # derived: 64 cores × 2 AVX-512 FMA units per core
-    peak_fp32_tflops: 5.1               # derived: 128 FMA units × 16 FP32/unit × 2.5 GHz / 1000
-    peak_fp32_clock_ghz: 2.5
+
+    essentials:
+      product_collection: 5th Gen Intel® Xeon® Scalable Processors
+      code_name: Emerald Rapids
+      lithography: Intel 7
+      launch_date: Q4'23
+      recommended_customer_price_usd: 12992.00
+
+    cpu_specifications:
+      total_cores: 64
+      total_threads: 128
+      base_frequency_ghz: 1.90
+      max_turbo_frequency_ghz: 3.90
+      cache_mb: 320
+      upi_speed_gts: 20
+      max_upi_links: 4
+      tdp_w: 350
+
+    memory_specifications:
+      max_memory_size_tb: 4
+      memory_types: "DDR5-5600 (1DPC)"
+      memory_channels: 8
+      memory_bandwidth_gbs: 358         # derived: 8 channels × 44.8 GB/s (DDR5-5600 per channel)
+      ecc_supported: true
+
+    expansion_options:
+      scalability: 2S
+      pcie_revision: "5.0"
+      max_pcie_lanes: 80
+
+    package_specifications:
+      socket: FCLGA4677
+      package_carrier: E1A
+      dts_max_c: 98
+      tcase_c: 81
+      package_size_mm: 77.5 x 56.5
+
+    advanced_technologies:
+      instruction_set_extensions: "AMX, SSE4.2, AVX, AVX2, AVX-512"
+      avx512_fma_units: 2
+      best_simd: AVX-512
+      simd_width_bits: 512
+      avx_fp_units: 128                 # derived: 64 cores × 2 AVX-512 FMA units per core
+      peak_fp32_tflops: 5.1             # derived: 128 FMA units × 16 FP32/unit × 2.5 GHz / 1000
+      peak_fp32_clock_ghz: 2.5
+      hyper_threading: true
+      turbo_boost_version: "2.0"
+      amx: true
+      dl_boost: true
+      speed_select_core_power: true
+      speed_select_turbo_freq: true
+      speed_select_base_freq: true
+      high_priority_cores: 20
+      high_priority_core_freq_ghz: 2.10
+      low_priority_cores: 44
+      low_priority_core_freq_ghz: 1.70
+      resource_director_rdt: true
+      speed_shift: true
+      transactional_sync_extensions: true
+      volume_management_device_vmd: true
+      qat_devices: 1
+      dlb_devices: 1
+      dsa_devices: 1
+      iaa_devices: 1
+      on_demand_activation: false
+
+    security_and_reliability:
+      aes_ni: true
+      sgx: "Yes with Intel® SPS"
+      sgx_epc_max_gb: 512
+      trusted_execution_technology: true
+      execute_disable_bit: true
+      vt_x: true
+      vt_d: true
+      ept: true
+      total_memory_encryption: true
+      total_memory_encryption_multi_key: true
+      tdx: true
+      crypto_acceleration: true
+      platform_firmware_resilience: true
+      control_flow_enforcement: true
+      os_guard: true
+      boot_guard: true
+      run_sure: true
+      mbec: true
+      quickassist_sw_acceleration: true
+
 
   - name: Xeon 6980P
     full_name: Intel Xeon 6980P
     brand: Intel
-    # Default source: [1] Intel ARK — Xeon 6980P Specifications
+    # Default source: [1] Intel ARK CSV export — Xeon 6980P (downloaded 2026-04-01)
     # Fields from other sources are annotated with [n]
     references:
       - name: Intel ARK — Xeon 6980P Specifications             # [1] default
         url: https://www.intel.com/content/www/us/en/products/sku/240777/intel-xeon-6980p-processor-504m-cache-2-00-ghz/specifications.html
-    family: Xeon 6
-    generation: Granite Rapids
-    gen_number: 6
-    year: 2024
-    max_cores: 128
-    memory_channels: 8
-    memory_type: DDR5-6400
-    memory_bandwidth_gbs: 409           # derived: 8 channels × 51.2 GB/s (DDR5-6400 per channel)
-    best_simd: AVX-512
-    simd_width_bits: 512
-    avx_fp_units: 256                   # derived: 128 cores × 2 AVX-512 FMA units per core
-    peak_fp32_tflops: 10.0              # derived: 256 FMA units × 16 FP32/unit × 2.5 GHz / 1000
-    peak_fp32_clock_ghz: 2.5
+
+    essentials:
+      product_collection: Intel® Xeon® 6 Processors
+      code_name: Granite Rapids
+      lithography: Intel 3
+      launch_date: Q3'24
+      recommended_customer_price_usd: 13955.00
+
+    cpu_specifications:
+      total_cores: 128
+      total_threads: 256
+      base_frequency_ghz: 2.00
+      max_turbo_frequency_ghz: 3.90
+      all_core_turbo_frequency_ghz: 3.20
+      cache_mb: 504
+      upi_speed_gts: 24
+      max_upi_links: 6
+      tdp_w: 500
+
+    memory_specifications:
+      max_memory_size_tb: 3
+      memory_types: "DDR5-6400 / MRDIMM-8800"
+      max_memory_speed_mts: 8800
+      memory_channels: 12
+      memory_bandwidth_gbs: 614         # derived: 12 channels × 51.2 GB/s (DDR5-6400 per channel)
+      ecc_supported: true
+
+    expansion_options:
+      scalability: 2S
+      pcie_revision: "5.0"
+      max_pcie_lanes: 96
+
+    package_specifications:
+      socket: FCLGA7529
+      package_carrier: BR1A
+      dts_max_c: 95
+      tcase_c: 80
+      package_size_mm: 104.5 x 70.5
+
+    advanced_technologies:
+      instruction_set_extensions: "AMX, SSE4.2, AVX, AVX2, AVX-512"
+      avx512_fma_units: 2
+      best_simd: AVX-512
+      simd_width_bits: 512
+      avx_fp_units: 256                 # derived: 128 cores × 2 AVX-512 FMA units per core
+      peak_fp32_tflops: 10.0            # derived: 256 FMA units × 16 FP32/unit × 2.5 GHz / 1000
+      peak_fp32_clock_ghz: 2.5
+      hyper_threading: true
+      turbo_boost_version: "2.0"
+      amx: true
+      dl_boost: true
+      speed_select_core_power: true
+      speed_select_turbo_freq: true
+      speed_select_base_freq: true
+      speed_select_performance_profile: false
+      high_priority_cores: 48
+      high_priority_core_freq_ghz: 2.20
+      low_priority_cores: 80
+      low_priority_core_freq_ghz: 1.80
+      resource_director_rdt: true
+      speed_shift: true
+      transactional_sync_extensions: true
+      volume_management_device_vmd: true
+      qat_devices: 4
+      dlb_devices: 4
+      dsa_devices: 4
+      iaa_devices: 4
+
+    security_and_reliability:
+      aes_ni: true
+      sgx: "Yes"
+      sgx_epc_max_gb: 512
+      trusted_execution_technology: true
+      execute_disable_bit: true
+      vt_x: true
+      vt_d: true
+      ept: true
+      total_memory_encryption: true
+      total_memory_encryption_multi_key: true
+      tdx: true
+      crypto_acceleration: true
+      platform_firmware_resilience: true
+      control_flow_enforcement: true
+      os_guard: true
+      boot_guard: true
+      run_sure: true
+      mbec: true
+      secure_key: true
+      quickassist_sw_acceleration: true
 

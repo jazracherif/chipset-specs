@@ -7,69 +7,134 @@ cpus:
   - name: EPYC 7763
     full_name: AMD EPYC 7763
     brand: AMD
-    # Default source: [1] AMD EPYC 7763 Product Page
-    # Fields from other sources are annotated with [n]
+    # Default source: [1] AMD EPYC 7763 Product Page (downloaded 2026-04-01)
     references:
       - name: AMD EPYC 7763 Product Page                        # [1] default
         url: https://www.amd.com/en/products/processors/server/epyc/7003-series/amd-epyc-7763.html
-    family: EPYC
-    generation: Milan
     microarch: Zen 3
-    gen_number: 3
-    year: 2021
-    max_cores: 64
-    memory_channels: 8
-    memory_type: DDR4-3200
-    memory_bandwidth_gbs: 205           # derived: 8 channels × 25.6 GB/s (DDR4-3200 per channel)
-    best_simd: AVX2
-    simd_width_bits: 256
-    avx_fp_units: 128                   # derived: 64 cores × 2 AVX2 FMA units per core
-    peak_fp32_tflops: 2.5               # derived: 128 FMA units × 8 FP32/unit × 2.4 GHz / 1000
-    peak_fp32_clock_ghz: 2.4
+    essentials:
+      product_collection: EPYC 7003 Series
+      code_name: Milan
+      form_factor: Servers
+      launch_date: "03/15/2021"
+      recommended_customer_price_usd: 7890.00
+    cpu_specifications:
+      total_cores: 64
+      total_threads: 128
+      base_frequency_ghz: 2.45
+      max_turbo_frequency_ghz: 3.5
+      cache_mb: 256
+      tdp_w: 280
+      ctdp_range: "225-280W"
+    memory_specifications:
+      memory_types: DDR4
+      max_memory_speed_mts: 3200
+      memory_channels: 8
+      memory_bandwidth_gbs: 204.8
+    expansion_options:
+      pcie_revision: "4.0"
+      max_pcie_lanes: 128
+    package_specifications:
+      socket: SP3
+      socket_count: "1P / 2P"
+    product_ids:
+      product_id_boxed: 100-100000312WOF
+      product_id_tray: 100-000000312
+    advanced_technologies:
+      best_simd: AVX2
+      simd_width_bits: 256
+      avx_fp_units: 128               # derived: 64 cores × 2 AVX2 FMA units per core
+      peak_fp32_tflops: 2.5           # derived: 128 FMA units × 8 FP32/unit × 2.45 GHz / 1000
+      peak_fp32_clock_ghz: 2.45
+      supported_technologies: "AMD Infinity Guard, AMD Infinity Architecture"
 
   - name: EPYC 9654
     full_name: AMD EPYC 9654
     brand: AMD
-    # Default source: [1] AMD EPYC 9654 Product Page
-    # Fields from other sources are annotated with [n]
+    # Default source: [1] AMD EPYC 9654 Product Page (downloaded 2026-04-01)
     references:
       - name: AMD EPYC 9654 Product Page                        # [1] default
         url: https://www.amd.com/en/products/processors/server/epyc/4th-generation-9004-and-8004-series/amd-epyc-9654.html
-    family: EPYC
-    generation: Genoa
     microarch: Zen 4
-    gen_number: 4
-    year: 2022
-    max_cores: 96
-    memory_channels: 12
-    memory_type: DDR5-4800
-    memory_bandwidth_gbs: 461           # derived: 12 channels × 38.4 GB/s (DDR5-4800 per channel)
-    best_simd: AVX-512
-    simd_width_bits: 512
-    avx_fp_units: 192                   # derived: 96 cores × 2 AVX-512 FMA units per core
-    peak_fp32_tflops: 3.7               # derived: 192 FMA units × 16 FP32/unit × 2.4 GHz / 1000 (approx; Zen 4 AVX-512 width)
-    peak_fp32_clock_ghz: 2.4
+    essentials:
+      product_collection: EPYC 9004 Series
+      code_name: Genoa
+      form_factor: Servers
+      launch_date: "11/10/2022"
+      recommended_customer_price_usd: 8452.00
+    cpu_specifications:
+      total_cores: 96
+      total_threads: 192
+      base_frequency_ghz: 2.4
+      max_turbo_frequency_ghz: 3.7
+      all_core_turbo_frequency_ghz: 3.55
+      cache_mb: 384
+      tdp_w: 360
+      ctdp_range: "320-400W"
+    memory_specifications:
+      memory_types: DDR5
+      max_memory_speed_mts: 4800
+      memory_channels: 12
+      memory_bandwidth_gbs: 460.8
+    expansion_options:
+      pcie_revision: "5.0"
+      max_pcie_lanes: 128
+    package_specifications:
+      socket: SP5
+      socket_count: "1P / 2P"
+    product_ids:
+      product_id_tray: 100-000000789
+    advanced_technologies:
+      best_simd: AVX-512
+      simd_width_bits: 512
+      avx_fp_units: 96                # derived: 96 cores × 1 AVX-512 FMA unit per core (Zen 4: 2×256-bit fused)
+      peak_fp32_tflops: 3.7           # derived: 96 FMA units × 16 FP32/unit × 2.4 GHz / 1000
+      peak_fp32_clock_ghz: 2.4
+      supported_technologies: "AMD Infinity Guard, AMD Infinity Architecture"
+    security_and_reliability:
+      fips_certification: "In Review"
 
   - name: EPYC 9965
-    full_name: AMD EPYC 9965X
+    full_name: AMD EPYC 9965
     brand: AMD
-    # Default source: [1] AMD EPYC 9965 Product Page
-    # Fields from other sources are annotated with [n]
+    # Default source: [1] AMD EPYC 9965 Product Page (downloaded 2026-04-01)
     references:
       - name: AMD EPYC 9965 Product Page                        # [1] default
         url: https://www.amd.com/en/products/processors/server/epyc/9005-series/amd-epyc-9965.html
-    family: EPYC
-    generation: Turin
     microarch: Zen 5
-    gen_number: 5
-    year: 2024
-    max_cores: 192
-    memory_channels: 12
-    memory_type: DDR5-6000
-    memory_bandwidth_gbs: 576           # derived: 12 channels × 48.0 GB/s (DDR5-6000 per channel)
-    best_simd: AVX-512
-    simd_width_bits: 512
-    avx_fp_units: 384                   # derived: 192 cores × 2 AVX-512 FMA units per core
-    peak_fp32_tflops: 7.4               # derived: 384 FMA units × 16 FP32/unit × 2.4 GHz / 1000 (approx; Zen 5 512-bit AVX)
-    peak_fp32_clock_ghz: 2.4
+    essentials:
+      product_collection: EPYC 9005 Series
+      code_name: Turin
+      form_factor: Servers
+      launch_date: "10/10/2024"
+      recommended_customer_price_usd: 11988.00
+    cpu_specifications:
+      total_cores: 192
+      total_threads: 384
+      base_frequency_ghz: 2.25
+      max_turbo_frequency_ghz: 3.7
+      all_core_turbo_frequency_ghz: 3.35
+      cache_mb: 384
+      tdp_w: 500
+      ctdp_range: "450-500W"
+    memory_specifications:
+      memory_types: DDR5
+      max_memory_speed_mts: 6400
+      memory_channels: 12
+      memory_bandwidth_gbs: 614
+    expansion_options:
+      pcie_revision: "5.0"
+      max_pcie_lanes: 128
+    package_specifications:
+      socket: SP5
+      socket_count: "1P / 2P"
+    product_ids:
+      product_id_tray: 100-000000976
+    advanced_technologies:
+      best_simd: AVX-512
+      simd_width_bits: 512
+      avx_fp_units: 384               # derived: 192 cores × 2 AVX-512 FMA units per core (Zen 5: native 512-bit)
+      peak_fp32_tflops: 13.8          # derived: 384 FMA units × 16 FP32/unit × 2.25 GHz / 1000
+      peak_fp32_clock_ghz: 2.25
+      supported_technologies: "AMD Infinity Guard, AMD Infinity Architecture"
 

@@ -59,14 +59,149 @@
     "cpu_entry": {
       "type": "object",
       "description": "One CPU entry in specs/amd/cpus/*.yaml or specs/intel/cpus/*.yaml.",
-      "required": ["name", "full_name", "brand", "family", "generation", "year", "max_cores", "memory_channels", "memory_type", "memory_bandwidth_gbs", "best_simd", "simd_width_bits", "avx_fp_units", "peak_fp32_tflops", "peak_fp32_clock_ghz", "references"],
+      "required": ["name", "full_name", "brand", "references"],
       "properties": {
-        "name":               { "type": "string" },
-        "full_name":          { "type": "string" },
-        "brand":              { "type": "string", "enum": ["AMD", "Intel"] },
+        "name":       { "type": "string", "description": "Short identifier, e.g. EPYC 7763, Xeon 8380" },
+        "full_name":  { "type": "string", "description": "Full marketing name, e.g. AMD EPYC 7763" },
+        "brand":      { "type": "string", "enum": ["AMD", "Intel"] },
+        "references": { "type": "array", "items": { "$ref": "#/$defs/reference" }, "minItems": 1 },
+
+        "essentials": {
+          "type": "object",
+          "properties": {
+            "product_collection":             { "type": "string", "description": "Product line name, e.g. EPYC 9005 Series, 5th Gen Intel Xeon Scalable" },
+            "code_name":                      { "type": "string", "description": "Microarchitecture platform code name, e.g. Milan, Genoa, Sapphire Rapids" },
+            "lithography":                    { "type": "string", "description": "Manufacturing process node, e.g. 5nm, 7nm, Intel 7" },
+            "form_factor":                    { "type": "string", "description": "Deployment target, e.g. Servers, Embedded" },
+            "launch_date":                    { "type": "string", "description": "Product launch date or quarter, e.g. Q2'21, 11/10/2022" },
+            "recommended_customer_price_usd": { "type": "number", "description": "1k-unit OEM list price in USD" }
+          }
+        },
+
+        "cpu_specifications": {
+          "type": "object",
+          "properties": {
+            "total_cores":                  { "type": "integer", "description": "Physical core count per socket" },
+            "total_threads":                { "type": "integer", "description": "Logical thread count per socket (with SMT/HT enabled)" },
+            "base_frequency_ghz":           { "type": "number", "description": "Base (guaranteed) clock frequency in GHz" },
+            "max_turbo_frequency_ghz":      { "type": "number", "description": "Single-core max boost frequency in GHz" },
+            "all_core_turbo_frequency_ghz": { "type": "number", "description": "All-core sustained boost frequency in GHz" },
+            "cache_mb":                     { "type": ["number", "string"], "description": "Last-level cache size in MB (L3 for AMD, LLC for Intel)" },
+            "upi_speed_gts":                { "type": "number", "description": "Intel UPI inter-socket link speed in GT/s" },
+            "max_upi_links":                { "type": "integer", "description": "Number of Intel UPI links for multi-socket configuration" },
+            "tdp_w":                        { "type": "number", "description": "Default Thermal Design Power in watts" },
+            "ctdp_range":                   { "type": "string", "description": "Configurable TDP range, e.g. 225-280W (AMD cTDP) or Intel TDP-up/down" }
+          }
+        },
+
+        "memory_specifications": {
+          "type": "object",
+          "properties": {
+            "max_memory_size_tb":     { "type": "number", "description": "Maximum addressable memory per socket in TB" },
+            "memory_types":           { "type": "string", "description": "Supported DIMM types and speeds, e.g. DDR5-4800, DDR5-6400 / MRDIMM-8800" },
+            "max_memory_speed_mhz":   { "type": "number", "description": "Maximum memory speed in MHz (Intel convention)" },
+            "max_memory_speed_mts":   { "type": "number", "description": "Maximum memory speed in MT/s (AMD convention)" },
+            "memory_channels":        { "type": "integer", "description": "Number of independent memory channels per socket" },
+            "memory_bandwidth_gbs":   { "type": "number", "description": "Peak theoretical memory bandwidth in GB/s (channels × per-channel BW)" },
+            "optane_pmem_supported":  { "type": "boolean", "description": "Intel Optane Persistent Memory (PMem) support" },
+            "ecc_supported":          { "type": "boolean", "description": "Error-correcting code memory support" }
+          }
+        },
+
+        "expansion_options": {
+          "type": "object",
+          "properties": {
+            "scalability":    { "type": "string", "description": "Multi-socket support, e.g. 1P / 2P, S8S (8-socket)" },
+            "pcie_revision":  { "type": "string", "description": "PCIe generation supported, e.g. 4.0, 5.0" },
+            "max_pcie_lanes": { "type": "integer", "description": "Total PCIe lanes available per socket" }
+          }
+        },
+
+        "package_specifications": {
+          "type": "object",
+          "properties": {
+            "socket":           { "type": "string", "description": "CPU socket type, e.g. SP3, SP5, FCLGA4677, FCLGA7529" },
+            "socket_count":     { "type": "string", "description": "Supported socket configurations, e.g. 1P / 2P" },
+            "package_carrier":  { "type": "string", "description": "Intel package carrier designation, e.g. E1A, BR1A" },
+            "dts_max_c":        { "type": "number", "description": "Maximum die temperature (Digital Thermal Sensor) in °C" },
+            "tcase_c":          { "type": "number", "description": "Maximum case (lid) temperature in °C" },
+            "package_size_mm":  { "type": "string", "description": "Physical package dimensions in mm, e.g. 77.5 x 56.5" }
+          }
+        },
+
+        "advanced_technologies": {
+          "type": "object",
+          "properties": {
+            "instruction_set_extensions":     { "type": "string", "description": "Supported ISA extensions, e.g. SSE4.2, AVX2, AVX-512, AMX" },
+            "avx512_fma_units":               { "type": "integer", "description": "AVX-512 FMA units per core (1 = 256-bit fused pair, 2 = native 512-bit)" },
+            "best_simd":                      { "type": "string", "enum": ["AVX2", "AVX-512"], "description": "Widest SIMD instruction set supported" },
+            "simd_width_bits":                { "type": "integer", "enum": [256, 512], "description": "Width of the widest SIMD register in bits" },
+            "avx_fp_units":                   { "type": "integer", "description": "Total FP32 execution lanes across all cores (derived)" },
+            "peak_fp32_tflops":               { "type": "number", "description": "Peak single-socket FP32 throughput in TFLOPS (derived)" },
+            "peak_fp32_clock_ghz":            { "type": "number", "description": "Clock speed used for peak FP32 calculation in GHz" },
+            "hyper_threading":                { "type": "boolean", "description": "Intel Hyper-Threading (SMT) support" },
+            "turbo_boost_version":            { "type": "string", "description": "Intel Turbo Boost version, e.g. 2.0, 3.0" },
+            "amx":                            { "type": "boolean", "description": "Intel Advanced Matrix Extensions (tile-based matrix acceleration) support" },
+            "dl_boost":                       { "type": "boolean", "description": "Intel DL Boost (VNNI instructions for INT8 inference) support" },
+            "speed_select_core_power":        { "type": "boolean", "description": "Intel Speed Select Technology — Core Power (per-core TDP tuning)" },
+            "speed_select_turbo_freq":        { "type": "boolean", "description": "Intel Speed Select Technology — Turbo Frequency (tiered boost bins)" },
+            "speed_select_base_freq":         { "type": "boolean", "description": "Intel Speed Select Technology — Base Frequency profile switching" },
+            "speed_select_performance_profile": { "type": "boolean", "description": "Intel Speed Select Technology — Performance Profile support" },
+            "high_priority_cores":            { "type": "integer", "description": "Number of high-priority cores in a Speed Select / core tiering config" },
+            "high_priority_core_freq_ghz":    { "type": "number", "description": "Base frequency for high-priority cores in GHz" },
+            "low_priority_cores":             { "type": "integer", "description": "Number of low-priority cores in a Speed Select / core tiering config" },
+            "low_priority_core_freq_ghz":     { "type": "number", "description": "Base frequency for low-priority cores in GHz" },
+            "resource_director_rdt":          { "type": "boolean", "description": "Intel Resource Director Technology (cache/bandwidth QoS)" },
+            "speed_shift":                    { "type": "boolean", "description": "Intel Speed Shift Technology (hardware-controlled P-state transitions)" },
+            "transactional_sync_extensions":  { "type": "boolean", "description": "Intel Transactional Synchronization Extensions (TSX-NI) support" },
+            "volume_management_device_vmd":   { "type": "boolean", "description": "Intel Volume Management Device (hot-plug NVMe management)" },
+            "on_demand_activation":           { "type": "boolean", "description": "Intel On Demand feature activation (software-licensed capabilities)" },
+            "qat_devices":                    { "type": "integer", "description": "Number of on-die Intel QuickAssist Technology (QAT) accelerator devices" },
+            "dlb_devices":                    { "type": "integer", "description": "Number of on-die Intel Dynamic Load Balancer (DLB) devices" },
+            "dsa_devices":                    { "type": "integer", "description": "Number of on-die Intel Data Streaming Accelerator (DSA) devices" },
+            "iaa_devices":                    { "type": "integer", "description": "Number of on-die Intel In-Memory Analytics Accelerator (IAA) devices" },
+            "supported_technologies":         { "type": "string", "description": "Vendor-listed platform technologies, e.g. AMD Infinity Guard, Infinity Architecture" }
+          }
+        },
+
+        "security_and_reliability": {
+          "type": "object",
+          "properties": {
+            "aes_ni":                              { "type": "boolean", "description": "AES-NI hardware encryption acceleration" },
+            "sgx":                                 { "type": "string", "description": "Intel Software Guard Extensions support and variant, e.g. Yes with Intel SPS" },
+            "sgx_epc_max_gb":                      { "type": "integer", "description": "Maximum SGX Enclave Page Cache size in GB" },
+            "trusted_execution_technology":        { "type": "boolean", "description": "Intel TXT (measured launch environment for platform integrity)" },
+            "execute_disable_bit":                 { "type": "boolean", "description": "XD/NX bit support (hardware data execution prevention)" },
+            "vt_x":                                { "type": "boolean", "description": "Intel VT-x virtualization support (CPU)" },
+            "vt_d":                                { "type": "boolean", "description": "Intel VT-d virtualization support (I/O IOMMU)" },
+            "ept":                                 { "type": "boolean", "description": "Extended Page Tables (hardware-assisted nested paging)" },
+            "total_memory_encryption":             { "type": "boolean", "description": "Intel TME — encrypts all DRAM at the memory controller" },
+            "total_memory_encryption_multi_key":   { "type": "boolean", "description": "Intel TME-MK — multiple independent encryption keys for memory isolation" },
+            "tdx":                                 { "type": "boolean", "description": "Intel Trust Domain Extensions (hardware-isolated confidential VMs)" },
+            "crypto_acceleration":                 { "type": "boolean", "description": "On-die cryptographic acceleration (SHA, CRC, etc.)" },
+            "platform_firmware_resilience":        { "type": "boolean", "description": "Intel PFR — firmware protection, detection, and recovery" },
+            "control_flow_enforcement":            { "type": "boolean", "description": "Intel CET — shadow stack and indirect branch tracking against ROP/JOP" },
+            "os_guard":                            { "type": "boolean", "description": "Intel OS Guard (SMEP/SMAP — prevents supervisor-mode execution of user pages)" },
+            "boot_guard":                          { "type": "boolean", "description": "Intel Boot Guard (authenticated code module for secure boot)" },
+            "run_sure":                            { "type": "boolean", "description": "Intel Run Sure Technology (enhanced RAS and error handling)" },
+            "mbec":                                { "type": "boolean", "description": "Mode-Based Execute Control (per-mode execute protections for hypervisors)" },
+            "secure_key":                          { "type": "boolean", "description": "Intel Secure Key (RDRAND/RDSEED hardware RNG)" },
+            "quickassist_sw_acceleration":         { "type": "boolean", "description": "Intel QuickAssist software acceleration fallback when no QAT hardware is present" },
+            "fips_certification":                  { "type": "string", "description": "FIPS 140 certification status, e.g. Certified, In Review" }
+          }
+        },
+
+        "product_ids": {
+          "type": "object",
+          "properties": {
+            "product_id_tray":   { "type": "string", "description": "OPN / tray (bulk) product order number" },
+            "product_id_boxed":  { "type": "string", "description": "Boxed (retail/single-unit) product order number" }
+          }
+        },
+
+        "microarch":          { "type": "string", "description": "AMD only — e.g. Zen 3, Zen 4, Zen 5" },
         "family":             { "type": "string", "description": "e.g. EPYC, Xeon Scalable, Xeon 6" },
         "generation":         { "type": "string", "description": "e.g. Milan, Genoa, Turin, Sapphire Rapids" },
-        "microarch":          { "type": "string", "description": "AMD only — e.g. Zen 3, Zen 4, Zen 5" },
         "gen_number":         { "type": "integer" },
         "year":               { "type": "integer", "minimum": 2010 },
         "max_cores":          { "type": "integer", "description": "Per-socket core count" },
@@ -77,8 +212,7 @@
         "simd_width_bits":    { "type": "integer", "enum": [256, 512] },
         "avx_fp_units":       { "type": "integer", "description": "Number of FP32 lanes across all AVX units" },
         "peak_fp32_tflops":   { "type": "number", "description": "Peak single-socket FP32 TFLOPS" },
-        "peak_fp32_clock_ghz": { "type": "number", "description": "Clock speed at which peak FP32 is measured" },
-        "references":         { "type": "array", "items": { "$ref": "#/$defs/reference" }, "minItems": 1 }
+        "peak_fp32_clock_ghz": { "type": "number", "description": "Clock speed at which peak FP32 is measured" }
       },
       "additionalProperties": false
     },
