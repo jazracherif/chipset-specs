@@ -377,3 +377,98 @@ cpus:
       secure_key: true
       quickassist_sw_acceleration: true
 
+
+  - name: Xeon 8570
+    full_name: Intel Xeon Platinum 8570
+    brand: Intel
+    # Default source: [1] Intel ARK CSV export — Xeon Platinum 8570 (downloaded 2026-04-08)
+    # Fields from other sources are annotated with [n]
+    references:
+      - name: Intel ARK — Xeon Platinum 8570 Specifications     # [1] default
+        url: https://www.intel.com/content/www/us/en/products/sku/237264/intel-xeon-platinum-8570-processor-300m-cache-2-10-ghz/specifications.html
+
+    # Notable deployments: NVIDIA DGX B200 (2x per system, host CPUs)
+
+    essentials:
+      product_collection: 5th Gen Intel® Xeon® Scalable Processors
+      code_name: Emerald Rapids
+      lithography: Intel 7
+      launch_date: Q4'23
+      recommended_customer_price_usd: 10746.00
+
+    cpu_specifications:
+      total_cores: 56
+      total_threads: 112
+      base_frequency_ghz: 2.10
+      max_turbo_frequency_ghz: 4.00
+      cache_mb: 300
+      upi_speed_gts: 20
+      max_upi_links: 4
+      tdp_w: 350
+
+    memory_specifications:
+      max_memory_size_tb: 4
+      memory_types: "DDR5-5600 (1DPC)"
+      memory_channels: 8
+      memory_bandwidth_gbs: 358         # derived: 8 channels × 44.8 GB/s (DDR5-5600 per channel)
+      ecc_supported: true
+
+    expansion_options:
+      scalability: 2S
+      pcie_revision: "5.0"
+      max_pcie_lanes: 80
+
+    package_specifications:
+      socket: FCLGA4677
+      package_carrier: E1A
+      dts_max_c: 99
+      tcase_c: 81
+      package_size_mm: 77.5 x 56.5
+
+    advanced_technologies:
+      instruction_set_extensions: "AMX, SSE4.2, AVX, AVX2, AVX-512"
+      avx512_fma_units: 2
+      best_simd: AVX-512
+      simd_width_bits: 512
+      avx_fp_units: 112                 # derived: 56 cores × 2 AVX-512 FMA units per core
+      peak_fp32_tflops: 3.8             # derived: 112 FMA units × 16 FP32/unit × 2.1 GHz / 1000
+      peak_fp32_clock_ghz: 2.1
+      hyper_threading: true
+      turbo_boost_version: "2.0"
+      amx: true
+      dl_boost: true
+      speed_select_core_power: true
+      speed_select_turbo_freq: true
+      speed_select_base_freq: true
+      high_priority_cores: 16
+      high_priority_core_freq_ghz: 2.3
+      low_priority_cores: 40
+      low_priority_core_freq_ghz: 1.9
+      resource_director_rdt: true
+      speed_shift: true
+      transactional_sync_extensions: true
+      volume_management_device_vmd: true
+      dsa_devices: 1
+      on_demand_activation: false
+
+    security_and_reliability:
+      aes_ni: true
+      sgx: "Yes with Intel® SPS"
+      sgx_epc_max_gb: 512
+      trusted_execution_technology: true
+      execute_disable_bit: true
+      vt_x: true
+      vt_d: true
+      ept: true
+      total_memory_encryption: true
+      total_memory_encryption_multi_key: true
+      tdx: true
+      crypto_acceleration: true
+      platform_firmware_resilience: true
+      control_flow_enforcement: true
+      os_guard: true
+      boot_guard: true
+      run_sure: true
+      mbec: true
+      quickassist_sw_acceleration: true
+

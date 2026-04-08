@@ -281,16 +281,18 @@ Every entry must annotate the provenance of each field using inline YAML comment
     # Default source: [1] NVIDIA A100 GPU Datasheet
     # Fields from other sources are annotated with [n]
     references:
-      - name: NVIDIA A100 GPU Datasheet          # [1] default
+      - name: NVIDIA A100 GPU Datasheet                          # [1] default
         url: https://...
-      - name: NVIDIA Ampere Architecture Whitepaper  # [2]
+      - name: NVIDIA Ampere Architecture Whitepaper              # [2]
         url: https://...
 
     core_specifications:
-      streaming_multiprocessors: 108             # [2] whitepaper p.20
-      cuda_cores_fp32_per_gpu: 6912              # derived: 64 × 108 SMs
-      max_clock_speed: ~1410 MHz                 # [1] datasheet
+      streaming_multiprocessors: 108                             # [2] whitepaper p.20
+      cuda_cores_fp32_per_gpu: 6912                              # derived: 64 × 108 SMs
+      max_clock_speed: ~1410 MHz                                 # [1] datasheet
 ```
+
+**Column alignment**: pad each value with spaces so all `#` annotations start at column 60 (matching `specs/nvidia/gpus/ampere.yaml`). For values that exceed column 60, place the `#` one space after the value.
 
 ## Validation Checklist
 

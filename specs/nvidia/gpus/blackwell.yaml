@@ -195,8 +195,8 @@ gpus:
       nvlink_domain_bandwidth: "130 TB/s (all-to-all across 72 GPUs)"
 
       gpu_memory:
-        capacity: "13.8 TB HBM3e (192 GB per GPU × 72)"
-        capacity_per_gpu: 192 GB HBM3e
+        capacity: "13.4 TB HBM3e (186 GB per GPU × 72)"  # [1] Blackwell datasheet: "186 GB HBM3E"
+        capacity_per_gpu: 186 GB HBM3e                           # [1] Blackwell datasheet
         memory_type: HBM3e
         l2_cache_total: "6912 MB (96 MB per GPU × 72)"
         l2_cache_max_per_gpu: 256 MB
@@ -236,8 +236,8 @@ gpus:
             latency: "~150–200 cycles"
 
           global_dram:
-            capacity_per_gpu: "192 GB HBM3e"
-            capacity_total: "13.8 TB HBM3e (192 GB × 72)"
+            capacity_per_gpu: "186 GB HBM3e"                   # [1] Blackwell datasheet
+            capacity_total: "13.4 TB HBM3e (186 GB × 72)"      # derived: 186 × 72
             memory_type: HBM3e
             throughput_per_gpu: "8 TB/s"
             throughput_total: "576 TB/s (8 TB/s × 72)"
@@ -442,4 +442,104 @@ gpus:
       gaming_apis: "DirectX 12 Ultimate, Vulkan"
       geforce_experience: true
       studio_drivers: true
+
+
+  DGX_B200:
+    name: NVIDIA DGX B200
+    # Default source: [1] NVIDIA DGX B200 Product Page
+    # Fields from other sources are annotated with [n]
+    references:
+      - name: NVIDIA DGX B200 Product Page                       # [1] default
+        url: https://www.nvidia.com/en-us/data-center/dgx-b200/
+      - name: NVIDIA DGX B200 Datasheet                          # [2]
+        url: https://resources.nvidia.com/en-us-dgx-systems/dgx-b200-datasheet
+      - name: Blackwell Architecture Technical Brief             # [3]
+        url: https://resources.nvidia.com/en-us-blackwell-architecture/blackwell-architecture-technical-brief
+      - name: "GTC26 Session S81563 (timestamp 9:50) — cost estimate"  # [4]
+        url: https://www.nvidia.com/en-us/on-demand/session/gtc26-s81563/
+
+    core_specifications:
+      release_date: Q2 2025
+      architecture: Blackwell                                    # [3]
+      compute_capability: 10.0                                   # [3]
+      gpu_count: 8
+      cpu: "2x Intel Xeon Platinum 8570 (112 cores total, 2.1 GHz base / 4.0 GHz boost)"  # [1]
+      streaming_multiprocessors: "1184 total (148 per GPU × 8)" # [3] derived: 148 SMs per B200 × 8
+      cuda_cores_fp32_per_sm: 128                               # [3]
+      cuda_cores_fp32_per_gpu: 18944                            # derived: 128 × 148 SMs
+      cuda_cores_total: 151552                                   # derived: 18944 × 8 GPUs
+      max_clock_speed: ~2250 MHz                                 # estimated
+      form_factor: 10U Rackmount server                         # [1]
+
+    sm_execution_model:
+      shared_memory_per_sm: 228 KB                              # [3] derived from B200 spec
+      shared_memory_per_block: 227 KB                           # [3] derived from B200 spec
+      max_resident_threads_per_sm: 2048                         # [3] derived from B200 spec
+      max_resident_blocks_per_sm: 32                            # [3] derived from B200 spec
+
+    memory_specifications:
+      architecture: "HBM3e per GPU; each GPU has discrete device memory; GPUs share NVLink fabric"
+      total_gpu_memory: "1440 GB HBM3e total"                   # [2] datasheet: "1,440 GB total, 64 TB/s HBM3e bandwidth"
+      ecc_support: true
+      addressing_mode: ATS (Address Translation Services)       # [3]
+      concurrent_managed_access: true
+      nvlink_domain_bandwidth: "14.4 TB/s aggregate"            # [1] specs table: "14.4 TB/s aggregate bandwidth"
+
+      gpu_memory:
+        capacity: "1440 GB HBM3e total (180 GB per GPU × 8)"   # [2] datasheet total; derived per-GPU
+        memory_type: HBM3e                                       # [2]
+        l2_cache_per_gpu: 96 MB                                 # [3] derived from B200 spec
+        bandwidth_per_gpu: 8 TB/s                               # [2] derived: 64 TB/s ÷ 8 GPUs
+        bandwidth_total: 64 TB/s                                 # [2] datasheet: "64 TB/s HBM3e bandwidth"
+        bus_width_per_gpu: 6144-bit                             # [3] derived from B200 spec
+
+    compute_performance:
+      fp4: "144 PFLOPS system total (18 PFLOPS per GPU × 8)"   # [1] specs table: "FP4 Tensor Core: 144 PFLOPS"
+      fp8: "72 PFLOPS system total (9 PFLOPS per GPU × 8)"     # [1] specs table: "FP8 Tensor Core: 72 PFLOPS (sparse)"
+      fp16_bf16: "36 PFLOPS system total (4.5 PFLOPS per GPU × 8)"  # derived: fp8 dense ÷ 2
+      fp32: "640 TFLOPS system total (80 TFLOPS per GPU × 8)"  # [3] derived from B200 spec
+      tensor_core_generation: "5th Gen (Blackwell)"             # [3]
+      fp4_fp6_tensor_core_support: true                         # [3]
+
+    power_and_thermal:
+      gpu_tdp_per_gpu: 1000 W                                   # estimated; B200 SXM socket limit
+      total_system_tdp: ~14.3 kW                                # [1] specs table: "~14.3 kW max"
+      form_factor: 10U rack server                              # [1] specs table: "Rack Units (RU): 10 RU"
+      cooling: Liquid-cooled
+
+    pricing:
+      estimated_system_usd: 515000                              # [4] GTC26 session S81563 at timestamp 9:50
+      estimated_per_gpu_usd: 64000                              # [4] GTC26 session S81563 at timestamp 9:50
+
+    advanced_features:
+      mig: "Yes (up to 7 instances per GPU)"                    # [3]
+      nvlink: "NVLink 5.0 (14.4 TB/s aggregate)"               # [1]
+      nvswitch_count: 2                                          # [1] specs table: "NVIDIA NVSwitch: 2x"
+      dynamic_programming: Full support                         # [3]
+      thread_block_clusters: true                               # [3]
+      tensor_memory_accelerator: true                           # [3]
+      hardware_coherency: "Yes (ATS support)"                   # [3]
+      transformer_engine: "Yes (FP8 + FP4 optimized)"           # [3]
+      distributed_shared_memory: true                           # [3]
+      confidential_computing: "Supported"                        # [3]
+
+    networking_and_connectivity:
+      pcie_interface: PCIe 5.0                                  # [3]
+      high_speed_interconnect: "4x OSFP ports serving 8x single-port ConnectX-7 VPI (up to 400 Gb/s IB/Ethernet)"  # [1]
+      nvlink_fabric: "14.4 TB/s aggregate NVLink 5.0"           # [1]
+      nvswitch: "2 NVSwitches (8-GPU intra-node mesh)"          # [1]
+      rdma: "Integrated with ConnectX-7"                        # [1]
+      gpu_to_gpu_direct: "Yes (GPUDirect RDMA + NVLink)"        # [3]
+      sharp: true                                                # [3]
+
+    software_and_ecosystem:
+      cuda_toolkit: "13.0+"                                     # [3]
+      minimum_driver: "570.00+"                                  # [3]
+      cublas: cuBLAS 13.x with FP8                              # [3]
+      cudnn: "9.x"                                               # [3]
+      tensorrt: "11.x+ (FP8/FP4 support)"                       # [3]
+      nccl: "2.28+"                                              # [3]
+      nemo_framework: Supported                                  # [1]
+      pytorch: "2.x+"                                            # [3]
+      tensorflow: "2.x+"                                         # [3]
 

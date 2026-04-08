@@ -17,12 +17,14 @@ common_references:
 gpus:
   MI355X_8NODE_RACK:
     name: AMD Instinct MI355X 8-Node Rack Platform
+    # Default source: [1] AMD Instinct MI355X Product Page
+    # Fields from other sources are annotated with [n]
     references:
-      - name: AMD Instinct MI355X Product Page
+      - name: AMD Instinct MI355X Product Page                                              # [1] default
         url: https://www.amd.com/en/products/accelerators/instinct/mi350/mi355x.html
-      - name: MI355X GPU Brochure
+      - name: MI355X GPU Brochure                                                           # [2]
         url: https://www.amd.com/content/dam/amd/en/documents/instinct-tech-docs/product-briefs/amd-instinct-mi355x-gpu-brochure.pdf
-      - name: MI355X GPU Platform (8 GPUs) Brochure
+      - name: MI355X GPU Platform (8 GPUs) Brochure                                        # [3]
         url: https://www.amd.com/content/dam/amd/en/documents/instinct-tech-docs/product-briefs/amd-instinct-miI355x-platform-brochure.pdf
 
     # The MI355X is the top-bin variant of the MI350 series (CDNA 4 architecture).
@@ -47,11 +49,11 @@ gpus:
 
     cu_execution_model:
       # Per-GPU figures (MI355X = top-bin CDNA 4)
-      compute_units_per_gpu: "~320 CUs (top-bin MI355X, estimated)"
-      wavefront_size: 64
-      max_workitems_per_cu: 2048
-      stream_processors_per_cu: 64
-      vgpr_per_cu: "256 KB VGPR"
+      compute_units_per_gpu: "~320 CUs (top-bin MI355X, estimated)" # estimated
+      wavefront_size: 64               # fixed: AMD GPU constant
+      max_workitems_per_cu: 2048       # fixed: 32 wavefronts × 64 work-items
+      stream_processors_per_cu: 64     # fixed: 4 SIMD-16 units × 16 lanes per CU
+      vgpr_per_cu: "256 KB VGPR"       # estimated: same as CDNA 3
 
     memory_specifications:
       architecture: "Dedicated HBM3E per GPU; flat coherent address space intra-node via XGMI; cross-node via RDMA"
@@ -105,22 +107,22 @@ gpus:
 
     compute_performance:
       # Per-GPU (MI355X top-bin CDNA 4, estimated)
-      fp16_bf16_mfma_per_gpu: "~2600+ TFLOPS dense"
-      fp8_mfma_per_gpu: "~5200+ TFLOPS dense"
-      fp4_mfma_per_gpu: "~10400+ TFLOPS dense"
-      fp64_mfma_per_gpu: "~320 TFLOPS"
+      fp16_bf16_mfma_per_gpu: "~2600+ TFLOPS dense"   # [2] brochure
+      fp8_mfma_per_gpu: "~5200+ TFLOPS dense"         # [2] brochure
+      fp4_mfma_per_gpu: "~10400+ TFLOPS dense"        # [2] brochure
+      fp64_mfma_per_gpu: "~320 TFLOPS"                # estimated
 
       # Per-node (8 GPUs)
-      fp16_bf16_mfma_per_node: "~20.8+ PFLOPS dense"
-      fp8_mfma_per_node: "~41.6+ PFLOPS dense"
-      fp4_mfma_per_node: "~83.2+ PFLOPS dense"
-      fp64_mfma_per_node: "~2.56 PFLOPS"
+      fp16_bf16_mfma_per_node: "~20.8+ PFLOPS dense"  # derived: ~2600 TFLOPS × 8 GPUs
+      fp8_mfma_per_node: "~41.6+ PFLOPS dense"        # derived: ~5200 TFLOPS × 8 GPUs
+      fp4_mfma_per_node: "~83.2+ PFLOPS dense"        # derived: ~10400 TFLOPS × 8 GPUs
+      fp64_mfma_per_node: "~2.56 PFLOPS"              # derived: ~320 TFLOPS × 8 GPUs
 
       # Per-rack (64 GPUs)
-      fp16_bf16_mfma_per_rack: "~166+ PFLOPS dense"
-      fp8_mfma_per_rack: "~333+ PFLOPS dense"
-      fp4_mfma_per_rack: "~666+ PFLOPS dense"
-      fp64_mfma_per_rack: "~20.5 PFLOPS"
+      fp16_bf16_mfma_per_rack: "~166+ PFLOPS dense"   # derived: ~2600 TFLOPS × 64 GPUs
+      fp8_mfma_per_rack: "~333+ PFLOPS dense"         # derived: ~5200 TFLOPS × 64 GPUs
+      fp4_mfma_per_rack: "~666+ PFLOPS dense"         # derived: ~10400 TFLOPS × 64 GPUs
+      fp64_mfma_per_rack: "~20.5 PFLOPS"              # derived: ~320 TFLOPS × 64 GPUs
 
       fp4_support: true
       fp6_support: true
@@ -129,9 +131,9 @@ gpus:
       notes: "Figures estimated from CDNA 4 architecture targets; official MI355X datasheet pending as of Q1 2026"
 
     power_and_thermal:
-      tdp_per_gpu: "~1000 W (OAM socket limit, estimated)"
-      tdp_per_node: "~10 kW (8 GPUs + 2 CPUs + interconnects)"
-      tdp_per_rack: "~80–100 kW (64 GPUs + CPUs + networking, estimated)"
+      tdp_per_gpu: "~1000 W (OAM socket limit, estimated)"   # estimated
+      tdp_per_node: "~10 kW (8 GPUs + 2 CPUs + interconnects)"  # derived: ~1000 W × 8 + CPU/fabric overhead (estimated)
+      tdp_per_rack: "~80–100 kW (64 GPUs + CPUs + networking, estimated)"  # derived: ~1000 W × 64 + system overhead (estimated)
       form_factor: "Rack-mount nodes (8-node, 64 GPUs)"
       cooling: "Direct liquid cooling mandatory for all compute nodes"
       power_distribution: "Three-phase datacenter power (240V AC or 48V DC OCP rack standard)"
@@ -171,8 +173,10 @@ gpus:
 
   MI350X:
     name: AMD Instinct MI350X
+    # Default source: [1] AMD Instinct MI350 Product Family Page
+    # Fields from other sources are annotated with [n]
     references:
-      - name: AMD Instinct MI350 Product Family
+      - name: AMD Instinct MI350 Product Family                                             # [1] default
         url: https://www.amd.com/en/products/accelerators/instinct/mi350.html
  
     # MI350X is AMD's top-bin CDNA 4 accelerator, announced October 2024.
@@ -186,12 +190,12 @@ gpus:
       target_id: "gfx950 (estimated)"
       gpu_count: 1
       host_cpu: "User-supplied (AMD EPYC Turin recommended)"
-      process_node: "TSMC N3E (3nm class, estimated)"
-      compute_units: "~320 CUs (estimated)"
-      stream_processors_per_cu: 64
-      stream_processors_per_gpu: "~20480 (estimated; 64 × ~320 CUs)"
-      wavefront_size: 64
-      max_clock_speed: "~2300 MHz (estimated)"
+      process_node: "TSMC N3E (3nm class, estimated)" # estimated
+      compute_units: "~320 CUs (estimated)"            # estimated
+      stream_processors_per_cu: 64                     # fixed: 4 SIMD-16 units × 16 lanes per CU
+      stream_processors_per_gpu: "~20480 (estimated; 64 × ~320 CUs)" # derived: 64 × ~320 CUs (estimated)
+      wavefront_size: 64                               # fixed: AMD GPU constant
+      max_clock_speed: "~2300 MHz (estimated)"         # estimated
       form_factor: "OAM (OCP Accelerator Module)"
 
     cu_execution_model:
@@ -202,14 +206,14 @@ gpus:
       vgpr_per_cu: "256 KB VGPR"
 
       # CDNA 4 doubles or quadruples MFMA throughput for FP8/FP4/FP6 vs. CDNA 3
-      per_cycle_throughput_per_cu:
+      per_cycle_throughput_per_cu:     # derived: from CDNA 4 ISA + estimated CU lane counts
         fp64_vector_per_cycle: "64 FP64 ops/cycle"
         fp32_vector_per_cycle: "64 FP32 ops/cycle"
-        fp64_matrix_mfma_per_cycle: "512 FLOP/cycle (estimated)"
-        fp16_bf16_matrix_mfma_per_cycle: "~2048 FLOP/cycle (estimated; ~2× CDNA 3)"
-        fp8_matrix_mfma_per_cycle: "~4096 FLOP/cycle (estimated)"
-        fp6_matrix_mfma_per_cycle: "~4096 FLOP/cycle (FP6 new in CDNA 4)"
-        fp4_matrix_mfma_per_cycle: "~8192 FLOP/cycle (FP4 new in CDNA 4)"
+        fp64_matrix_mfma_per_cycle: "512 FLOP/cycle (estimated)"                  # estimated
+        fp16_bf16_matrix_mfma_per_cycle: "~2048 FLOP/cycle (estimated; ~2× CDNA 3)" # estimated
+        fp8_matrix_mfma_per_cycle: "~4096 FLOP/cycle (estimated)"                 # estimated
+        fp6_matrix_mfma_per_cycle: "~4096 FLOP/cycle (FP6 new in CDNA 4)"        # estimated
+        fp4_matrix_mfma_per_cycle: "~8192 FLOP/cycle (FP4 new in CDNA 4)"        # estimated
       notes: "CDNA 4 adds v_mfma_f6 and v_mfma_f4 instructions; ~35× claimed AI inference gain vs CDNA 3 at system level"
 
     memory_specifications:
@@ -256,13 +260,13 @@ gpus:
           bus_width: "8192-bit"
 
     compute_performance:
-      fp64_mfma_matrix: "~320 TFLOPS (estimated; ~2× MI300X)"
-      fp32_mfma_matrix: "~320 TFLOPS (estimated)"
-      fp16_bf16_mfma_dense: "~2600+ TFLOPS (estimated)"
-      fp8_mfma_dense: "~5200+ TFLOPS (estimated)"
-      fp6_mfma_dense: "~5200+ TFLOPS (estimated; new in CDNA 4)"
-      fp4_mfma_dense: "~10400+ TFLOPS (estimated; new in CDNA 4)"
-      int8_mfma_dense: "~5200+ TOPS (estimated)"
+      fp64_mfma_matrix: "~320 TFLOPS (estimated)"             # estimated
+      fp32_mfma_matrix: "~320 TFLOPS (estimated)"             # estimated
+      fp16_bf16_mfma_dense: "~2600+ TFLOPS (estimated)"       # estimated
+      fp8_mfma_dense: "~5200+ TFLOPS (estimated)"             # estimated
+      fp6_mfma_dense: "~5200+ TFLOPS (estimated; new in CDNA 4)" # estimated
+      fp4_mfma_dense: "~10400+ TFLOPS (estimated; new in CDNA 4)" # estimated
+      int8_mfma_dense: "~5200+ TOPS (estimated)"              # estimated
       fp4_support: true
       fp6_support: true
       fp8_support: true
@@ -270,10 +274,10 @@ gpus:
       notes: "AMD claims ~35× AI inference improvement for LLM serving workloads vs. CDNA 3 generation"
 
     power_and_thermal:
-      socket_tdp: "~1000 W (OAM socket limit, estimated)"
+      socket_tdp: "~1000 W (OAM socket limit, estimated)"  # estimated
       form_factor: OAM
       cooling: "Direct liquid cooling required"
-      compute_efficiency_fp16: "~2600+ GFLOPS/W (estimated)"
+      compute_efficiency_fp16: "~2600+ GFLOPS/W"  # derived: ~2600 TFLOPS FP16 / ~1000 W TDP (estimated)
 
     advanced_features:
       compute_partitioning: "Yes — enhanced Accelerator Partitioning (CDNA 4)"

@@ -4,7 +4,7 @@
 # Load this file first for filter/list queries; load the spec_file only for deep-dive queries.
 
 schema_version: 1
-last_updated: "2026-04-01"
+last_updated: "2026-04-08"
 
 gpus:
 
@@ -33,13 +33,30 @@ gpus:
     year: 2025
     type: datacenter rack (72 GPUs)
     form_factor: Liquid-cooled rack
-    memory_gb: 13400        # total HBM3E across 72 GPUs
+    memory_gb: 13392        # derived: 186 GB × 72 GPUs (source: Blackwell datasheet)
     memory_type: HBM3E
     memory_bw_tbs: 576      # total across 72 GPUs
     fp16_tflops: 360000     # 360 PFLOPS total rack
     fp32_tflops: 5760       # 5.76 PFLOPS total rack
     tdp_kw: 132
     cost_usd_range: [2900000, 3400000]   # NVL72 rack
+    spec_file: specs/nvidia/gpus/blackwell.yaml
+
+  - name: DGX B200
+    full_name: NVIDIA DGX B200
+    vendor: NVIDIA
+    architecture: Blackwell
+    generation: Blackwell
+    year: 2025
+    type: datacenter server (8 GPUs)
+    form_factor: 10U Rackmount
+    memory_gb: 1440              # 180 GB HBM3e × 8 GPUs (source: nvidia.com/en-us/data-center/dgx-b200/)
+    memory_type: HBM3E
+    memory_bw_tbs: 64            # 8 TB/s × 8 GPUs
+    fp16_tflops: 36000           # 4,500 TFLOPS per GPU (dense) × 8
+    fp32_tflops: 640             # 80 TFLOPS × 8
+    tdp_kw: 14.3                 # estimated (8 GPUs + system overhead)
+    cost_usd_range: [515000, 515000]   # GTC26 session S81563 at 9:50 — $515K system / $64K per GPU
     spec_file: specs/nvidia/gpus/blackwell.yaml
 
   - name: RTX5070
@@ -293,6 +310,20 @@ cpus:
     memory_type: DDR5-5600
     peak_fp32_tflops: 5.1
     tdp_w: null
+    spec_file: specs/intel/cpus/xeon.yaml
+
+  - name: Xeon 8570
+    full_name: Intel Xeon Platinum 8570
+    vendor: Intel
+    family: Xeon Scalable
+    generation: Emerald Rapids
+    year: 2023
+    max_cores: 56
+    memory_bw_gbs: 358
+    memory_type: DDR5-5600
+    peak_fp32_tflops: 3.8
+    tdp_w: null
+    # Notable deployments: NVIDIA DGX B200 (2x per system, host CPUs)
     spec_file: specs/intel/cpus/xeon.yaml
 
   - name: Xeon 6980P

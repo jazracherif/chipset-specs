@@ -222,33 +222,34 @@
       "description": "Full NVIDIA GPU spec entry (one chip inside gpus: in a specs/nvidia/gpus/*.yaml file).",
       "required": ["name", "references", "core_specifications", "memory_specifications", "compute_performance", "power_and_thermal", "software_and_ecosystem"],
       "properties": {
-        "name":       { "type": "string" },
+        "name":       { "type": "string", "description": "Short identifier, e.g. H100 SXM5, GB200, A100-SXM4-80GB" },
         "references": { "type": "array", "items": { "$ref": "#/$defs/reference" }, "minItems": 1 },
 
         "core_specifications": {
           "type": "object",
           "required": ["release_date", "architecture", "form_factor"],
           "properties": {
-            "release_date":            { "type": "string" },
-            "architecture":            { "type": "string" },
-            "compute_capability":      { "type": ["number", "string"] },
-            "gpu_count":               { "type": "integer" },
-            "cpu":                     { "type": "string" },
-            "streaming_multiprocessors": { "type": ["integer", "string"] },
-            "cuda_cores_fp32_per_sm":  { "type": "integer" },
-            "cuda_cores_fp32_per_gpu": { "type": ["integer", "string"] },
-            "max_clock_speed":         { "type": ["integer", "string"] },
-            "form_factor":             { "type": "string" }
+            "release_date":            { "type": "string", "description": "Product launch date or quarter, e.g. Q4'22" },
+            "architecture":            { "type": "string", "description": "GPU microarchitecture name, e.g. Hopper, Blackwell, Ampere" },
+            "compute_capability":      { "type": ["number", "string"], "description": "CUDA compute capability version, e.g. 9.0" },
+            "gpu_count":               { "type": "integer", "description": "Number of GPU dies in the system or module (1 for single-chip cards)" },
+            "cpu":                     { "type": "string", "description": "Paired host CPU for superchip/integrated products, e.g. Grace" },
+            "streaming_multiprocessors": { "type": ["integer", "string"], "description": "Total number of SMs per GPU" },
+            "cuda_cores_fp32_per_sm":  { "type": "integer", "description": "FP32 CUDA cores per SM (128 for Hopper/Blackwell)" },
+            "cuda_cores_fp32_per_gpu": { "type": ["integer", "string"], "description": "Total FP32 CUDA cores per GPU (SMs × cores/SM)" },
+            "max_clock_speed":         { "type": ["integer", "string"], "description": "Maximum GPU boost clock in MHz" },
+            "form_factor":             { "type": "string", "description": "Physical form factor, e.g. SXM5, PCIe, OAM, NVL72 rack" }
           }
         },
 
         "sm_execution_model": {
           "type": "object",
+          "description": "Per-SM resource limits defining occupancy and parallelism.",
           "properties": {
-            "shared_memory_per_sm":          { "type": "string" },
-            "shared_memory_per_block":       { "type": "string" },
-            "max_resident_threads_per_sm":   { "type": "integer" },
-            "max_resident_blocks_per_sm":    { "type": "integer" }
+            "shared_memory_per_sm":          { "type": "string", "description": "Maximum configurable shared memory per SM, e.g. 228 KB" },
+            "shared_memory_per_block":       { "type": "string", "description": "Maximum shared memory per thread block, e.g. 227 KB" },
+            "max_resident_threads_per_sm":   { "type": "integer", "description": "Maximum concurrent threads per SM (determines theoretical occupancy)" },
+            "max_resident_blocks_per_sm":    { "type": "integer", "description": "Maximum concurrent thread blocks per SM" }
           }
         },
 
@@ -256,44 +257,46 @@
           "type": "object",
           "required": ["architecture", "ecc_support"],
           "properties": {
-            "architecture":    { "type": "string" },
-            "total_capacity":  { "type": "string" },
-            "memory_type":     { "type": "string" },
-            "ecc_support":     { "type": "boolean" },
-            "addressing_mode": { "type": "string" },
-            "pageable_memory_access_via_host_page_tables": { "type": "boolean" },
-            "concurrent_managed_access": { "type": "boolean" },
+            "architecture":    { "type": "string", "description": "Memory subsystem architecture, e.g. HBM3, HBM3E, LPDDR5x" },
+            "total_capacity":  { "type": "string", "description": "Total memory across all GPU dies, e.g. 80 GB" },
+            "memory_type":     { "type": "string", "description": "DRAM technology, e.g. HBM3, GDDR6" },
+            "ecc_support":     { "type": "boolean", "description": "Hardware error-correcting code memory support" },
+            "addressing_mode": { "type": "string", "description": "Virtual address space size, e.g. 128-bit" },
+            "pageable_memory_access_via_host_page_tables": { "type": "boolean", "description": "GPU can access CPU pageable memory directly via ATS/SVM" },
+            "concurrent_managed_access": { "type": "boolean", "description": "GPU and CPU can concurrently access Unified Memory regions" },
             "gpu_memory": {
               "type": "object",
               "required": ["capacity", "memory_type"],
+              "description": "On-package HBM/GDDR memory attached directly to the GPU die.",
               "properties": {
-                "capacity":     { "type": "string" },
-                "memory_type":  { "type": "string" },
-                "l2_cache":     { "type": ["string", "number"] },
-                "bandwidth":    { "type": "string" },
-                "bus_width":    { "type": "string" }
+                "capacity":     { "type": "string", "description": "Per-GPU memory capacity, e.g. 80 GB" },
+                "memory_type":  { "type": "string", "description": "DRAM technology, e.g. HBM3E" },
+                "l2_cache":     { "type": ["string", "number"], "description": "L2 / last-level GPU cache size, e.g. 50 MB" },
+                "bandwidth":    { "type": "string", "description": "Peak HBM/GDDR bandwidth, e.g. 3.35 TB/s" },
+                "bus_width":    { "type": "string", "description": "Memory bus width in bits, e.g. 5120-bit" }
               }
             },
-            "cpu_memory": { "type": "object" },
-            "memory_hierarchy": { "type": "object" }
+            "cpu_memory": { "type": "object", "description": "Host LPDDR5x / DRAM specs for superchips with integrated CPU (e.g. Grace Hopper, Grace Blackwell)." },
+            "memory_hierarchy": { "type": "object", "description": "L1/L2/HBM cache hierarchy details." }
           }
         },
 
         "compute_performance": {
           "type": "object",
           "required": ["fp32"],
+          "description": "Peak throughput figures in TFLOPS (or TOPS for integer). Sparse = 2× dense via sparsity acceleration.",
           "properties": {
-            "fp64":              { "type": ["string", "number"] },
-            "fp32":              { "type": ["string", "number"] },
-            "tf32":              { "type": ["string", "number"] },
-            "fp16_bf16":         { "type": ["string", "number"] },
-            "fp8":               { "type": ["string", "boolean"] },
-            "fp6":               { "type": ["string", "boolean"] },
-            "fp4":               { "type": ["string", "boolean"] },
-            "int8":              { "type": ["string", "number"] },
-            "tensor_core_generation": { "type": "string" },
-            "fp4_fp6_tensor_core_support": { "type": ["boolean", "string"] },
-            "fp8_support":       { "type": "boolean" }
+            "fp64":              { "type": ["string", "number"], "description": "FP64 (double precision) vector TFLOPS" },
+            "fp32":              { "type": ["string", "number"], "description": "FP32 (single precision) CUDA core TFLOPS" },
+            "tf32":              { "type": ["string", "number"], "description": "TF32 Tensor Core TFLOPS (10-bit mantissa, 8-bit exponent)" },
+            "fp16_bf16":         { "type": ["string", "number"], "description": "FP16 / BF16 Tensor Core TFLOPS (dense)" },
+            "fp8":               { "type": ["string", "boolean"], "description": "FP8 Tensor Core TFLOPS (dense), or false if unsupported" },
+            "fp6":               { "type": ["string", "boolean"], "description": "FP6 Tensor Core TFLOPS (dense), or false if unsupported" },
+            "fp4":               { "type": ["string", "boolean"], "description": "FP4 Tensor Core TFLOPS (dense), or false if unsupported" },
+            "int8":              { "type": ["string", "number"], "description": "INT8 Tensor Core TOPS (dense)" },
+            "tensor_core_generation": { "type": "string", "description": "Tensor Core generation label, e.g. 4th Gen, 5th Gen" },
+            "fp4_fp6_tensor_core_support": { "type": ["boolean", "string"], "description": "Whether FP4/FP6 Tensor Cores are present (Blackwell+)" },
+            "fp8_support":       { "type": "boolean", "description": "Whether FP8 Tensor Cores are present (Hopper+)" }
           }
         },
 
@@ -301,30 +304,31 @@
           "type": "object",
           "required": ["form_factor", "cooling"],
           "properties": {
-            "tdp":          { "type": ["number", "string"] },
-            "gpu_tdp":      { "type": ["number", "string"] },
-            "total_system_tdp": { "type": ["number", "string"] },
-            "total_rack_tdp":   { "type": ["number", "string"] },
-            "idle_power":   { "type": ["number", "string"] },
-            "form_factor":  { "type": "string" },
-            "cooling":      { "type": "string" }
+            "tdp":              { "type": ["number", "string"], "description": "Single-card/module TDP in watts" },
+            "gpu_tdp":          { "type": ["number", "string"], "description": "GPU-only TDP (excluding host CPU) in watts, used for superchips" },
+            "total_system_tdp": { "type": ["number", "string"], "description": "Full system TDP including CPU and switching, e.g. GB200 NVL2 total" },
+            "total_rack_tdp":   { "type": ["number", "string"], "description": "Total rack-level TDP in kilowatts, e.g. NVL72" },
+            "idle_power":       { "type": ["number", "string"], "description": "Power draw at idle in watts" },
+            "form_factor":      { "type": "string", "description": "Physical packaging, e.g. SXM5, PCIe Gen5 x16, OAM" },
+            "cooling":          { "type": "string", "description": "Cooling method, e.g. Active (liquid-cooled), Passive" }
           }
         },
 
-        "advanced_features": { "type": "object" },
-        "networking_and_connectivity": { "type": "object" },
+        "advanced_features": { "type": "object", "description": "NVLink, NVSwitch, confidential computing, MIG, and other optional capabilities." },
+        "networking_and_connectivity": { "type": "object", "description": "Network interface specs (InfiniBand, Ethernet) for DGX/HGX nodes." },
         "software_and_ecosystem": {
           "type": "object",
           "required": ["cuda_toolkit", "minimum_driver"],
+          "description": "Minimum software stack versions required or recommended for this GPU.",
           "properties": {
-            "cuda_toolkit":    { "type": "string" },
-            "minimum_driver":  { "type": "string" },
-            "cublas":          { "type": "string" },
-            "cudnn":           { "type": "string" },
-            "tensorrt":        { "type": "string" },
-            "nccl":            { "type": "string" },
-            "pytorch":         { "type": "string" },
-            "tensorflow":      { "type": "string" }
+            "cuda_toolkit":    { "type": "string", "description": "Minimum CUDA Toolkit version, e.g. 12.0" },
+            "minimum_driver":  { "type": "string", "description": "Minimum NVIDIA driver version, e.g. 525.85.12" },
+            "cublas":          { "type": "string", "description": "Recommended cuBLAS version" },
+            "cudnn":           { "type": "string", "description": "Recommended cuDNN version" },
+            "tensorrt":        { "type": "string", "description": "Recommended TensorRT version" },
+            "nccl":            { "type": "string", "description": "Recommended NCCL version for multi-GPU collective communications" },
+            "pytorch":         { "type": "string", "description": "Recommended PyTorch version" },
+            "tensorflow":      { "type": "string", "description": "Recommended TensorFlow version" }
           }
         }
       }
@@ -335,37 +339,38 @@
       "description": "Full AMD GPU spec entry (one chip inside gpus: in a specs/amd/gpus/*.yaml file).",
       "required": ["name", "references", "core_specifications", "memory_specifications", "compute_performance", "power_and_thermal", "software_and_ecosystem"],
       "properties": {
-        "name":       { "type": "string" },
+        "name":       { "type": "string", "description": "Short identifier, e.g. MI300X, MI325X, RX 9070 XT" },
         "references": { "type": "array", "items": { "$ref": "#/$defs/reference" }, "minItems": 1 },
 
         "core_specifications": {
           "type": "object",
           "required": ["release_date", "architecture", "form_factor"],
           "properties": {
-            "release_date":         { "type": "string" },
-            "architecture":         { "type": "string", "description": "e.g. CDNA 4" },
-            "target_id":            { "type": "string", "description": "e.g. gfx942, gfx950" },
-            "gpu_count":            { "type": "integer" },
-            "host_cpu":             { "type": "string" },
-            "compute_units":        { "type": ["integer", "string"] },
-            "stream_processors_per_cu":  { "type": "integer", "const": 64 },
-            "stream_processors_per_gpu": { "type": ["integer", "string"] },
-            "wavefront_size":       { "type": "integer", "const": 64 },
-            "max_clock_speed":      { "type": "string" },
-            "form_factor":          { "type": "string", "description": "OAM or PCIe" },
-            "process_node":         { "type": "string" }
+            "release_date":         { "type": "string", "description": "Product launch date or quarter, e.g. Q1'24" },
+            "architecture":         { "type": "string", "description": "GPU compute architecture, e.g. CDNA 3, CDNA 4, RDNA 4" },
+            "target_id":            { "type": "string", "description": "ROCm target GFX ID, e.g. gfx942, gfx950" },
+            "gpu_count":            { "type": "integer", "description": "Number of GPU dies in the package (1 for single-die, 3 for MI300X)" },
+            "host_cpu":             { "type": "string", "description": "Paired host CPU die for APUs/integrated products, e.g. Zen 4 (MI300A)" },
+            "compute_units":        { "type": ["integer", "string"], "description": "Total Compute Units across all GPU dies" },
+            "stream_processors_per_cu":  { "type": "integer", "const": 64, "description": "Stream processors (shaders) per CU — fixed at 64 for all CDNA/RDNA" },
+            "stream_processors_per_gpu": { "type": ["integer", "string"], "description": "Total stream processors (CUs × 64)" },
+            "wavefront_size":       { "type": "integer", "const": 64, "description": "Wavefront width in work-items — fixed at 64 for all AMD GPU architectures" },
+            "max_clock_speed":      { "type": "string", "description": "Maximum engine (shader) clock in MHz or GHz" },
+            "form_factor":          { "type": "string", "description": "Physical packaging, e.g. OAM, PCIe Gen5 x16" },
+            "process_node":         { "type": "string", "description": "Manufacturing process node, e.g. TSMC N5, TSMC N6" }
           }
         },
 
         "cu_execution_model": {
           "type": "object",
+          "description": "Per-CU resource limits defining occupancy and parallelism (AMD equivalent of NVIDIA SM execution model).",
           "properties": {
-            "lds_per_cu":            { "type": "string", "description": "e.g. '64 KB LDS'" },
-            "max_wavefronts_per_cu": { "type": "integer" },
-            "max_workitems_per_cu":  { "type": "integer", "const": 2048 },
-            "simd_units_per_cu":     { "type": "integer", "const": 4 },
-            "vgpr_per_cu":           { "type": "string" },
-            "sgpr_per_cu":           { "type": "string" }
+            "lds_per_cu":            { "type": "string", "description": "Local Data Share (LDS) per CU — AMD equivalent of NVIDIA shared memory, e.g. 64 KB" },
+            "max_wavefronts_per_cu": { "type": "integer", "description": "Maximum concurrent wavefronts per CU (AMD equivalent of NVIDIA warps per SM)" },
+            "max_workitems_per_cu":  { "type": "integer", "const": 2048, "description": "Maximum concurrent work-items per CU (wavefronts × 64) — fixed at 2048" },
+            "simd_units_per_cu":     { "type": "integer", "const": 4, "description": "SIMD32 execution units per CU — fixed at 4 for CDNA/RDNA" },
+            "vgpr_per_cu":           { "type": "string", "description": "Vector General Purpose Register file size per CU, e.g. 512 × 32 × 4 = 65536 VGPRs" },
+            "sgpr_per_cu":           { "type": "string", "description": "Scalar General Purpose Register file size per CU" }
           }
         },
 
@@ -373,45 +378,47 @@
           "type": "object",
           "required": ["architecture", "total_capacity", "memory_type", "ecc_support"],
           "properties": {
-            "architecture":    { "type": "string" },
-            "total_capacity":  { "type": "string" },
-            "memory_type":     { "type": "string" },
-            "ecc_support":     { "type": "boolean" },
-            "addressing_mode": { "type": "string" },
+            "architecture":    { "type": "string", "description": "Memory subsystem architecture, e.g. HBM3, HBM3E" },
+            "total_capacity":  { "type": "string", "description": "Total HBM capacity across all stacks, e.g. 192 GB" },
+            "memory_type":     { "type": "string", "description": "DRAM technology, e.g. HBM3, HBM3E" },
+            "ecc_support":     { "type": "boolean", "description": "Hardware ECC support on HBM" },
+            "addressing_mode": { "type": "string", "description": "Virtual address space mode, e.g. 64-bit flat" },
             "gpu_memory": {
               "type": "object",
               "required": ["capacity", "memory_type"],
+              "description": "On-package HBM stacks attached to the GPU die(s).",
               "properties": {
-                "capacity":        { "type": "string" },
-                "memory_type":     { "type": "string" },
-                "infinity_cache":  { "type": "string" },
-                "bandwidth":       { "type": "string" },
-                "bus_width":       { "type": "string" }
+                "capacity":        { "type": "string", "description": "Total HBM capacity, e.g. 192 GB" },
+                "memory_type":     { "type": "string", "description": "HBM generation, e.g. HBM3E" },
+                "infinity_cache":  { "type": "string", "description": "AMD Infinity Cache size — last-level GPU cache acting as HBM bandwidth amplifier" },
+                "bandwidth":       { "type": "string", "description": "Peak aggregate HBM bandwidth, e.g. 5.3 TB/s" },
+                "bus_width":       { "type": "string", "description": "Total HBM bus width in bits across all stacks, e.g. 8192-bit" }
               }
             },
-            "memory_hierarchy": { "type": "object" }
+            "memory_hierarchy": { "type": "object", "description": "L1/L2/HBM cache hierarchy details." }
           }
         },
 
         "compute_performance": {
           "type": "object",
           "required": ["matrix_core_generation"],
+          "description": "Peak throughput in TFLOPS. MFMA = Matrix Fused Multiply-Add (AMD equivalent of NVIDIA Tensor Cores). Dense = no sparsity, Sparse = 2× via structured sparsity.",
           "properties": {
-            "fp64_vector":              { "type": ["string", "number"] },
-            "fp64_mfma_matrix":         { "type": ["string", "number"] },
-            "fp32_vector":              { "type": ["string", "number"] },
-            "fp32_mfma_matrix":         { "type": ["string", "number"] },
-            "fp16_bf16_mfma_dense":     { "type": ["string", "number"] },
-            "fp16_bf16_mfma_sparse":    { "type": ["string", "number"] },
-            "fp8_mfma_dense":           { "type": ["string", "number"] },
-            "fp8_mfma_sparse":          { "type": ["string", "number"] },
-            "fp6_mfma_dense":           { "type": ["string", "number"] },
-            "fp4_mfma_dense":           { "type": ["string", "number"] },
-            "int8_mfma_dense":          { "type": ["string", "number"] },
-            "fp8_support":              { "type": "boolean" },
-            "fp6_support":              { "type": "boolean" },
-            "fp4_support":              { "type": "boolean" },
-            "matrix_core_generation":   { "type": "string", "description": "e.g. '4th Gen CDNA Matrix Cores (MFMA)'" }
+            "fp64_vector":              { "type": ["string", "number"], "description": "FP64 vector (VALU) TFLOPS" },
+            "fp64_mfma_matrix":         { "type": ["string", "number"], "description": "FP64 MFMA matrix TFLOPS" },
+            "fp32_vector":              { "type": ["string", "number"], "description": "FP32 vector TFLOPS" },
+            "fp32_mfma_matrix":         { "type": ["string", "number"], "description": "FP32 MFMA matrix TFLOPS" },
+            "fp16_bf16_mfma_dense":     { "type": ["string", "number"], "description": "FP16 / BF16 MFMA dense TFLOPS" },
+            "fp16_bf16_mfma_sparse":    { "type": ["string", "number"], "description": "FP16 / BF16 MFMA sparse TFLOPS (2× dense via structured sparsity)" },
+            "fp8_mfma_dense":           { "type": ["string", "number"], "description": "FP8 MFMA dense TOPS" },
+            "fp8_mfma_sparse":          { "type": ["string", "number"], "description": "FP8 MFMA sparse TOPS" },
+            "fp6_mfma_dense":           { "type": ["string", "number"], "description": "FP6 MFMA dense TOPS (CDNA 4+)" },
+            "fp4_mfma_dense":           { "type": ["string", "number"], "description": "FP4 MFMA dense TOPS (CDNA 4+)" },
+            "int8_mfma_dense":          { "type": ["string", "number"], "description": "INT8 MFMA dense TOPS" },
+            "fp8_support":              { "type": "boolean", "description": "FP8 MFMA support (CDNA 3+)" },
+            "fp6_support":              { "type": "boolean", "description": "FP6 MFMA support (CDNA 4+)" },
+            "fp4_support":              { "type": "boolean", "description": "FP4 MFMA support (CDNA 4+)" },
+            "matrix_core_generation":   { "type": "string", "description": "MFMA generation label, e.g. 4th Gen CDNA Matrix Cores — AMD equivalent of NVIDIA Tensor Core generation" }
           }
         },
 
@@ -419,27 +426,28 @@
           "type": "object",
           "required": ["form_factor", "cooling"],
           "properties": {
-            "socket_tdp":   { "type": "string" },
-            "tdp_per_gpu":  { "type": "string" },
-            "form_factor":  { "type": "string" },
-            "cooling":      { "type": "string" }
+            "socket_tdp":   { "type": "string", "description": "Total socket TDP for multi-die packages in watts, e.g. 750W" },
+            "tdp_per_gpu":  { "type": "string", "description": "Per GPU-die TDP in watts" },
+            "form_factor":  { "type": "string", "description": "Physical packaging, e.g. OAM, PCIe" },
+            "cooling":      { "type": "string", "description": "Cooling method, e.g. Passive (liquid-cooled by system), Active" }
           }
         },
 
-        "advanced_features": { "type": "object" },
-        "networking_and_connectivity": { "type": "object" },
+        "advanced_features": { "type": "object", "description": "Infinity Fabric, XGMI links, confidential compute, and other platform capabilities." },
+        "networking_and_connectivity": { "type": "object", "description": "Network and interconnect specs for MI300 nodes (InfiniBand, Ethernet)." },
         "software_and_ecosystem": {
           "type": "object",
           "required": ["rocm_version", "programming_model"],
+          "description": "Minimum software stack versions required or recommended for this GPU.",
           "properties": {
-            "rocm_version":       { "type": "string" },
-            "programming_model":  { "type": "string", "const": "HIP C++" },
-            "math_libraries":     { "type": "string" },
-            "dnn_library":        { "type": "string", "description": "Should be MIOpen" },
-            "inference_runtime":  { "type": "string" },
-            "collective_comms":   { "type": "string", "description": "Should be RCCL" },
-            "pytorch":            { "type": "string" },
-            "tensorflow":         { "type": "string" }
+            "rocm_version":       { "type": "string", "description": "Minimum ROCm version (AMD equivalent of CUDA Toolkit), e.g. 6.0" },
+            "programming_model":  { "type": "string", "const": "HIP C++", "description": "GPU programming model — HIP C++ is AMD's CUDA-compatible API" },
+            "math_libraries":     { "type": "string", "description": "Recommended math libraries, e.g. rocBLAS, hipBLAS" },
+            "dnn_library":        { "type": "string", "description": "DNN library — MIOpen is AMD's equivalent of cuDNN" },
+            "inference_runtime":  { "type": "string", "description": "Recommended inference runtime, e.g. MIGraphX, ONNX Runtime" },
+            "collective_comms":   { "type": "string", "description": "Collective communications library — RCCL is AMD's equivalent of NCCL" },
+            "pytorch":            { "type": "string", "description": "Recommended PyTorch version" },
+            "tensorflow":         { "type": "string", "description": "Recommended TensorFlow version" }
           }
         }
       }
