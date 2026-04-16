@@ -242,7 +242,7 @@ cpus:
     memory_bw_gbs: 205
     memory_type: DDR4-3200
     peak_fp32_tflops: 2.5
-    tdp_w: null
+    tdp_w: 280
     spec_file: specs/amd/cpus/epyc.yaml
 
   - name: EPYC 9654
@@ -256,7 +256,7 @@ cpus:
     memory_bw_gbs: 461
     memory_type: DDR5-4800
     peak_fp32_tflops: 3.7
-    tdp_w: null
+    tdp_w: 360
     spec_file: specs/amd/cpus/epyc.yaml
 
   - name: EPYC 9965
@@ -270,7 +270,7 @@ cpus:
     memory_bw_gbs: 576
     memory_type: DDR5-6000
     peak_fp32_tflops: 7.4
-    tdp_w: null
+    tdp_w: 500
     spec_file: specs/amd/cpus/epyc.yaml
 
   - name: Xeon 8380
@@ -296,7 +296,7 @@ cpus:
     memory_bw_gbs: 307
     memory_type: DDR5-4800
     peak_fp32_tflops: 4.8
-    tdp_w: null
+    tdp_w: 350
     spec_file: specs/intel/cpus/xeon.yaml
 
   - name: Xeon 8592+
@@ -309,7 +309,7 @@ cpus:
     memory_bw_gbs: 358
     memory_type: DDR5-5600
     peak_fp32_tflops: 5.1
-    tdp_w: null
+    tdp_w: 350
     spec_file: specs/intel/cpus/xeon.yaml
 
   - name: Xeon 8570
@@ -322,7 +322,7 @@ cpus:
     memory_bw_gbs: 358
     memory_type: DDR5-5600
     peak_fp32_tflops: 3.8
-    tdp_w: null
+    tdp_w: 350
     # Notable deployments: NVIDIA DGX B200 (2x per system, host CPUs)
     spec_file: specs/intel/cpus/xeon.yaml
 
@@ -336,7 +336,7 @@ cpus:
     memory_bw_gbs: 409
     memory_type: DDR5-6400
     peak_fp32_tflops: 10.0
-    tdp_w: null
+    tdp_w: 500
     spec_file: specs/intel/cpus/xeon.yaml
 
   - name: AGI SP113012

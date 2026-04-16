@@ -22,7 +22,7 @@ specs/
   intel/cpus/
     xeon.yaml              # Xeon 8380 (Ice Lake), 8490H (Sapphire Rapids), 8570/8592+ (Emerald Rapids), 6980P (Granite Rapids)
   arm/cpus/
-    agi.yaml               # AGI SP113012, SP113012S, SP113012A (Phoenix / Neoverse V3)
+    agi.yaml               # AGI SP113012, SP113012S, SP113012A (Neoverse V3)
 terminology/
   amd-nvidia.md            # AMD ↔ NVIDIA concept mapping table
 comparisons/               # Pre-written side-by-side chip comparisons
@@ -59,29 +59,29 @@ package.json               # Node dependencies (ajv, ajv-formats, js-yaml)
 
 ### AMD CPUs
 
-| Name | Generation | Cores | Memory BW |
-|------|-----------|-------|----------|
-| EPYC 7763 | Milan (Zen 3) | 64 | 205 GB/s |
-| EPYC 9654 | Genoa (Zen 4) | 96 | 461 GB/s |
-| EPYC 9965 | Turin (Zen 5) | 192 | 576 GB/s |
+| Name | Generation | Cores | Memory BW | TDP |
+|------|-----------|-------|----------|-----|
+| EPYC 7763 | Milan (Zen 3) | 64 | 205 GB/s | 280 W |
+| EPYC 9654 | Genoa (Zen 4) | 96 | 461 GB/s | 360 W |
+| EPYC 9965 | Turin (Zen 5) | 192 | 576 GB/s | 500 W |
 
 ### Intel CPUs
 
-| Name | Generation | Cores | Memory BW | Notes |
-|------|-----------|-------|----------|-------|
-| Xeon 8380 | Ice Lake | 40 | 205 GB/s | |
-| Xeon 8490H | Sapphire Rapids | 60 | 307 GB/s | |
-| Xeon 8570 | Emerald Rapids | 56 | 358 GB/s | Used in NVIDIA DGX B200 (2× per system) |
-| Xeon 8592+ | Emerald Rapids | 64 | 358 GB/s | |
-| Xeon 6980P | Granite Rapids | 128 | 409 GB/s | |
+| Name | Generation | Cores | Memory BW | TDP | Notes |
+|------|-----------|-------|----------|-----|-------|
+| Xeon 8380 | Ice Lake | 40 | 205 GB/s | 270 W | |
+| Xeon 8490H | Sapphire Rapids | 60 | 307 GB/s | 350 W | |
+| Xeon 8570 | Emerald Rapids | 56 | 358 GB/s | 350 W | Used in NVIDIA DGX B200 (2× per system) |
+| Xeon 8592+ | Emerald Rapids | 64 | 358 GB/s | 350 W | |
+| Xeon 6980P | Granite Rapids | 128 | 409 GB/s | 500 W | |
 
 ### ARM CPUs
 
 | Name | SKU | Generation | Cores | Memory BW | TDP |
 |------|-----|-----------|-------|----------|-----|
-| AGI SP113012 | SP113012 | Phoenix (Neoverse V3) | 136 | 845 GB/s | 300 W |
-| AGI SP113012S | SP113012S | Phoenix (Neoverse V3) | 128 | 845 GB/s | 300 W |
-| AGI SP113012A | SP113012A | Phoenix (Neoverse V3) | 64 | 845 GB/s | 300 W |
+| AGI SP113012 | SP113012 | Neoverse V3 | 136 | 845 GB/s | 300 W |
+| AGI SP113012S | SP113012S | Neoverse V3 | 128 | 845 GB/s | 300 W |
+| AGI SP113012A | SP113012A | Neoverse V3 | 64 | 845 GB/s | 300 W |
 
 ## Agent Skills
 
