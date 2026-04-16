@@ -23,7 +23,7 @@ cpus:
       total_threads: 128
       base_frequency_ghz: 2.45
       max_turbo_frequency_ghz: 3.5
-      cache_mb: 256
+      llc_mb: 256
       tdp_w: 280
       ctdp_range: "225-280W"
     memory_specifications:
@@ -34,6 +34,7 @@ cpus:
     expansion_options:
       pcie_revision: "4.0"
       max_pcie_lanes: 128
+      pci_max_bw_gbs: 256  # derived: 128 lanes × 2 GB/s per lane (PCIe 4.0)
     package_specifications:
       socket: SP3
       socket_count: "1P / 2P"
@@ -68,7 +69,7 @@ cpus:
       base_frequency_ghz: 2.4
       max_turbo_frequency_ghz: 3.7
       all_core_turbo_frequency_ghz: 3.55
-      cache_mb: 384
+      llc_mb: 384
       tdp_w: 360
       ctdp_range: "320-400W"
     memory_specifications:
@@ -79,6 +80,7 @@ cpus:
     expansion_options:
       pcie_revision: "5.0"
       max_pcie_lanes: 128
+      pci_max_bw_gbs: 512  # derived: 128 lanes × 4 GB/s per lane (PCIe 5.0)
     package_specifications:
       socket: SP5
       socket_count: "1P / 2P"
@@ -114,7 +116,7 @@ cpus:
       base_frequency_ghz: 2.25
       max_turbo_frequency_ghz: 3.7
       all_core_turbo_frequency_ghz: 3.35
-      cache_mb: 384
+      llc_mb: 384
       tdp_w: 500
       ctdp_range: "450-500W"
     memory_specifications:
@@ -125,6 +127,7 @@ cpus:
     expansion_options:
       pcie_revision: "5.0"
       max_pcie_lanes: 128
+      pci_max_bw_gbs: 512  # derived: 128 lanes × 4 GB/s per lane (PCIe 5.0)
     package_specifications:
       socket: SP5
       socket_count: "1P / 2P"

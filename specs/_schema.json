@@ -63,7 +63,7 @@
       "properties": {
         "name":       { "type": "string", "description": "Short identifier, e.g. EPYC 7763, Xeon 8380" },
         "full_name":  { "type": "string", "description": "Full marketing name, e.g. AMD EPYC 7763" },
-        "brand":      { "type": "string", "enum": ["AMD", "Intel"] },
+        "brand":      { "type": "string", "enum": ["AMD", "Intel", "ARM"] },
         "references": { "type": "array", "items": { "$ref": "#/$defs/reference" }, "minItems": 1 },
 
         "essentials": {
@@ -86,7 +86,7 @@
             "base_frequency_ghz":           { "type": "number", "description": "Base (guaranteed) clock frequency in GHz" },
             "max_turbo_frequency_ghz":      { "type": "number", "description": "Single-core max boost frequency in GHz" },
             "all_core_turbo_frequency_ghz": { "type": "number", "description": "All-core sustained boost frequency in GHz" },
-            "cache_mb":                     { "type": ["number", "string"], "description": "Last-level cache size in MB (L3 for AMD, LLC for Intel)" },
+            "llc_mb":                     { "type": ["number", "string"], "description": "Last-level cache size in MB (L3 for AMD, LLC for Intel)" },
             "upi_speed_gts":                { "type": "number", "description": "Intel UPI inter-socket link speed in GT/s" },
             "max_upi_links":                { "type": "integer", "description": "Number of Intel UPI links for multi-socket configuration" },
             "tdp_w":                        { "type": "number", "description": "Default Thermal Design Power in watts" },
@@ -113,7 +113,8 @@
           "properties": {
             "scalability":    { "type": "string", "description": "Multi-socket support, e.g. 1P / 2P, S8S (8-socket)" },
             "pcie_revision":  { "type": "string", "description": "PCIe generation supported, e.g. 4.0, 5.0" },
-            "max_pcie_lanes": { "type": "integer", "description": "Total PCIe lanes available per socket" }
+            "max_pcie_lanes": { "type": "integer", "description": "Total PCIe lanes available per socket" },
+            "pci_max_bw_gbs": { "type": "number", "description": "Peak unidirectional PCIe bandwidth in GB/s (derived: max_pcie_lanes × per-lane BW — 2 GB/s for PCIe 4.0, 4 GB/s for PCIe 5.0, 8 GB/s for PCIe 6.0)" }
           }
         },
 
@@ -134,8 +135,8 @@
           "properties": {
             "instruction_set_extensions":     { "type": "string", "description": "Supported ISA extensions, e.g. SSE4.2, AVX2, AVX-512, AMX" },
             "avx512_fma_units":               { "type": "integer", "description": "AVX-512 FMA units per core (1 = 256-bit fused pair, 2 = native 512-bit)" },
-            "best_simd":                      { "type": "string", "enum": ["AVX2", "AVX-512"], "description": "Widest SIMD instruction set supported" },
-            "simd_width_bits":                { "type": "integer", "enum": [256, 512], "description": "Width of the widest SIMD register in bits" },
+            "best_simd":                      { "type": "string", "enum": ["AVX2", "AVX-512", "SVE2"], "description": "Widest SIMD instruction set supported" },
+            "simd_width_bits":                { "type": "integer", "enum": [128, 256, 512], "description": "Width of the widest SIMD register in bits" },
             "avx_fp_units":                   { "type": "integer", "description": "Total FP32 execution lanes across all cores (derived)" },
             "peak_fp32_tflops":               { "type": "number", "description": "Peak single-socket FP32 throughput in TFLOPS (derived)" },
             "peak_fp32_clock_ghz":            { "type": "number", "description": "Clock speed used for peak FP32 calculation in GHz" },
@@ -212,7 +213,27 @@
         "simd_width_bits":    { "type": "integer", "enum": [256, 512] },
         "avx_fp_units":       { "type": "integer", "description": "Number of FP32 lanes across all AVX units" },
         "peak_fp32_tflops":   { "type": "number", "description": "Peak single-socket FP32 TFLOPS" },
-        "peak_fp32_clock_ghz": { "type": "number", "description": "Clock speed at which peak FP32 is measured" }
+        "peak_fp32_clock_ghz": { "type": "number", "description": "Clock speed at which peak FP32 is measured" },
+
+        "research": {
+          "type": "object",
+          "description": "Links to research entries that used this CPU (e.g. as host CPU in a benchmark system).",
+          "properties": {
+            "accelerated_databases": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": ["name"],
+                "properties": {
+                  "name":   { "type": "string", "description": "Database name, matching research/accelerated_databases/<name>.yaml" },
+                  "system": { "type": "string", "description": "Full system description as used in the benchmark" }
+                },
+                "additionalProperties": false
+              }
+            }
+          },
+          "additionalProperties": false
+        }
       },
       "additionalProperties": false
     },
@@ -476,7 +497,7 @@
             "properties": {
               "name":             { "type": "string" },
               "full_name":        { "type": "string" },
-              "vendor":           { "type": "string", "enum": ["AMD", "Intel"] },
+              "vendor":           { "type": "string", "enum": ["AMD", "Intel", "ARM"] },
               "family":           { "type": "string" },
               "generation":       { "type": "string" },
               "microarch":        { "type": "string" },
@@ -544,6 +565,19 @@
     {
       "title": "Intel CPU spec file",
       "description": "Top-level structure of specs/intel/cpus/*.yaml",
+      "type": "object",
+      "required": ["cpus"],
+      "properties": {
+        "cpus": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/cpu_entry" }
+        }
+      },
+      "additionalProperties": false
+    },
+    {
+      "title": "ARM CPU spec file",
+      "description": "Top-level structure of specs/arm/cpus/*.yaml",
       "type": "object",
       "required": ["cpus"],
       "properties": {

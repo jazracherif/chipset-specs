@@ -1,0 +1,52 @@
+name: SiriusDB
+full_name: "Rethinking Analytical Processing in the GPU Era (Sirius)"
+domain: accelerated_databases
+type: academic
+paper: https://arxiv.org/abs/2508.04701
+authors:
+  - Bobbi Yogatama
+  - Yifei Yang
+  - Kevin Kristensen
+  - Devesh Sarda
+  - Abigale Kim
+  - Adrian Cockcroft
+  - Yu Teng
+  - Joshua Patterson
+  - Gregory Kimball
+  - Wes McKinney
+  - Weiwei Gong
+  - Xiangyao Yu
+published: "2025-08-06"
+venue: "CIDR 2026 (arXiv:2508.04701 [cs.DB])"
+
+benchmark:
+  suites: ["TPC-H (SF=100)", "ClickBench"]
+  notes: >
+    Single-node TPC-H SF=100 compared to DuckDB and ClickHouse at cost parity ($1.5/h).
+    ClickBench compared against ClickHouse leaderboard (Umbra, DuckDB).
+    Distributed TPC-H SF=100 Q1/Q3/Q6 on 4-node A100 cluster vs Doris and ClickHouse.
+
+systems:
+  - label: single-node (GH200)
+    nodes: 1
+    gpu: "NVIDIA GH200 (Hopper H200 + Grace CPU)"   # spec: specs/nvidia/gpus/hopper.yaml (GH200)
+    gpu_memory_gb: 92                                 # HBM3e on GPU die
+    cpu: "NVIDIA Grace (72-core Arm Neoverse V2)"    # integrated in superchip; NOT in chipset-spec repo
+    cpu_memory_gb: 480                               # LPDDR5X unified with GPU via NVLink-C2C 900 GB/s
+    rental_cost: "$1.5/h on Lambda Labs"
+
+  - label: distributed (4× A100 cluster)
+    nodes: 4
+    gpu: "NVIDIA A100 (PCIe 40 GB HBM2e)"             # spec: specs/nvidia/gpus/ampere.yaml (A100)
+    # NOTE: paper states "40 GB of HBM3" — likely a copy-edit error; A100 uses HBM2e
+    gpu_memory_gb: 40                                  # per node
+    cpu: "Intel Xeon Gold 6526Y (64 cores)"            # NOT in chipset-specs repo (Granite Rapids)
+    network: "InfiniBand 4x NDR (400 Gbps per node)"
+    pcie_generation: "PCIe 4 (25.6 GB/s bidirectional GPU↔CPU)"
+
+results:
+  - "Single-node GH200: 8.3× better cost efficiency vs DuckDB on TPC-H SF=100 at same $1.5/h rental"
+  - "Single-node GH200: 7.4× better cost efficiency vs ClickHouse on ClickBench"
+  - "Single-node GH200: 11% faster than Umbra on ClickBench leaderboard while running on 6× cheaper hardware"
+  - "Distributed (4× A100): up to 12.5× speedup vs Apache Doris on TPC-H Q1"
+  - "Distributed (4× A100): 4×, 37.5×, 3.5× speedup vs ClickHouse on Q1, Q3, Q6"

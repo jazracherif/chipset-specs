@@ -139,6 +139,21 @@ for (const file of fs.readdirSync(intelCpuDir).filter((f) => f.endsWith(".yaml")
   }
 }
 
+// ── Validate ARM CPU specs ────────────────────────────────────────────────────
+
+console.log("Validating ARM CPU specs …");
+const armCpuDir = path.join(SPECS_ROOT, "arm", "cpus");
+if (fs.existsSync(armCpuDir)) {
+  for (const file of fs.readdirSync(armCpuDir).filter((f) => f.endsWith(".yaml"))) {
+    const rel = `arm/cpus/${file}`;
+    const doc = loadYaml(path.join(armCpuDir, file));
+    if (!doc?.cpus) { console.warn(`  skip ${rel} — no 'cpus' key`); continue; }
+    for (const entry of doc.cpus) {
+      check(validateCpuEntry, entry, rel, entry.name);
+    }
+  }
+}
+
 // ── Summary ───────────────────────────────────────────────────────────────────
 
 console.log(`\n${checked} entries checked.`);

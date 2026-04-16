@@ -1,0 +1,30 @@
+name: Crystal
+full_name: "A Study of the Fundamental Performance Characteristics of GPUs and CPUs for Database Analytics"
+domain: accelerated_databases
+type: academic
+paper: https://dl.acm.org/doi/epdf/10.1145/3318464.3380595
+authors:
+  - Anil Shanbhag
+  - Samuel Madden
+  - Xiangyao Yu
+published: "2020"
+venue: "ACM SIGMOD 2020"
+institution: MIT
+
+benchmark:
+  suites: ["Star Schema Benchmark (SSB)"]
+  notes: >
+    Evaluates full SQL queries with minimal materialization on GPU.
+    Analyzes speedup relative to the memory bandwidth ratio (~16× on modern hardware).
+
+system:
+  hardware_extracted: false
+  reason: "paper behind ACM paywall"
+  gpu_target: "NVIDIA (CUDA)"
+  notes: "Published 2020 at MIT — likely V100 or RTX 2080 Ti based on contemporaneous MIT GPU research"
+
+results:
+  - "GPU achieves 25× speedup over CPU on full SSB benchmark"
+  - "Full query speedup exceeds the raw memory bandwidth ratio (~16×) due to CPU vectorization limitations"
+  - "Selection and projection approach bandwidth-ratio speedup; joins achieve less due to hardware differences"
+  - "Model-based analysis explains when and why GPU vs CPU speedups deviate from bandwidth ratio"

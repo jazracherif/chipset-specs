@@ -1,0 +1,34 @@
+name: TQP
+full_name: "Query Processing on Tensor Computation Runtimes"
+domain: accelerated_databases
+type: academic
+paper: https://arxiv.org/abs/2203.01877
+authors:
+  - Dong He
+  - Supun Nakandala
+  - Dalitso Banda
+  - Rathijit Sen
+  - Karla Saur
+  - Kwanghyun Park
+  - Carlo Curino
+  - Jesús Camacho-Rodríguez
+  - et al. (Microsoft Research)
+published: "2022-03-03"
+venue: "PVLDB 2022 (VLDB Endowment 15:11, 2811–2825)"
+
+benchmark:
+  suites: ["TPC-H", "TPC-DS", "mixed ML+SQL workloads"]
+  notes: >
+    SQL queries compiled into tensor programs and executed on PyTorch (TCR backend).
+    Supports both GPU and CPU execution via hardware-portable tensor interface.
+
+system:
+  hardware_extracted: false
+  reason: "arXiv PDF failed to extract; PVLDB behind paywall"
+  gpu_target: "NVIDIA (CUDA), AMD (ROCm)"
+  notes: "Microsoft Research 2022 — likely V100 or A100; hardware-portable (runs on CPU and GPU via PyTorch)"
+
+results:
+  - "Up to 10× improvement in query execution time over specialized CPU- and GPU-only systems"
+  - "Up to 9× speedup over CPU baselines for queries mixing ML predictions and SQL"
+  - "Hardware-portable: same SQL-to-tensor code runs on CPU and GPU via PyTorch"

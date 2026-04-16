@@ -1,0 +1,26 @@
+name: Themis
+full_name: "Themis: GPU-Efficient Load-Balanced Query Processing"
+domain: accelerated_databases
+type: academic
+paper: https://dl.acm.org/doi/10.14778/3705829.3705856
+authors:
+  - (authors — PVLDB 2024)
+published: "2024"
+venue: "PVLDB 2024"
+
+benchmark:
+  suites: ["TPC-H", "TPC-DS (likely)"]
+  notes: >
+    Focuses on eliminating intra-warp and inter-warp thread divergence during query processing
+    via warp-level work-stealing and tuple redistribution.
+
+system:
+  hardware_extracted: false
+  reason: "paper behind ACM/PVLDB paywall (HTTP 403)"
+  gpu_target: "NVIDIA (CUDA)"
+  notes: "Published 2024 PVLDB — likely A100 or H100 based on era"
+
+results:
+  - "Eliminates inter-warp and intra-warp idle GPU cores"
+  - "SIMT efficiency through dynamic load balancing via warp-level work-stealing"
+  - "Fine-grained tuple redistribution ensures all active warps are utilized"

@@ -137,6 +137,15 @@ gpus:
       pytorch: "1.7+"
       tensorflow: "2.4+"
 
+    research:
+      accelerated_databases:
+        - name: SiriusDB
+          # A100 (40 GB, PCIe) used as the GPU in each of the 4 distributed nodes
+          system: "4-node cluster, 1× A100 (40 GB) per node"  # full details: research/accelerated_databases/siriusdb.yaml
+        - name: Maximus
+          # A100 (40 GB) on GCP a2-highgpu-1g VM; PCIe 3.0 (12.35 GB/s CPU↔GPU bandwidth)
+          system: "GCP a2-highgpu-1g VM, 1× A100 (40 GB), PCIe 3.0"  # full details: research/accelerated_databases/maximus.yaml
+
 
   DGXA100:
     name: NVIDIA DGX A100
@@ -237,4 +246,9 @@ gpus:
       nccl: "2.8+"
       pytorch: "1.7+"
       tensorflow: "2.4+"
+
+    research:
+      accelerated_databases:
+        - name: Theseus
+          system: "GPU: 2× DGX A100 640GB nodes, host CPU: Intel Xeon Platinum 8380"  # full details: research/accelerated_databases/theseus.yaml
 

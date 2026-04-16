@@ -1,0 +1,25 @@
+name: Virginian
+full_name: "Efficient Data Management for GPU Databases"
+domain: accelerated_databases
+type: academic
+paper: https://pbbakkum.com/virginian/paper.pdf
+authors:
+  - Peter Bakkum
+  - Kevin Skadron
+published: "2012"
+venue: "Research paper 2012"
+institution: University of Virginia
+
+benchmark:
+  suites: ["Custom relational operator suite"]
+  notes: "One of the first systems to comprehensively evaluate GPU database performance."
+
+system:
+  hardware_extracted: false
+  reason: "paper link returned HTTP Forbidden"
+  gpu_target: "NVIDIA (CUDA)"
+  notes: "Published 2012 — likely GeForce GTX 480/580 or Tesla C2070 based on era (Fermi architecture)"
+
+results:
+  - "Early GPU database prototype with columnar storage and SIMD-like GPU execution"
+  - "Comprehensive evaluation of GPU database performance as one of the first systems to do so"

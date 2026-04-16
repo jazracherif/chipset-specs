@@ -1,0 +1,25 @@
+name: GHive
+full_name: "GHive: Accelerating Analytical Query Processing in Apache Hive via CPU-GPU Heterogeneous Computing"
+domain: accelerated_databases
+type: academic
+paper: https://dl.acm.org/doi/10.1145/3542929.3563503
+authors:
+  - (authors — ACM 2022)
+published: "2022"
+venue: "ACM 2022"
+
+benchmark:
+  suites: ["HiveQL / TPC-H on Hadoop/HDFS"]
+  notes: >
+    Replaces Java-based Hive execution with GPU-optimized heterogeneous operator
+    primitives for joins and aggregations in Apache Hive distributed SQL.
+
+system:
+  hardware_extracted: false
+  reason: "paper behind ACM paywall (HTTP 403)"
+  gpu_target: "NVIDIA (CUDA)"
+  notes: "Published 2022 — likely V100 or A100 on a Hadoop/HDFS cluster"
+
+results:
+  - "GPU-accelerated joins and aggregations as drop-in replacement for Hive's Java execution"
+  - "CPU-GPU heterogeneous computing for distributed SQL-on-Hadoop workloads"

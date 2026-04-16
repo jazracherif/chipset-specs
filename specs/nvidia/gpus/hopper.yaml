@@ -294,3 +294,8 @@ gpus:
       nccl: "2.17+ (NVLink-C2C topology-aware)"
       pytorch: "2.0+"
       tensorflow: "2.12+"
+
+    research:
+      accelerated_databases:
+        - name: SiriusDB
+          system: "1× GH200 superchip (single-node)"  # full details: research/accelerated_databases/siriusdb.yaml

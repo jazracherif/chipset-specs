@@ -1,0 +1,27 @@
+name: Ocelot_HyPE
+full_name: "Ocelot/HyPE: Optimized Data Processing on Heterogeneous Hardware"
+domain: accelerated_databases
+type: academic
+paper: https://www.vldb.org/pvldb/vol7/p1609-bress.pdf
+authors:
+  - (TU Berlin)
+published: "2014"
+venue: "VLDB 2014"
+institution: TU Berlin
+
+benchmark:
+  suites: ["TPC-H (subset)"]
+  notes: >
+    Evaluates cross-hardware operator placement with a learning query optimizer.
+    Supports NVIDIA CUDA and OpenCL for cross-vendor portability.
+
+system:
+  hardware_extracted: false
+  reason: "PVLDB PDF returned HTTP 429 (rate-limited); hardware section not yet extracted"
+  gpu_target: "NVIDIA (CUDA), OpenCL (cross-vendor)"
+  notes: "Published 2014 — likely GeForce GTX 700 series or Tesla K40 based on era and TU Berlin equipment"
+
+results:
+  - "Addresses optimal operator placement, cross-architecture runtime cost estimation"
+  - "Adaptive DBMS tailored towards heterogeneous hardware environments"
+  - "OpenCL portability layer enables cross-vendor GPU support"

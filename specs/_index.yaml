@@ -4,7 +4,7 @@
 # Load this file first for filter/list queries; load the spec_file only for deep-dive queries.
 
 schema_version: 1
-last_updated: "2026-04-08"
+last_updated: "2026-04-16"
 
 gpus:
 
@@ -338,3 +338,42 @@ cpus:
     peak_fp32_tflops: 10.0
     tdp_w: null
     spec_file: specs/intel/cpus/xeon.yaml
+
+  - name: AGI SP113012
+    full_name: Arm AGI CPU SP113012
+    vendor: ARM
+    family: AGI CPU
+    generation: Phoenix
+    year: 2025
+    max_cores: 136
+    memory_bw_gbs: 845                          # derived: 12 channels × 70.4 GB/s (DDR5-8800 per channel)
+    memory_type: DDR5-8800
+    peak_fp32_tflops: 7.6                       # derived: 136 cores × 2 SVE2 units × 4 FP32 × 2 (FMA) × 3.5 GHz / 1000
+    tdp_w: 300
+    spec_file: specs/arm/cpus/agi.yaml
+
+  - name: AGI SP113012S
+    full_name: Arm AGI CPU SP113012S
+    vendor: ARM
+    family: AGI CPU
+    generation: Phoenix
+    year: 2025
+    max_cores: 128
+    memory_bw_gbs: 845                          # derived: 12 channels × 70.4 GB/s (DDR5-8800 per channel)
+    memory_type: DDR5-8800
+    peak_fp32_tflops: 7.2                       # derived: 128 cores × 2 SVE2 units × 4 FP32 × 2 (FMA) × 3.5 GHz / 1000
+    tdp_w: 300
+    spec_file: specs/arm/cpus/agi.yaml
+
+  - name: AGI SP113012A
+    full_name: Arm AGI CPU SP113012A
+    vendor: ARM
+    family: AGI CPU
+    generation: Phoenix
+    year: 2025
+    max_cores: 64
+    memory_bw_gbs: 845                          # derived: 12 channels × 70.4 GB/s (DDR5-8800 per channel)
+    memory_type: DDR5-8800
+    peak_fp32_tflops: 3.8                       # derived: 64 cores × 2 SVE2 units × 4 FP32 × 2 (FMA) × 3.7 GHz / 1000
+    tdp_w: 300
+    spec_file: specs/arm/cpus/agi.yaml

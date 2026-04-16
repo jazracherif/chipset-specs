@@ -1,0 +1,30 @@
+name: Wukong_G
+full_name: "Wukong+G: Fast and Concurrent RDF Query Processing using RDMA and GPU"
+domain: accelerated_databases
+type: academic
+paper: https://ieeexplore.ieee.org/document/9582823
+authors:
+  - (Shanghai Jiao Tong University — IPADS lab)
+published: "2021"
+venue: "IEEE TPDS 2021"
+institution: Shanghai Jiao Tong University
+
+benchmark:
+  suites: ["SPARQL queries on LUBM, BSBM benchmarks (RDF)"]
+  notes: >
+    Distributed RDF query processing on multi-GPU cluster.
+    Tests with LUBM and BSBM workloads with mixed CPU/GPU hybrid queries.
+
+system:
+  hardware_extracted: false
+  reason: "IEEE TPDS behind paywall (HTTP 418)"
+  gpu_target: "NVIDIA (CUDA)"
+  multi_gpu: true
+  max_gpus_tested: 10
+  notes: "Published 2021 — likely NVIDIA V100 or A100 (SJTU IPADS cluster); host CPUs unknown"
+
+results:
+  - "9× speedup over CPU-only Wukong on heavy data-intensive queries"
+  - "Scales to 10 GPU cards"
+  - "GPUDirect RDMA for efficient cluster communication"
+  - "Query-aware prefetching and GPU-friendly RDF store; adaptive CPU/GPU scheduling"

@@ -21,6 +21,8 @@ specs/
     epyc.yaml              # EPYC 7763 (Milan), 9654 (Genoa), 9965 (Turin)
   intel/cpus/
     xeon.yaml              # Xeon 8380 (Ice Lake), 8490H (Sapphire Rapids), 8570/8592+ (Emerald Rapids), 6980P (Granite Rapids)
+  arm/cpus/
+    agi.yaml               # AGI SP113012, SP113012S, SP113012A (Phoenix / Neoverse V3)
 terminology/
   amd-nvidia.md            # AMD ↔ NVIDIA concept mapping table
 comparisons/               # Pre-written side-by-side chip comparisons
@@ -72,6 +74,14 @@ package.json               # Node dependencies (ajv, ajv-formats, js-yaml)
 | Xeon 8570 | Emerald Rapids | 56 | 358 GB/s | Used in NVIDIA DGX B200 (2× per system) |
 | Xeon 8592+ | Emerald Rapids | 64 | 358 GB/s | |
 | Xeon 6980P | Granite Rapids | 128 | 409 GB/s | |
+
+### ARM CPUs
+
+| Name | SKU | Generation | Cores | Memory BW | TDP |
+|------|-----|-----------|-------|----------|-----|
+| AGI SP113012 | SP113012 | Phoenix (Neoverse V3) | 136 | 845 GB/s | 300 W |
+| AGI SP113012S | SP113012S | Phoenix (Neoverse V3) | 128 | 845 GB/s | 300 W |
+| AGI SP113012A | SP113012A | Phoenix (Neoverse V3) | 64 | 845 GB/s | 300 W |
 
 ## Agent Skills
 

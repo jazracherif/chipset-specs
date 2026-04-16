@@ -1,0 +1,27 @@
+name: Vortex
+full_name: "Vortex: A Practical Approach for Handling Out-of-Core Datasets on GPU"
+domain: accelerated_databases
+type: academic
+paper: https://dl.acm.org/doi/10.14778/3717755.3717780
+authors:
+  - (authors — PVLDB 2024)
+published: "2024"
+venue: "PVLDB 2024"
+
+benchmark:
+  suites: ["TPC-H", "SSB (likely)"]
+  notes: >
+    Targets datasets exceeding local VRAM capacity. Repurposes SDMA engines across
+    multiple PCIe links from helper GPUs to feed a single execution engine.
+
+system:
+  hardware_extracted: false
+  reason: "paper behind ACM/PVLDB paywall (HTTP 403)"
+  gpu_target: "NVIDIA (CUDA)"
+  multi_gpu: true
+  notes: "Published 2024 PVLDB — multi-GPU PCIe setup; likely A100 based on era"
+
+results:
+  - "SDMA-based I/O primitives aggregate bandwidth across multi-GPU PCIe links"
+  - "Decoupled I/O and compute pipelines for out-of-core GPU query processing"
+  - "Repurposes helper GPUs' SDMA engines to continuously feed a single target execution engine"

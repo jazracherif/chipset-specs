@@ -26,7 +26,7 @@ cpus:
       total_threads: 80
       base_frequency_ghz: 2.30
       max_turbo_frequency_ghz: 3.40
-      cache_mb: 60
+      llc_mb: 60
       upi_speed_gts: 11.2
       max_upi_links: 3
       tdp_w: 270
@@ -44,6 +44,7 @@ cpus:
       scalability: 2S
       pcie_revision: "4.0"
       max_pcie_lanes: 64
+      pci_max_bw_gbs: 128  # derived: 64 lanes × 2 GB/s per lane (PCIe 4.0)
 
     package_specifications:
       socket: FCLGA4189
@@ -89,6 +90,12 @@ cpus:
       run_sure: true
       mbec: true
 
+    research:
+      accelerated_databases:
+        - name: Theseus
+          # Xeon 8380 served as host CPU in the DGX A100 nodes used in this benchmark
+          system: "GPU: 2× DGX A100 640GB nodes, host CPU: Intel Xeon Platinum 8380"  # full details: research/accelerated_databases/theseus.yaml
+
 
   - name: Xeon 8490H
     full_name: Intel Xeon Platinum 8490H
@@ -111,7 +118,7 @@ cpus:
       total_threads: 120
       base_frequency_ghz: 1.90
       max_turbo_frequency_ghz: 3.50
-      cache_mb: 112.5
+      llc_mb: 112.5
       upi_speed_gts: 16
       max_upi_links: 4
       tdp_w: 350
@@ -127,6 +134,7 @@ cpus:
       scalability: S8S
       pcie_revision: "5.0"
       max_pcie_lanes: 80
+      pci_max_bw_gbs: 320  # derived: 80 lanes × 4 GB/s per lane (PCIe 5.0)
 
     package_specifications:
       socket: FCLGA4677
@@ -204,7 +212,7 @@ cpus:
       total_threads: 128
       base_frequency_ghz: 1.90
       max_turbo_frequency_ghz: 3.90
-      cache_mb: 320
+      llc_mb: 320
       upi_speed_gts: 20
       max_upi_links: 4
       tdp_w: 350
@@ -220,6 +228,7 @@ cpus:
       scalability: 2S
       pcie_revision: "5.0"
       max_pcie_lanes: 80
+      pci_max_bw_gbs: 320  # derived: 80 lanes × 4 GB/s per lane (PCIe 5.0)
 
     package_specifications:
       socket: FCLGA4677
@@ -301,7 +310,7 @@ cpus:
       base_frequency_ghz: 2.00
       max_turbo_frequency_ghz: 3.90
       all_core_turbo_frequency_ghz: 3.20
-      cache_mb: 504
+      llc_mb: 504
       upi_speed_gts: 24
       max_upi_links: 6
       tdp_w: 500
@@ -318,6 +327,7 @@ cpus:
       scalability: 2S
       pcie_revision: "5.0"
       max_pcie_lanes: 96
+      pci_max_bw_gbs: 384  # derived: 96 lanes × 4 GB/s per lane (PCIe 5.0)
 
     package_specifications:
       socket: FCLGA7529
@@ -401,7 +411,7 @@ cpus:
       total_threads: 112
       base_frequency_ghz: 2.10
       max_turbo_frequency_ghz: 4.00
-      cache_mb: 300
+      llc_mb: 300
       upi_speed_gts: 20
       max_upi_links: 4
       tdp_w: 350
@@ -417,6 +427,7 @@ cpus:
       scalability: 2S
       pcie_revision: "5.0"
       max_pcie_lanes: 80
+      pci_max_bw_gbs: 320  # derived: 80 lanes × 4 GB/s per lane (PCIe 5.0)
 
     package_specifications:
       socket: FCLGA4677

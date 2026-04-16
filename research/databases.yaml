@@ -1,0 +1,596 @@
+# ── Academic databases ────────────────────────────────────────────────────────
+
+- name: CoGaDB
+  institution: University of Magdeburg
+  year: 2012
+  type: academic
+  architecture: column-store
+  gpu_target: "NVIDIA (CUDA)"
+  language: C++
+  status: archived
+  query_language: SQL
+  description: >
+    Column-oriented GPU-accelerated database using a heterogeneous memory hierarchy.
+    Pioneer in CPU/GPU hybrid query execution with runtime operator placement decisions.
+  github_url: https://github.com/TU-Berlin-DIMA/Hawk-VLDBJ
+  key_features:
+    - Heterogeneous CPU/GPU execution
+    - Runtime operator placement
+    - Column-store with GPU primitives
+    - CUDA-based backend
+  paper_links:
+    - title: "CoGaDB: A Column-oriented GPU-accelerated DBMS"
+      venue: ADMS@VLDB
+      year: 2012
+      url: https://wwwiti.cs.uni-magdeburg.de/iti_db/research/gpu/cogadb/0.22/doc/
+
+- name: "HeavyDB (MapD/OmniSciDB)"
+  institution: MIT / Harvard
+  year: 2013
+  type: academic
+  architecture: column-store
+  gpu_target: "NVIDIA (CUDA), AMD (ROCm experimental)"
+  language: C++
+  status: active
+  query_language: SQL
+  description: >
+    Originally developed at MIT as MapD. Pioneered in-GPU SQL query execution at scale.
+    Open-sourced as OmniSciDB, now HeavyDB under HEAVY.AI.
+  github_url: https://github.com/heavyai/heavydb
+  key_features:
+    - Full SQL on GPU
+    - Multi-GPU support
+    - In-situ GPU rendering
+    - Apache Arrow integration
+    - Geospatial extensions
+  paper_links: []
+
+- name: Crystal
+  institution: MIT
+  year: 2020
+  type: academic
+  architecture: column-store
+  gpu_target: "NVIDIA (CUDA)"
+  language: C++/CUDA
+  status: active
+  query_language: Custom DSL
+  description: >
+    Library of parallel GPU routines for running full SQL queries with minimal materialization
+    overhead. Uses a model-based approach to analyze when and why GPU vs CPU speedups deviate
+    from the memory bandwidth ratio (~16× on modern hardware).
+  github_url: https://github.com/anilshanbhag/crystal
+  key_features:
+    - Full SQL on GPU with minimal materialization
+    - Selection and projection near bandwidth-ratio speedup
+    - Joins achieve less speedup due to hardware capability differences
+    - Full query speedup exceeds bandwidth ratio (25× over CPU on SSB benchmark)
+    - CPU vectorization limitations amplify GPU gains on chained operators
+    - Model-based performance analysis vs memory bandwidth ratio
+  paper_links:
+    - title: "A Study of the Fundamental Performance Characteristics of GPUs and CPUs for Database Analytics"
+      venue: ACM
+      year: 2020
+      url: https://dl.acm.org/doi/epdf/10.1145/3318464.3380595
+
+- name: Ocelot/HyPE
+  institution: TU Berlin
+  year: 2014
+  type: academic
+  architecture: column-store
+  gpu_target: "NVIDIA (CUDA), OpenCL"
+  language: C++
+  status: archived
+  query_language: SQL subset
+  description: >
+    Combined system integrating a hardware-oblivious data processing engine with a learning
+    query optimizer for operator placement decisions across heterogeneous hardware. Addresses
+    optimal operator placement, cross-architecture runtime cost estimation, and code
+    maintenance across multiple architectures — resulting in a highly adaptive DBMS
+    specifically tailored towards heterogeneous hardware environments.
+  key_features:
+    - OpenCL portability layer
+    - Cross-vendor GPU support
+    - Adaptive execution
+    - Vectorized processing
+  paper_links:
+    - title: "Ocelot/HyPE: Optimized Data Processing on Heterogeneous Hardware"
+      venue: VLDB
+      year: 2014
+      url: https://www.vldb.org/pvldb/vol7/p1609-bress.pdf
+
+- name: Hawk
+  institution: TU Berlin
+  year: 2016
+  type: academic
+  architecture: column-store
+  gpu_target: "NVIDIA (CUDA)"
+  language: C++
+  status: archived
+  query_language: SQL
+  description: >
+    Hardware-oblivious database query compilation generating optimized code for CPUs and GPUs.
+    Compiles queries to native code targeting the best available hardware.
+  github_url: https://github.com/TU-Berlin-DIMA/Hawk-VLDBJ
+  key_features:
+    - Hardware-oblivious compilation
+    - Auto-generates CPU and GPU code
+    - LLVM-based IR
+    - Multi-device parallelism
+  paper_links:
+    - title: "Generating custom code for efficient query execution on heterogeneous processors"
+      venue: VLDB-J
+      year: 2016
+      url: https://link.springer.com/article/10.1007/s00778-018-0512-y
+
+- name: Virginian
+  institution: University of Virginia
+  year: 2012
+  type: academic
+  architecture: column-store
+  gpu_target: "NVIDIA (CUDA)"
+  language: C/CUDA
+  status: archived
+  query_language: SQL subset
+  description: >
+    Early GPU database prototype focusing on columnar storage and SIMD-like GPU execution.
+    One of the first systems to comprehensively evaluate GPU database performance.
+  github_url: https://github.com/bakks/virginian
+  key_features:
+    - Columnar GPU execution
+    - Early GPU DB prototype
+    - Relational operator suite on GPU
+    - Performance benchmarking focus
+  paper_links:
+    - title: Efficient Data Management for GPU Databases
+      year: 2012
+      url: https://pbbakkum.com/virginian/paper.pdf
+
+- name: Alenka
+  institution: Independent Research
+  year: 2013
+  type: academic
+  architecture: column-store
+  gpu_target: "NVIDIA (CUDA)"
+  language: C++/CUDA
+  status: archived
+  query_language: SQL-like scripting
+  description: >
+    Open-source GPU-accelerated database engine using a custom SQL-like scripting language.
+    Focused on analytical workloads with a compact implementation.
+  github_url: https://github.com/antonmks/Alenka
+  key_features:
+    - GPU-accelerated analytics
+    - Custom scripting language
+    - Open source
+    - Hash joins on GPU
+  paper_links: []
+
+- name: Harmonia
+  institution: Peking University
+  year: 2020
+  type: academic
+  architecture: hybrid
+  gpu_target: "NVIDIA (CUDA)"
+  language: C++/CUDA
+  status: active
+  query_language: SQL
+  description: >
+    Novel GPU-optimized B+tree structure that bridges the gap between B+tree access patterns
+    and GPU hardware. Divides the tree into a key region (breadth-first node layout) and a
+    prefix-sum child region that fits in on-chip caches for high locality. Achieves up to
+    3.6 billion queries/second on a TITAN V GPU — 3.4× faster than prior state-of-the-art.
+  key_features:
+    - B+tree split into key region (BFS layout) and prefix-sum child region
+    - Child region fits in on-chip cache for high locality
+    - Partially-sorted aggregation to reduce memory divergence
+    - Narrowed thread-group traversal to improve warp utilization
+    - 3.6 billion queries/sec on TITAN V (3.4× over HB+Tree)
+    - Addresses global memory access patterns and warp divergence on GPUs
+  paper_links:
+    - title: "Harmonia: A High Throughput B+tree for Main Memory Database"
+      venue: PPoPP
+      year: 2020
+      url: https://dl.acm.org/doi/epdf/10.1145/3293883.3295704
+
+- name: Wukong+G
+  institution: Shanghai Jiao Tong University
+  year: 2021
+  type: academic
+  architecture: graph
+  gpu_target: "NVIDIA (CUDA)"
+  language: C++/CUDA
+  status: active
+  query_language: SPARQL
+  description: >
+    First graph-based distributed RDF query processing system exploiting hybrid CPU/GPU
+    parallelism for SPARQL queries at scale. Addresses throughput collapse under heavy
+    data-intensive queries via query-aware prefetching, GPU-friendly RDF store, GPUDirect
+    RDMA communication, and adaptive CPU/GPU query scheduling. Outperforms Wukong by up to
+    9× and improves latency and throughput by over an order of magnitude on hybrid workloads.
+  github_url: https://github.com/SJTU-IPADS/wukong-g
+  key_features:
+    - Hybrid CPU+GPU parallelism for distributed SPARQL
+    - Query-aware prefetching and pattern-aware pipelining for latency hiding
+    - GPU-friendly RDF store supporting graphs exceeding GPU memory (predicate-based grouping)
+    - GPUDirect RDMA for efficient cluster communication
+    - Multi-query concurrency on a single GPU
+    - Adaptive single-query scheduling across CPU and GPU
+    - Scales to 10 GPU cards; 9× speedup over CPU-only Wukong on heavy queries
+  paper_links:
+    - title: "Wukong+G: Fast and Concurrent RDF Query Processing using RDMA and GPU"
+      venue: IEEE TPDS
+      year: 2021
+      url: https://ieeexplore.ieee.org/document/9582823
+
+# ── Industry databases ────────────────────────────────────────────────────────
+
+- name: BlazingSQL
+  company: BlazingDB Inc.
+  founded_year: 2018
+  type: industry
+  licensing: open-source
+  gpu_support: "NVIDIA (CUDA), RAPIDS ecosystem"
+  status: deprecated
+  query_language: SQL
+  website: https://blazingsql.com
+  github_url: https://github.com/BlazingDB/blazingsql
+  description: >
+    Open-source GPU SQL engine built on RAPIDS/cuDF. Allowed SQL queries on GPU DataFrames.
+    Deprecated in 2022 after the company pivoted; development merged into RAPIDS cuDF SQL layer.
+  use_case_focus:
+    - ETL on GPU
+    - RAPIDS integration
+    - Cloud analytics
+  notable_customers: []
+  cloud_platforms:
+    - AWS
+    - GCP
+
+- name: PG-Strom
+  company: HeteroDB Inc. / Open Source
+  founded_year: 2012
+  type: industry
+  licensing: open-source
+  gpu_support: "NVIDIA (CUDA), GPU-Direct Storage"
+  status: active
+  query_language: "SQL (PostgreSQL-compatible)"
+  website: https://heterodb.github.io/pg-strom/
+  github_url: https://github.com/heterodb/pg-strom
+  description: >
+    PostgreSQL extension that offloads query execution to GPU. Transparent GPU acceleration
+    for existing PostgreSQL workloads. Supports GPU-Direct Storage for NVMe-to-GPU DMA
+    without CPU involvement.
+  use_case_focus:
+    - PostgreSQL extension
+    - OLAP acceleration
+    - NVMe-GPU direct I/O
+  notable_customers:
+    - Various PostgreSQL users
+  cloud_platforms:
+    - On-premise
+    - "AWS (limited)"
+
+- name: TileDB
+  company: TileDB Inc.
+  founded_year: 2017
+  type: industry
+  licensing: open-source
+  gpu_support: "NVIDIA (CUDA), GPU array I/O"
+  status: active
+  query_language: "SQL + Array slicing API"
+  website: https://tiledb.com
+  github_url: https://github.com/TileDB-Inc/TileDB
+  description: >
+    Universal array database optimized for dense and sparse multi-dimensional arrays.
+    GPU acceleration via CUDA for array operations. Popular in genomics, geospatial,
+    and scientific computing.
+  use_case_focus:
+    - Array data
+    - Biomedical
+    - Geospatial
+    - ML feature stores
+  notable_customers:
+    - Regeneron
+    - NVIDIA
+    - US Government agencies
+  cloud_platforms:
+    - AWS
+    - GCP
+    - Azure
+    - TileDB Cloud
+
+- name: "Theseus (Voltron Data)"
+  company: Voltron Data
+  founded_year: 2021
+  type: industry
+  licensing: commercial
+  gpu_support: "NVIDIA (CUDA), Arrow-native"
+  status: deprecated
+  query_language: "SQL (ANSI) + Python"
+  website: https://voltrondata.com
+  github_url: null
+  description: >
+    GPU-native federated query engine built by the creators of Apache Arrow. Theseus
+    addresses sequential data movement costs from file I/O, spilling, and network shuffles
+    that block GPU compute. Uses proactive byte movement with asynchronous executors to move
+    data between GPU, host memory, and storage tiers before the compute phase begins.
+    Leverages the Arrow columnar format throughout for zero-copy data sharing.
+  use_case_focus:
+    - Proactive asynchronous data movement
+    - GPU/Host/Storage tiering
+    - Federated analytics
+    - Arrow-native columnar execution
+  notable_customers:
+    - Enterprise data teams
+  cloud_platforms:
+    - Multi-cloud
+  paper_links:
+    - title: "Theseus: Proactive Data Movement for GPU-Native Query Processing"
+      venue: arXiv
+      year: 2025
+      url: https://arxiv.org/abs/2508.05029
+
+- name: Themis
+  institution: Research
+  year: 2024
+  type: academic
+  architecture: column-store
+  gpu_target: "NVIDIA (CUDA)"
+  language: C++/CUDA
+  status: active
+  query_language: SQL
+  description: >
+    Addresses intra-warp and inter-warp thread divergence that idles GPU cores during
+    query processing. Introduces warp-level redistribution using fine-grained work-stealing
+    and tuple redistribution to ensure SIMT efficiency across all active warps.
+  key_features:
+    - Warp-level work-stealing
+    - Fine-grained tuple redistribution
+    - SIMT efficiency through dynamic load balancing
+    - Eliminates inter-warp and intra-warp idle cores
+  paper_links:
+    - title: "Themis: GPU-Efficient Load-Balanced Query Processing"
+      venue: PVLDB
+      year: 2024
+      url: https://dl.acm.org/doi/10.14778/3705829.3705856
+
+- name: Vortex
+  institution: Research
+  year: 2024
+  type: academic
+  architecture: column-store
+  gpu_target: "NVIDIA (CUDA)"
+  language: C++/CUDA
+  status: active
+  query_language: SQL
+  description: >
+    Targets the memory wall and PCIe bottleneck when processing datasets that exceed local
+    VRAM capacity. Repurposes SDMA engines across multiple PCIe links from helper GPUs to
+    continuously feed a single target execution engine, decoupling I/O from compute.
+  key_features:
+    - SDMA-based I/O primitives
+    - Multi-GPU PCIe link aggregation
+    - Out-of-core GPU query processing
+    - Decoupled I/O and compute pipelines
+  paper_links:
+    - title: "Vortex: A Practical Approach for Handling Out-of-Core Datasets on GPU"
+      venue: PVLDB
+      year: 2024
+      url: https://dl.acm.org/doi/10.14778/3717755.3717780
+
+- name: H-Rocks
+  institution: Research
+  year: 2025
+  type: academic
+  architecture: key-value store
+  gpu_target: "NVIDIA (CUDA)"
+  language: C++/CUDA
+  status: active
+  query_language: Key-Value API
+  description: >
+    Manages high-throughput key-value operations on persistent memory using GPU acceleration.
+    Implements operation sub-batching with GPU-side versioning and batched key-value lookups
+    tailored for LSM-tree structures.
+  key_features:
+    - GPU-accelerated LSM-tree operations
+    - Operation sub-batching
+    - GPU-side versioning
+    - Persistent memory integration
+  paper_links:
+    - title: "H-Rocks: GPU-Accelerated Key-Value Operations on LSM-trees"
+      venue: ACM
+      year: 2025
+      url: https://dl.acm.org/doi/10.1145/3709694
+
+- name: Maximus
+  institution: Research
+  year: 2025
+  type: academic
+  architecture: column-store
+  gpu_target: "NVIDIA (CUDA)"
+  language: C++/CUDA
+  status: active
+  query_language: SQL
+  description: >
+    Determines the crossing point where workloads shift from CPU-bound to GPU-bound by
+    modeling interconnect constraints. Employs a cost-based model to decide when to transfer
+    data to the GPU based on filtering predicate selectivity.
+  key_features:
+    - Cost-based CPU/GPU workload routing
+    - Predicate selectivity analysis
+    - Selective data transfer model
+    - Interconnect-aware query planning
+  paper_links:
+    - title: "Maximus: A Modular Accelerated Query Engine for Data Analytics on Heterogeneous Systems"
+      venue: SIGMOD
+      year: 2025
+      url: https://dl.acm.org/doi/10.1145/3725324
+
+- name: TQP
+  institution: Microsoft Research
+  year: 2022
+  type: academic
+  architecture: column-store
+  gpu_target: "NVIDIA (CUDA), AMD (ROCm)"
+  language: Python/C++
+  status: active
+  query_language: SQL
+  description: >
+    Addresses hardware portability by compiling SQL into tensor programs that execute on
+    AI runtimes such as PyTorch. Eliminates the need to write optimized CUDA for every
+    database operator by reusing the AI software ecosystem as the query execution engine.
+  github_url: https://github.com/microsoft/tqp
+  key_features:
+    - SQL compiled to tensor programs
+    - PyTorch as execution backend
+    - Hardware-portable query execution
+    - Reuses AI runtime optimizations
+  paper_links:
+    - title: "Query Processing on Tensor Computation Runtimes"
+      venue: VLDB
+      year: 2022
+      url: https://arxiv.org/abs/2203.01877
+
+- name: SiriusDB
+  institution: Research
+  year: 2026
+  type: academic
+  architecture: column-store
+  gpu_target: "NVIDIA (CUDA)"
+  language: C++/CUDA
+  status: active
+  query_language: SQL
+  description: >
+    Reduces the engineering overhead of building GPU-native SQL engines from scratch.
+    Acts as a drop-in backend that reuses the Substrait standard query representation
+    to accelerate diverse data systems without rewriting front-end query layers.
+  key_features:
+    - Substrait-based GPU acceleration
+    - Drop-in backend for existing engines
+    - Reuses standard query IR
+    - Reduces GPU engine development cost
+  paper_links:
+    - title: "Rethinking Analytical Processing in the GPU Era"
+      venue: CIDR
+      year: 2026
+      url: https://arxiv.org/abs/2508.04701
+
+- name: GoLAP
+  institution: Research
+  year: 2025
+  type: academic
+  architecture: column-store
+  gpu_target: "NVIDIA (CUDA)"
+  language: C++/CUDA
+  status: active
+  query_language: SQL
+  description: >
+    Eliminates CPU involvement in the hot path of OLAP table scans by streaming compressed
+    blocks directly from SSDs to GPUs. Enables on-the-fly hardware decompression on the GPU,
+    removing the I/O path bottleneck.
+  key_features:
+    - Direct SSD-to-GPU data streaming
+    - GPU-in-data-path architecture
+    - Hardware decompression on GPU
+    - CPU-bypass for scan hot path
+  paper_links:
+    - title: "GoLAP: GPU-in-Data-Path for Accelerated OLAP Table Scans"
+      venue: ACM
+      year: 2025
+      url: https://dl.acm.org/doi/10.1145/3698812
+
+- name: VecFlow
+  institution: Research
+  year: 2026
+  type: academic
+  architecture: vector index
+  gpu_target: "NVIDIA (CUDA)"
+  language: C++/CUDA
+  status: active
+  query_language: "SQL + Vector Search API"
+  description: >
+    Optimizes hybrid queries combining high-dimensional vector search with strict relational
+    filters. Uses label-centric indexing for filtered approximate nearest neighbor search
+    (ANNS) through architecture-aware graph traversal on GPU.
+  key_features:
+    - Label-centric ANNS indexing
+    - Hybrid vector + relational query execution
+    - Architecture-aware GPU graph traversal
+    - Filtered approximate nearest neighbor search
+  paper_links:
+    - title: "VecFlow: Label-Centric Indexing for Hybrid Vector and Relational Queries on GPU"
+      venue: Research
+      year: 2026
+      url: https://dl.acm.org/doi/10.1145/3749189
+
+- name: GHive
+  institution: Research / Apache
+  year: 2022
+  type: academic
+  architecture: column-store
+  gpu_target: "NVIDIA (CUDA)"
+  language: Java/C++/CUDA
+  status: active
+  query_language: HiveQL (SQL)
+  description: >
+    Scales distributed SQL-on-Hadoop workloads by replacing traditional Java-based execution
+    in Apache Hive with GPU-optimized heterogeneous operator primitives for joins and aggregations.
+  github_url: null
+  key_features:
+    - GPU-accelerated Hive operators
+    - Heterogeneous CPU/GPU join and aggregation
+    - Drop-in Hive execution replacement
+    - Distributed warehouse GPU scaling
+  paper_links:
+    - title: "GHive: Accelerating Analytical Query Processing in Apache Hive via CPU-GPU Heterogeneous Computing"
+      venue: ACM
+      year: 2022
+      url: https://dl.acm.org/doi/10.1145/3542929.3563503
+
+- name: RAYdb
+  institution: Research
+  year: 2026
+  type: academic
+  architecture: column-store
+  gpu_target: "NVIDIA (CUDA RT Cores)"
+  language: C++/CUDA
+  status: active
+  query_language: SQL
+  description: >
+    Overcomes memory bandwidth saturation of standard CUDA cores by rephrasing database
+    indexing and scans as 3D ray tracing jobs executed on dedicated RT cores, exploiting
+    otherwise idle hardware units.
+  key_features:
+    - Database queries as ray tracing jobs
+    - RT core utilization for scans
+    - Parallel CUDA core and RT core execution
+    - Memory bandwidth saturation bypass
+  paper_links:
+    - title: "RayDB: Building Databases with Ray Tracing Cores"
+      venue: arXiv
+      year: 2026
+      url: https://dl.acm.org/doi/10.14778/3772181.3772185
+
+- name: GUST
+  institution: Research
+  year: 2026
+  type: academic
+  architecture: column-store
+  gpu_target: "NVIDIA (CUDA)"
+  language: C++/CUDA
+  status: active
+  query_language: SQL
+  description: >
+    Addresses multi-tenant interference between analytics and AI workloads on shared GPUs.
+    Treats the PCIe bus as a first-class scheduling resource, interleaving I/O-intensive
+    and compute-intensive tasks to minimize resource contention.
+  key_features:
+    - PCIe bus as first-class resource
+    - Transfer-aware multi-tenant scheduling
+    - Analytics and AI workload co-scheduling
+    - Reduced inter-workload interference
+  paper_links:
+    - title: "Data Movement-Aware GPU Sharing for Data-Intensive Systems"
+      venue: CIDR
+      year: 2026
+      url: https://www.vldb.org/cidrdb/papers/2026/p13-jiang.pdf

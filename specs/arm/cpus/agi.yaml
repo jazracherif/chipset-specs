@@ -1,0 +1,148 @@
+# ARM AGI CPU Specifications
+# Arm's first production silicon — Armv9.2 server CPU designed for agentic AI workloads.
+# Each entry covers one CPU SKU (single-socket figures unless noted).
+
+cpus:
+
+  - name: AGI SP113012
+    full_name: Arm AGI CPU SP113012
+    brand: ARM
+    # Default source: [1] Arm AGI CPU Product Page (accessed 2026-04-16)
+    references:
+      - name: Arm AGI CPU Product Page                          # [1] default
+        url: https://www.arm.com/products/cloud-datacenter/arm-agi-cpu
+      - name: Arm AGI CPU Product Brief
+        url: https://www.arm.com/static/az/pdf/product-brief/arm-agi-cpu-product-brief.pdf
+
+    essentials:
+      product_collection: Arm AGI CPU
+      form_factor: Servers
+      launch_date: "03/24/2026"
+      # base_frequency_ghz not published; TDP is a configurable preset
+      max_turbo_frequency_ghz: 3.5
+      llc_mb: 272                               # derived: 136 cores × 2 MB L2/core
+      tdp_w: 300                                # preset TDP (configurable range not published)
+
+    memory_specifications:
+      memory_types: DDR5
+      max_memory_speed_mts: 8800
+      memory_channels: 12
+      memory_bandwidth_gbs: 845                 # derived: 12 channels × 70.4 GB/s (DDR5-8800 per channel)
+      ecc_supported: true
+
+    expansion_options:
+      scalability: "1P / 2P"
+      pcie_revision: "6.0"
+      max_pcie_lanes: 96
+      pci_max_bw_gbs: 768                        # derived: 96 lanes × 8 GB/s per lane (PCIe 6.0)
+      cxl_version: "3.0"                        # CXL 3.0 Type 3 support
+      cxl_type: "Type 3"
+
+    package_specifications:
+      socket_count: "1P / 2P"
+
+    advanced_technologies:
+      instruction_set_extensions: "Armv9.2, SVE2, bfloat16, INT8"
+      best_simd: SVE2
+      simd_width_bits: 128                      # physical SVE implementation width per unit
+      sve_units_per_core: 2                     # 2x 128-bit SVE execution units per core
+      avx_fp_units: 1088                        # derived: 136 cores × 2 SVE units × 4 FP32 lanes/unit
+      peak_fp32_tflops: 7.6                     # derived: 136 cores × 2 SVE units × 4 FP32 × 2 (FMA) × 3.5 GHz / 1000
+      peak_fp32_clock_ghz: 3.5
+      system_level_cache_mb: 128               # shared SLC across all cores
+
+  - name: AGI SP113012S
+    full_name: Arm AGI CPU SP113012S
+    brand: ARM
+    # Default source: [1] Arm AGI CPU Product Page (accessed 2026-04-16)
+    references:
+      - name: Arm AGI CPU Product Page                          # [1] default
+        url: https://www.arm.com/products/cloud-datacenter/arm-agi-cpu
+
+    essentials:
+      product_collection: Arm AGI CPU
+      form_factor: Servers
+      launch_date: "03/24/2026"
+
+    cpu_specifications:
+      total_cores: 128
+      # base_frequency_ghz not published; TDP is a configurable preset
+      max_turbo_frequency_ghz: 3.5
+      llc_mb: 256                               # derived: 128 cores × 2 MB L2/core
+      tdp_w: 300
+
+    memory_specifications:
+      memory_types: DDR5
+      max_memory_speed_mts: 8800
+      memory_channels: 12
+      memory_bandwidth_gbs: 845                 # derived: 12 channels × 70.4 GB/s (DDR5-8800 per channel)
+      ecc_supported: true
+
+    expansion_options:
+      scalability: "1P / 2P"
+      pcie_revision: "6.0"
+      max_pcie_lanes: 96
+      pci_max_bw_gbs: 768                        # derived: 96 lanes × 8 GB/s per lane (PCIe 6.0)
+      cxl_version: "3.0"
+      cxl_type: "Type 3"
+
+    package_specifications:
+      socket_count: "1P / 2P"
+
+    advanced_technologies:
+      instruction_set_extensions: "Armv9.2, SVE2, bfloat16, INT8"
+      best_simd: SVE2
+      simd_width_bits: 128
+      sve_units_per_core: 2
+      avx_fp_units: 1024                        # derived: 128 cores × 2 SVE units × 4 FP32 lanes/unit
+      peak_fp32_tflops: 7.2                     # derived: 128 cores × 2 SVE units × 4 FP32 × 2 (FMA) × 3.5 GHz / 1000
+      peak_fp32_clock_ghz: 3.5
+      system_level_cache_mb: 128
+
+  - name: AGI SP113012A
+    full_name: Arm AGI CPU SP113012A
+    brand: ARM
+    # Default source: [1] Arm AGI CPU Product Page (accessed 2026-04-16)
+    references:
+      - name: Arm AGI CPU Product Page                          # [1] default
+        url: https://www.arm.com/products/cloud-datacenter/arm-agi-cpu
+
+    essentials:
+      product_collection: Arm AGI CPU
+      form_factor: Servers
+      launch_date: "03/24/2026"
+
+    cpu_specifications:
+      total_cores: 64
+      # base_frequency_ghz not published; TDP is a configurable preset
+      max_turbo_frequency_ghz: 3.7
+      llc_mb: 128                               # derived: 64 cores × 2 MB L2/core
+      tdp_w: 300
+
+    memory_specifications:
+      memory_types: DDR5
+      max_memory_speed_mts: 8800
+      memory_channels: 12
+      memory_bandwidth_gbs: 845                 # derived: 12 channels × 70.4 GB/s (DDR5-8800 per channel)
+      ecc_supported: true
+
+    expansion_options:
+      scalability: "1P / 2P"
+      pcie_revision: "6.0"
+      max_pcie_lanes: 96
+      pci_max_bw_gbs: 768                        # derived: 96 lanes × 8 GB/s per lane (PCIe 6.0)
+      cxl_version: "3.0"
+      cxl_type: "Type 3"
+
+    package_specifications:
+      socket_count: "1P / 2P"
+
+    advanced_technologies:
+      instruction_set_extensions: "Armv9.2, SVE2, bfloat16, INT8"
+      best_simd: SVE2
+      simd_width_bits: 128
+      sve_units_per_core: 2
+      avx_fp_units: 512                         # derived: 64 cores × 2 SVE units × 4 FP32 lanes/unit
+      peak_fp32_tflops: 3.8                     # derived: 64 cores × 2 SVE units × 4 FP32 × 2 (FMA) × 3.7 GHz / 1000
+      peak_fp32_clock_ghz: 3.7
+      system_level_cache_mb: 128

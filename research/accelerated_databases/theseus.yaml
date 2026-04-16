@@ -1,0 +1,33 @@
+name: Theseus
+full_name: "Theseus: A Distributed and Scalable GPU-Accelerated Query Processing Platform Optimized for Efficient Data Movement"
+domain: accelerated_databases
+type: production engine
+paper: https://arxiv.org/abs/2508.05029
+authors:
+  - Felipe Aramburú
+  - William Malpica
+  - Kaouther Abrougui
+  - Amin Aramoon
+  - Romulo Auccapuclla
+  - Claude Brisson
+  - Matthijs Brobbel
+  - Colby Farrell
+  - et al.
+published: "2025-08-07"
+venue: "arXiv:2508.05029 [cs.DC]"
+
+benchmark:
+  suites: ["TPC-H", "TPC-DS"]
+  scale_factors: "SF 1k–30k (cloud); SF 100k (100 TB, validated end-to-end)"
+
+system:
+  nodes: 2
+  node_type: DGX A100 640GB
+  gpus_per_node: 8
+  gpu: NVIDIA A100 SXM4 80GB        # spec: specs/nvidia/gpus/ampere.yaml (DGXA100)
+  host_cpu: Intel Xeon Platinum 8380 # spec: specs/intel/cpus/xeon.yaml (Xeon 8380)
+  total_gpu_memory_gb: 1280          # derived: 80 GB × 8 GPUs × 2 nodes
+
+results:
+  - "Processes all TPC-H and TPC-DS queries at 100 TB scale (SF 100k) with 2 DGX A100 nodes"
+  - "Outperforms Databricks Photon by up to 4× at cost parity on cloud benchmarks (SF 1k–30k)"

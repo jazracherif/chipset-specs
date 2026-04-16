@@ -1,0 +1,25 @@
+name: Hawk
+full_name: "Generating custom code for efficient query execution on heterogeneous processors"
+domain: accelerated_databases
+type: academic
+paper: https://link.springer.com/article/10.1007/s00778-018-0512-y
+authors:
+  - (TU Berlin)
+published: "2016"
+venue: "VLDB Journal 2016/2018"
+institution: TU Berlin
+
+benchmark:
+  suites: ["TPC-H (subset)"]
+  notes: "Hardware-oblivious query compilation; generates native CPU and GPU code via LLVM IR."
+
+system:
+  hardware_extracted: false
+  reason: "paper behind Springer paywall"
+  gpu_target: "NVIDIA (CUDA)"
+  notes: "Published 2016/2018 — likely GTX 1080 or Tesla P100 based on era"
+
+results:
+  - "Hardware-oblivious compilation auto-generates optimized CPU and GPU code"
+  - "LLVM-based IR; multi-device parallelism"
+  - "Compiles queries to native code targeting the best available hardware"

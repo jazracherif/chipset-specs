@@ -1,0 +1,30 @@
+name: Harmonia
+full_name: "Harmonia: A High Throughput B+tree for Main Memory Database"
+domain: accelerated_databases
+type: academic
+paper: https://dl.acm.org/doi/epdf/10.1145/3293883.3295704
+authors:
+  - (authors from PPoPP 2020; Peking University)
+published: "2020"
+venue: "PPoPP 2020"
+institution: Peking University
+
+benchmark:
+  suites: ["Custom B+tree query throughput benchmark"]
+  notes: >
+    Evaluates point queries and range queries on a GPU-optimized B+tree vs CPU baselines
+    and prior GPU B+tree implementations (HB+Tree).
+
+system:
+  hardware_extracted: true
+  gpu: "NVIDIA Titan V"                               # stated in databases.yaml description
+  # spec: not in chipset-specs repo (Volta architecture, GV100 die, 12 GB HBM2)
+  gpu_memory_gb: 12
+  gpu_memory_type: HBM2
+  host_cpu: "not extracted (paywalled)"
+
+results:
+  - "3.6 billion queries/second on TITAN V GPU"
+  - "3.4× faster than prior state-of-the-art (HB+Tree)"
+  - "Key region uses breadth-first node layout; child region uses prefix-sum fitting in on-chip cache"
+  - "Partially-sorted aggregation reduces memory divergence; narrowed thread-group traversal improves warp utilization"

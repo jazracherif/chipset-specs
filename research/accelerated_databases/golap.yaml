@@ -1,0 +1,27 @@
+name: GoLAP
+full_name: "GoLAP: GPU-in-Data-Path for Accelerated OLAP Table Scans"
+domain: accelerated_databases
+type: academic
+paper: https://dl.acm.org/doi/10.1145/3698812
+authors:
+  - (authors — ACM 2025)
+published: "2025"
+venue: "ACM 2025"
+
+benchmark:
+  suites: ["TPC-H (likely)", "custom OLAP scan benchmarks"]
+  notes: >
+    Eliminates CPU involvement in the hot path of OLAP table scans by streaming compressed
+    blocks directly from SSDs to GPUs with hardware decompression on the GPU.
+
+system:
+  hardware_extracted: false
+  reason: "paper behind ACM paywall (HTTP 403)"
+  gpu_target: "NVIDIA (CUDA)"
+  storage: "NVMe SSD (direct SSD-to-GPU streaming via GPUDirect Storage)"
+  notes: "Published 2025 — likely A100 or H100 with NVMe + GPUDirect Storage setup"
+
+results:
+  - "Direct SSD-to-GPU data streaming; CPU bypassed in scan hot path"
+  - "On-the-fly hardware decompression on GPU removes I/O path bottleneck"
+  - "GPU-in-data-path architecture"

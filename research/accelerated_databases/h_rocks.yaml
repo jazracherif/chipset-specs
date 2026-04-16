@@ -1,0 +1,24 @@
+name: H-Rocks
+full_name: "H-Rocks: GPU-Accelerated Key-Value Operations on LSM-trees"
+domain: accelerated_databases
+type: academic
+paper: https://dl.acm.org/doi/10.1145/3709694
+authors:
+  - (authors — ACM 2025)
+published: "2025"
+venue: "ACM 2025"
+
+benchmark:
+  suites: ["Custom KV throughput benchmark (LSM-tree operations)"]
+  notes: "High-throughput key-value operations on persistent memory using GPU acceleration."
+
+system:
+  hardware_extracted: false
+  reason: "paper behind ACM paywall (HTTP 403)"
+  gpu_target: "NVIDIA (CUDA)"
+  notes: "Published 2025 — likely A100 or H100 based on era"
+
+results:
+  - "GPU-accelerated LSM-tree operations with operation sub-batching"
+  - "GPU-side versioning and batched key-value lookups"
+  - "Persistent memory integration"

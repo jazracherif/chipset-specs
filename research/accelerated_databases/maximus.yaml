@@ -1,0 +1,34 @@
+name: Maximus
+full_name: "Maximus: A Modular Accelerated Query Engine for Data Analytics on Heterogeneous Systems"
+domain: accelerated_databases
+type: academic
+paper: https://dl.acm.org/doi/10.1145/3725324
+authors:
+  - (authors — SIGMOD 2025)
+published: "2025"
+venue: "SIGMOD 2025"
+
+benchmark:
+  suites: ["TPC-H (likely)"]
+  notes: >
+    Cost-based model determines when to transfer data to GPU based on filtering predicate
+    selectivity and interconnect constraints.
+
+system:
+  hardware_extracted: true
+  source: "§6.1.3 of the paper (user-supplied excerpt)"
+  cloud_instance: "Google Cloud Platform a2-highgpu-1g VM"
+  gpu: "NVIDIA A100 (40 GB HBM2e)"             # spec: specs/nvidia/gpus/ampere.yaml (A100)
+  cpu: "Intel Xeon @ 2.20 GHz (6 physical / 12 virtual cores)"  # NOT in chipset-specs repo (GCP Cascade Lake, unspecified SKU)
+  cpu_memory_gb: 85
+  gpu_cpu_bandwidth_gbs: 12.35                  # measured via NVIDIA nvbandwidth; PCIe 3.0 link
+  pcie_generation: "3.0"
+  os: "Ubuntu 24.04.1 LTS (Linux kernel 6.8.0-1015-gcp)"
+  nvidia_driver: "555.58.02"
+  cuda_version: "12.5"
+  compiler: "GNU GCC v13.2.0"
+
+results:
+  - "Cost-based CPU/GPU workload routing based on predicate selectivity and interconnect model"
+  - "Determines crossing point where workloads shift from CPU-bound to GPU-bound"
+  - "Selective data transfer model minimizes unnecessary PCIe traffic"

@@ -1,0 +1,26 @@
+name: VecFlow
+full_name: "VecFlow: Label-Centric Indexing for Hybrid Vector and Relational Queries on GPU"
+domain: accelerated_databases
+type: academic
+paper: https://dl.acm.org/doi/10.1145/3749189
+authors:
+  - (authors — ACM 2026)
+published: "2026"
+venue: "ACM 2026"
+
+benchmark:
+  suites: ["Hybrid vector+relational query benchmarks (ANNS + filter)"]
+  notes: >
+    Label-centric indexing for filtered approximate nearest neighbor search (ANNS)
+    with architecture-aware GPU graph traversal.
+
+system:
+  hardware_extracted: false
+  reason: "paper behind ACM paywall (HTTP 403)"
+  gpu_target: "NVIDIA (CUDA)"
+  notes: "Published 2026 — likely A100 or H100 based on era"
+
+results:
+  - "Label-centric ANNS indexing for filtered nearest-neighbor search"
+  - "Architecture-aware GPU graph traversal for hybrid vector + relational queries"
+  - "Optimized for high-dimensional vector search with strict relational filters"

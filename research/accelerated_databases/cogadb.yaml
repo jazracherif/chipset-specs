@@ -1,0 +1,24 @@
+name: CoGaDB
+full_name: "CoGaDB: A Column-oriented GPU-accelerated DBMS"
+domain: accelerated_databases
+type: academic
+paper: https://wwwiti.cs.uni-magdeburg.de/iti_db/research/gpu/cogadb/0.22/doc/
+authors:
+  - (University of Magdeburg)
+published: "2012"
+venue: "ADMS@VLDB 2012"
+institution: University of Magdeburg
+
+benchmark:
+  suites: ["TPC-H (subset)"]
+  notes: "Early GPU DBMS using heterogeneous CPU/GPU execution with runtime operator placement."
+
+system:
+  hardware_extracted: false
+  reason: "paper link resolves to old project page with limited technical detail; hardware section not accessible"
+  gpu_target: "NVIDIA (CUDA)"
+  notes: "Published 2012 — likely GeForce GTX 500/600 series or Tesla C2075 based on era and institution equipment"
+
+results:
+  - "Pioneered heterogeneous CPU/GPU execution with runtime operator placement decisions"
+  - "Column-store with GPU primitives; CUDA-based backend"
