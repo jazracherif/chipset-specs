@@ -495,19 +495,19 @@
             "type": "object",
             "required": ["name", "full_name", "vendor", "family", "generation", "year", "max_cores", "memory_bw_gbs", "memory_type", "peak_fp32_tflops", "spec_file"],
             "properties": {
-              "name":             { "type": "string" },
-              "full_name":        { "type": "string" },
-              "vendor":           { "type": "string", "enum": ["AMD", "Intel", "ARM"] },
-              "family":           { "type": "string" },
-              "generation":       { "type": "string" },
-              "microarch":        { "type": "string" },
-              "year":             { "type": "integer" },
-              "max_cores":        { "type": "integer" },
-              "memory_bw_gbs":    { "type": "number" },
-              "memory_type":      { "type": "string" },
-              "peak_fp32_tflops": { "type": "number" },
-              "tdp_w":            { "type": ["number", "null"] },
-              "spec_file":        { "type": "string" }
+              "name":             { "type": "string", "description": "Short identifier, e.g. EPYC 9654, Xeon 8380, AGI SP113012" },
+              "full_name":        { "type": "string", "description": "Full marketing name, e.g. AMD EPYC 9654" },
+              "vendor":           { "type": "string", "enum": ["AMD", "Intel", "ARM"], "description": "Chip vendor" },
+              "family":           { "type": "string", "description": "Product line name, e.g. EPYC, Xeon Scalable, Xeon 6, AGI CPU" },
+              "generation":       { "type": "string", "description": "Microarchitecture platform name, e.g. Milan, Genoa, Sapphire Rapids, Neoverse V3" },
+              "microarch":        { "type": "string", "description": "AMD only — microarchitecture codename, e.g. Zen 3, Zen 4, Zen 5" },
+              "year":             { "type": "integer", "description": "Launch year" },
+              "max_cores":        { "type": "integer", "description": "Physical core count per socket" },
+              "memory_bw_gbs":    { "type": "number", "description": "Peak single-socket memory bandwidth in GB/s" },
+              "memory_type":      { "type": "string", "description": "Primary memory type and speed, e.g. DDR4-3200, DDR5-4800, DDR5-8800" },
+              "peak_fp32_tflops": { "type": "number", "description": "Peak single-socket FP32 throughput in TFLOPS (derived)" },
+              "tdp_w":            { "type": ["number", "null"], "description": "Default TDP in watts; null if not published" },
+              "spec_file":        { "type": "string", "description": "Relative path from repo root to the full spec YAML, e.g. specs/amd/cpus/epyc.yaml" }
             },
             "additionalProperties": false
           }

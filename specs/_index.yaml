@@ -343,8 +343,8 @@ cpus:
     full_name: Arm AGI CPU SP113012
     vendor: ARM
     family: AGI CPU
-    generation: Phoenix
-    year: 2025
+    generation: Neoverse V3
+    year: 2026
     max_cores: 136
     memory_bw_gbs: 845                          # derived: 12 channels × 70.4 GB/s (DDR5-8800 per channel)
     memory_type: DDR5-8800
@@ -356,8 +356,8 @@ cpus:
     full_name: Arm AGI CPU SP113012S
     vendor: ARM
     family: AGI CPU
-    generation: Phoenix
-    year: 2025
+    generation: Neoverse V3
+    year: 2026
     max_cores: 128
     memory_bw_gbs: 845                          # derived: 12 channels × 70.4 GB/s (DDR5-8800 per channel)
     memory_type: DDR5-8800
@@ -369,8 +369,8 @@ cpus:
     full_name: Arm AGI CPU SP113012A
     vendor: ARM
     family: AGI CPU
-    generation: Phoenix
-    year: 2025
+    generation: Neoverse V3
+    year: 2026
     max_cores: 64
     memory_bw_gbs: 845                          # derived: 12 channels × 70.4 GB/s (DDR5-8800 per channel)
     memory_type: DDR5-8800
