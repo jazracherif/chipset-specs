@@ -19,7 +19,7 @@ gpus:
     # Deployed in NVL72 rack (36 VR200 superchips = 72 R100 GPUs + 36 Vera CPUs).
 
     core_specifications:
-      release_date: "2025 (announced GTC March 2025)"
+      release_date: "2026 (announced GTC March 2025; shipping 2026)"
       architecture: "Rubin (R100 GPU)"
       compute_capability: "~13.0 (estimated; not officially confirmed as of Q1 2026)"
       gpu_count: 2                             # per superchip (2× R100 GPUs)

@@ -200,7 +200,7 @@ gpus:
     vendor: NVIDIA
     architecture: Rubin
     generation: Rubin
-    year: 2025
+    year: 2026
     type: superchip
     form_factor: NVL72 rack
     memory_gb: 2150          # total unified (576 HBM4 + 1536 LPDDR5X)
