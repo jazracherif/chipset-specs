@@ -3,7 +3,7 @@
 # Each entry has ~8 key metrics + a pointer to the full spec file.
 # Load this file first for filter/list queries; load the spec_file only for deep-dive queries.
 
-schema_version: 1
+schema_version: 2
 last_updated: "2026-04-16"
 
 gpus:
