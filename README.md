@@ -36,52 +36,53 @@ package.json               # Node dependencies (ajv, ajv-formats, js-yaml)
 
 ### NVIDIA GPUs
 
-| Name | Generation | Type | Memory | TDP |
-|------|-----------|------|--------|-----|
-| GB10 | Blackwell | Desktop superchip | 128 GB LPDDR5x | 140 W |
-| GB200_NVL72 | Blackwell | Datacenter rack (72 GPUs) | 13.8 TB HBM3e | 132 kW |
-| DGX B200 | Blackwell | Datacenter server (8 GPUs) | 1,536 GB HBM3e | ~14.3 kW |
-| RTX 5070 | Blackwell | Consumer GPU | 12 GB GDDR7 | 220 W |
-| A100 | Ampere | Datacenter GPU | 80 GB HBM2e | 400 W |
-| DGXA100 | Ampere | Datacenter server (8 GPUs) | 640 GB HBM2e | 6.5 kW |
-| H100 SXM5 | Hopper | Datacenter GPU | 80 GB HBM3 | 700 W |
-| GH200 | Hopper | Superchip | 624 GB unified (HBM3e + LPDDR5X) | 1.0 kW |
-| VR200 | Rubin | Superchip | 2,150 GB unified (HBM4 + LPDDR5X) | 5.0 kW |
-| T4 | Turing | Inference GPU | 16 GB GDDR6 | 70 W |
+| Name | Year | Generation | Type | Memory | TDP |
+|------|------|-----------|------|--------|-----|
+| VR200 | 2026 | Rubin | Superchip | 2,150 GB unified (HBM4 + LPDDR5X) | 5.0 kW |
+| GB10 | 2025 | Blackwell | Desktop superchip | 128 GB LPDDR5x | 140 W |
+| GB200_NVL72 | 2025 | Blackwell | Datacenter rack (72 GPUs) | 13.8 TB HBM3e | 132 kW |
+| DGX B200 | 2025 | Blackwell | Datacenter server (8 GPUs) | 1,536 GB HBM3e | ~14.3 kW |
+| RTX 5070 | 2025 | Blackwell | Consumer GPU | 12 GB GDDR7 | 220 W |
+| RTX PRO 6000 Server | 2025 | Blackwell | Professional Server GPU | 96 GB GDDR7 | 600 W |
+| H100 SXM5 | 2023 | Hopper | Datacenter GPU | 80 GB HBM3 | 700 W |
+| GH200 | 2023 | Hopper | Superchip | 624 GB unified (HBM3e + LPDDR5X) | 1.0 kW |
+| A100 | 2020 | Ampere | Datacenter GPU | 80 GB HBM2e | 400 W |
+| DGXA100 | 2020 | Ampere | Datacenter server (8 GPUs) | 640 GB HBM2e | 6.5 kW |
+| T4 | 2018 | Turing | Inference GPU | 16 GB GDDR6 | 70 W |
 
 ### AMD GPUs
 
-| Name | Generation | Type | Memory | TDP |
-|------|-----------|------|--------|-----|
-| MI350X | CDNA 4 | Datacenter GPU (OAM) | 288 GB HBM3E | ~1,000 W |
-| MI355X (8-Node Rack) | CDNA 4 | Datacenter rack (64 GPUs) | 18.4 TB HBM3E | ~100 kW |
-| MI300X | CDNA 3 | Datacenter GPU (OAM) | 192 GB HBM3 | 750 W |
+| Name | Year | Generation | Type | Memory | TDP |
+|------|------|-----------|------|--------|-----|
+| MI350X | 2025 | CDNA 4 | Datacenter GPU (OAM) | 288 GB HBM3E | ~1,000 W |
+| MI355X (8-Node Rack) | 2025 | CDNA 4 | Datacenter rack (64 GPUs) | 18.4 TB HBM3E | ~100 kW |
+| MI300X | 2023 | CDNA 3 | Datacenter GPU (OAM) | 192 GB HBM3 | 750 W |
 
 ### AMD CPUs
 
-| Name | Generation | Cores | Memory BW | TDP |
-|------|-----------|-------|----------|-----|
-| EPYC 7763 | Milan (Zen 3) | 64 | 205 GB/s | 280 W |
-| EPYC 9654 | Genoa (Zen 4) | 96 | 461 GB/s | 360 W |
-| EPYC 9965 | Turin (Zen 5) | 192 | 576 GB/s | 500 W |
+| Name | Year | Generation | Cores | Memory BW | TDP |
+|------|------|-----------|-------|----------|-----|
+| EPYC 9965 | 2024 | Turin (Zen 5) | 192 | 576 GB/s | 500 W |
+| EPYC 9654 | 2022 | Genoa (Zen 4) | 96 | 461 GB/s | 360 W |
+| EPYC 7763 | 2021 | Milan (Zen 3) | 64 | 205 GB/s | 280 W |
 
 ### Intel CPUs
 
-| Name | Generation | Cores | Memory BW | TDP | Notes |
-|------|-----------|-------|----------|-----|-------|
-| Xeon 8380 | Ice Lake | 40 | 205 GB/s | 270 W | |
-| Xeon 8490H | Sapphire Rapids | 60 | 307 GB/s | 350 W | |
-| Xeon 8570 | Emerald Rapids | 56 | 358 GB/s | 350 W | Used in NVIDIA DGX B200 (2× per system) |
-| Xeon 8592+ | Emerald Rapids | 64 | 358 GB/s | 350 W | |
-| Xeon 6980P | Granite Rapids | 128 | 409 GB/s | 500 W | |
+| Name | Year | Generation | Cores | Memory BW | TDP | Notes |
+|------|------|-----------|-------|----------|-----|-------|
+| Xeon 6980P | 2024 | Granite Rapids | 128 | 409 GB/s | 500 W | |
+| Xeon 8592+ | 2024 | Emerald Rapids | 64 | 358 GB/s | 350 W | |
+| Xeon 8490H | 2023 | Sapphire Rapids | 60 | 307 GB/s | 350 W | |
+| Xeon 8570 | 2023 | Emerald Rapids | 56 | 358 GB/s | 350 W | Used in NVIDIA DGX B200 (2× per system) |
+| Xeon 8380 | 2021 | Ice Lake | 40 | 205 GB/s | 270 W | |
 
 ### ARM CPUs
 
-| Name | SKU | Generation | Cores | Memory BW | TDP |
-|------|-----|-----------|-------|----------|-----|
-| AGI SP113012 | SP113012 | Neoverse V3 | 136 | 845 GB/s | 300 W |
-| AGI SP113012S | SP113012S | Neoverse V3 | 128 | 845 GB/s | 300 W |
-| AGI SP113012A | SP113012A | Neoverse V3 | 64 | 845 GB/s | 300 W |
+| Name | Year | SKU | Generation | Cores | Memory BW | TDP |
+|------|------|-----|-----------|-------|----------|-----|
+| AGI SP113012 | 2026 | SP113012 | Neoverse V3 | 136 | 845 GB/s | 300 W |
+| AGI SP113012S | 2026 | SP113012S | Neoverse V3 | 128 | 845 GB/s | 300 W |
+| AGI SP113012A | 2026 | SP113012A | Neoverse V3 | 64 | 845 GB/s | 300 W |
 
 ## Agent Skills
 

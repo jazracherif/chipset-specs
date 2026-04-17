@@ -76,6 +76,23 @@ gpus:
     cost_usd_range: null
     spec_file: specs/nvidia/gpus/blackwell.yaml
 
+  - name: RTX_PRO_6000_SERVER
+    full_name: NVIDIA RTX PRO 6000 Blackwell Server Edition
+    vendor: NVIDIA
+    architecture: Blackwell
+    generation: Blackwell
+    year: 2025
+    type: professional server GPU
+    form_factor: Dual-slot PCIe server card
+    memory_gb: 96
+    memory_type: GDDR7
+    memory_bw_gbs: 1597
+    fp16_tflops: 1000
+    fp32_tflops: 120
+    tdp_w: 600
+    cost_usd_range: null
+    spec_file: specs/nvidia/gpus/blackwell.yaml
+
   - name: H100
     full_name: NVIDIA H100 Tensor Core GPU
     vendor: NVIDIA

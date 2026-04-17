@@ -406,7 +406,7 @@ gpus:
       idle_power: ~15 W
       form_factor: Dual-slot PCIe card
       cooling: Active air cooling (dual/triple fan)
-      power_efficiency_fp16_gpu_only: ~145 GFLOPS/W
+      power_efficiency_fp16: ~145 GFLOPS/W
       power_connector: "PCIe 5.0 (12VHPWR, 16-pin)"
 
     advanced_features:
@@ -495,7 +495,7 @@ gpus:
 
     compute_performance:
       fp4: "144 PFLOPS system total (18 PFLOPS per GPU × 8)"   # [1] specs table: "FP4 Tensor Core: 144 PFLOPS"
-      fp8: "72 PFLOPS system total (9 PFLOPS per GPU × 8)"     # [1] specs table: "FP8 Tensor Core: 72 PFLOPS (sparse)"
+      fp8_fp6: "72 PFLOPS system total (9 PFLOPS per GPU × 8)"  # [1] specs table: "FP8 Tensor Core: 72 PFLOPS (sparse)"
       fp16_bf16: "36 PFLOPS system total (4.5 PFLOPS per GPU × 8)"  # derived: fp8 dense ÷ 2
       fp32: "640 TFLOPS system total (80 TFLOPS per GPU × 8)"  # [3] derived from B200 spec
       tensor_core_generation: "5th Gen (Blackwell)"             # [3]
@@ -542,4 +542,148 @@ gpus:
       nemo_framework: Supported                                  # [1]
       pytorch: "2.x+"                                            # [3]
       tensorflow: "2.x+"                                         # [3]
+
+
+  RTX_PRO_6000_SERVER:
+    name: NVIDIA RTX PRO 6000 Blackwell Server Edition
+    # Default source: [1] NVIDIA RTX PRO 6000 Blackwell Server Edition Datasheet (Dec 2025)
+    # Fields from other sources are annotated with [n]
+    references:
+      - name: RTX PRO 6000 Blackwell Server Edition Datasheet    # [1] default
+        url: https://resources.nvidia.com/en-us-rtx-pro-6000/nvidia-rtx-pro-6000?ncid=no-ncid
+      - name: NVIDIA RTX PRO 6000 Blackwell Server Edition Product Page  # [2]
+        url: https://www.nvidia.com/en-us/data-center/rtx-pro-6000-blackwell-server-edition/
+      - name: Blackwell Architecture Technical Brief             # [3]
+        url: https://resources.nvidia.com/en-us-blackwell-architecture/blackwell-architecture-technical-brief
+
+    core_specifications:
+      release_date: Q4 2025
+      architecture: Blackwell
+      compute_capability: 12.0                                   # derived: GB202-class consumer/pro Blackwell die
+      gpu_count: 1
+      streaming_multiprocessors: 188                             # derived: 24,064 CUDA cores ÷ 128 cores/SM
+      cuda_cores_fp32_per_sm: 128                               # [3]
+      cuda_cores_fp32_per_gpu: 24064
+      tensor_cores: "752 (5th gen)"
+      rt_cores: "188 (4th gen)"                                  # derived: 1 RT core per SM ✓ (matches SM count)
+      max_clock_speed: ~2490 MHz                                 # derived: 120 TFLOPS / (24,064 cores × 2 FLOPs/cycle)
+      form_factor: "Dual-slot PCIe server card (4.4\" H × 10.5\" L)"
+
+    sm_execution_model:
+      shared_memory_per_sm: 100 KB                              # derived: same SM generation as GB10 and RTX 5070 (Blackwell consumer SM)
+      shared_memory_per_block: 99 KB                            # derived
+      max_resident_threads_per_sm: 1536                         # derived
+      max_resident_blocks_per_sm: 24                            # derived
+
+    memory_specifications:
+      architecture: Discrete (dedicated GDDR7; host CPU memory separate)
+      ecc_support: true
+      addressing_mode: Standard PCIe
+      pageable_memory_access_via_host_page_tables: false
+      concurrent_managed_access: true
+      cpu_gpu_transfer: "PCIe 5.0 (~128 GB/s bi-directional)"   # derived: PCIe 5.0 x16
+
+      gpu_memory:
+        capacity: 96 GB GDDR7
+        memory_type: GDDR7
+        l2_cache: ~96 MB                                         # derived: estimated for GB202 near-full die (188/192 SMs) with 512-bit bus
+        bandwidth: 1597 GB/s
+        bus_width: 512-bit
+
+      cpu_memory:
+        capacity: Host system RAM (user-supplied)
+        bandwidth: "~128 GB/s effective (PCIe 5.0 x16 CPU↔GPU transfer)"  # derived
+
+      memory_hierarchy:
+        # 188 SMs; discrete GDDR7 512-bit; host RAM reachable via PCIe 5.0 only
+        registers:
+          capacity_per_sm: "256 KB (64K × 32-bit registers)"    # derived: standard Blackwell SM
+          total_per_gpu: "~47 MB (256 KB × 188 SMs)"            # derived
+          throughput: "On-chip, not bandwidth-bound; effectively hundreds of TB/s aggregate"
+          latency: "~1 cycle (zero-overhead within a warp when no RAW hazards)"
+
+        l1_cache_shared_memory:
+          # Unified SRAM pool; configurable split between L1 data cache and shared memory
+          capacity_per_sm: "~128 KB unified (max 100 KB addressable as shared memory)"
+          total_per_gpu: "~23.5 MB (128 KB × 188 SMs)"          # derived
+          throughput: "~60 TB/s aggregate (188 SMs × 128 B/cycle × ~2490 MHz)"  # derived
+          latency: "~28–32 cycles (shared memory, bank-conflict-free)"
+          notes: "L1 cache occupies remaining SRAM not allocated to shared memory"
+
+        distributed_shared_memory:
+          available: true
+          capacity_per_cluster: "up to ~800 KB (up to 8 SMs × 100 KB per SM)"
+          throughput: "Lower than local shared memory; constrained by inter-SM L2 crossbar"
+          latency: "~50–100 cycles (peer-SM access within a thread block cluster)"
+          notes: "Available on SM 12.0 (Blackwell)"
+
+        l2_cache:
+          capacity: "~96 MB (GPU-exclusive)"                     # derived: estimated for GB202 near-full die
+          throughput: "~8–12 TB/s (estimated)"                   # derived
+          latency: "~150–200 cycles"
+
+        global_dram:
+          capacity: "96 GB GDDR7"
+          memory_type: GDDR7
+          throughput: "1597 GB/s"
+          latency: "~300–400 cycles"
+          bus_width: 512-bit
+          notes: "Host RAM accessible via PCIe 5.0 at ~128 GB/s bidirectional; adds ~microsecond latency"
+
+    compute_performance:
+      fp4: 4 PFLOPS
+      fp8: ~2 PFLOPS                                             # derived: FP4 / 2
+      fp16_bf16: "~1000 TFLOPS (Tensor Cores)"                  # derived: FP4 / 4
+      tf32: ~500 TFLOPS                                          # derived: fp16 / 2
+      fp32: 120 TFLOPS
+      fp64: ~3.75 TFLOPS                                         # derived: fp32 / 32 — typical ratio for consumer/pro Blackwell die
+      int8: ~2000 TOPS                                           # derived: ≈ FP8 tensor throughput
+      rt_core_performance: 355 TFLOPS
+      tensor_core_generation: "5th Gen (Blackwell)"
+      fp4_fp6_tensor_core_support: true                          # [3]
+      rt_cores: "4th Gen (188 cores)"
+
+    power_and_thermal:
+      gpu_tdp: "Up to 600 W (configurable)"
+      form_factor: "Dual-slot PCIe server card (4.4\" H × 10.5\" L)"
+      cooling: "Passive; air- and liquid-cooled"
+      power_connector: "1x PCIe CEM5 16-pin"
+
+    advanced_features:
+      mig: "Yes — Universal MIG (up to 4 instances @ 24 GB each)"
+      nvlink: false
+      dynamic_programming: Full support                          # [3]
+      thread_block_clusters: true                                # [3]
+      tensor_memory_accelerator: true                            # [3]
+      hardware_coherency: false
+      transformer_engine: "Yes (FP8 + FP4 optimized)"           # [3]
+      distributed_shared_memory: true                            # [3]
+      ray_tracing: "4th Gen RT Cores (188 cores)"
+      dlss: "4.0"                                                 # [2]
+      unified_memory: "Software-managed (CUDA UVM)"
+      confidential_computing: "Supported"
+      secure_boot: "Yes (root of trust)"
+      nvenc: "4x 9th Gen"
+      nvdec: "4x 6th Gen"
+      nvjpeg: "4x"
+      display_outputs: "4x DisplayPort 2.1"
+
+    networking_and_connectivity:
+      pcie_interface: PCIe 5.0 x16
+      high_speed_interconnect: None (relies on host system)
+      rdma: Not available
+      gpu_to_gpu_direct: Via host CPU
+
+    software_and_ecosystem:
+      cuda_toolkit: "13.0+"                                      # [3]
+      minimum_driver: "570.00+"                                   # [3]
+      cublas: cuBLAS 13.x with FP8                               # [3]
+      cudnn: "9.x"                                                # [3]
+      tensorrt: "11.x+ (FP8/FP4 support)"                        # [3]
+      nccl: "2.28+"                                               # [3]
+      nemo_framework: Supported                                   # [2]
+      pytorch: "2.x+"                                             # [3]
+      tensorflow: "2.x+"                                          # [3]
+      nvidia_ai_enterprise: Supported                             # [2]
+      nvidia_omniverse: Supported                                  # [2]
 
