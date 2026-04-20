@@ -40,12 +40,12 @@ package.json               # Node dependencies (ajv, ajv-formats, js-yaml)
 |------|------|-----------|------|--------|-----|
 | VR200 | 2026 | Rubin | Superchip | 2,150 GB unified (HBM4 + LPDDR5X) | 5.0 kW |
 | GB10 | 2025 | Blackwell | Desktop superchip | 128 GB LPDDR5x | 140 W |
-| GB200_NVL72 | 2025 | Blackwell | Datacenter rack (72 GPUs) | 13.8 TB HBM3e | 132 kW |
-| DGX B200 | 2025 | Blackwell | Datacenter server (8 GPUs) | 1,536 GB HBM3e | ~14.3 kW |
+| GB200_NVL72 | 2025 | Blackwell | Datacenter rack (72 GPUs) | 13.4 TB HBM3e | 132 kW |
+| DGX B200 | 2025 | Blackwell | Datacenter server (8 GPUs) | 1,440 GB HBM3e | ~14.3 kW |
 | RTX 5070 | 2025 | Blackwell | Consumer GPU | 12 GB GDDR7 | 220 W |
 | RTX PRO 6000 Server | 2025 | Blackwell | Professional Server GPU | 96 GB GDDR7 | 600 W |
 | H100 SXM5 | 2023 | Hopper | Datacenter GPU | 80 GB HBM3 | 700 W |
-| GH200 | 2023 | Hopper | Superchip | 624 GB unified (HBM3e + LPDDR5X) | 1.0 kW |
+| GH200 | 2023 | Hopper | Superchip | 621 GB unified (HBM3e + LPDDR5X) | 1.0 kW |
 | A100 | 2020 | Ampere | Datacenter GPU | 80 GB HBM2e | 400 W |
 | DGXA100 | 2020 | Ampere | Datacenter server (8 GPUs) | 640 GB HBM2e | 6.5 kW |
 | T4 | 2018 | Turing | Inference GPU | 16 GB GDDR6 | 70 W |

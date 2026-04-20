@@ -164,7 +164,7 @@ gpus:
     # The H200 GPU is the same GH100 silicon as H100 SXM5, upgraded with 141 GB HBM3e instead of 80 GB HBM3.
     # Grace CPU and H200 GPU share a coherent flat address space via NVLink-C2C at 900 GB/s.
     # Deployed in NVL32 rack (32 superchips, 32 H200 GPUs, 32 Grace CPUs).
-    # Note: chip_specs.yml lists 144 GB HBM3e; NVIDIA H200 official datasheet states 141 GB.
+    # Note removed: _index.yaml previously listed 144 GB HBM3e; corrected to 141 GB to match H200 datasheet [2].
 
     core_specifications:
       release_date: "November 2023 (GA)"

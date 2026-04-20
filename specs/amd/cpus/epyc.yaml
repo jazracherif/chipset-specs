@@ -121,9 +121,9 @@ cpus:
       ctdp_range: "450-500W"
     memory_specifications:
       memory_types: DDR5
-      max_memory_speed_mts: 6400
+      max_memory_speed_mts: 6000              # [1] AMD EPYC 9965 Product Page (DDR5-6000)
       memory_channels: 12
-      memory_bandwidth_gbs: 614
+      memory_bandwidth_gbs: 576               # derived: 12 channels × 48 GB/s (DDR5-6000 per channel)
     expansion_options:
       pcie_revision: "5.0"
       max_pcie_lanes: 128
