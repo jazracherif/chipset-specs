@@ -4,7 +4,7 @@
 # Load this file first for filter/list queries; load the spec_file only for deep-dive queries.
 
 schema_version: 2
-last_updated: "2026-04-16"
+last_updated: "2026-04-20"
 
 gpus:
 
@@ -203,10 +203,10 @@ gpus:
     year: 2023
     type: superchip
     form_factor: NVL32 rack
-    memory_gb: 624           # total unified (144 HBM3e + 480 LPDDR5X)
+    memory_gb: 621           # total unified (141 HBM3e + 480 LPDDR5X; H200 datasheet: 141 GB HBM3e)
     memory_type: HBM3E
-    memory_bw_tbs: 4.9
-    fp16_tflops: null
+    memory_bw_tbs: 4.8       # NVIDIA H200 official datasheet: 4.8 TB/s
+    fp16_tflops: 1979        # same GH100 die as H100 SXM5; with sparsity (matches hopper.yaml)
     fp32_tflops: 67
     tdp_kw: 1.0
     cost_usd_range: [34000, 44000]   # per chip
@@ -277,16 +277,16 @@ cpus:
     spec_file: specs/amd/cpus/epyc.yaml
 
   - name: EPYC 9965
-    full_name: AMD EPYC 9965X
+    full_name: AMD EPYC 9965
     vendor: AMD
     family: EPYC
     generation: Turin
     microarch: Zen 5
     year: 2024
     max_cores: 192
-    memory_bw_gbs: 576
+    memory_bw_gbs: 576       # 12 channels × DDR5-6000 × 48 GB/s (official AMD Turin spec)
     memory_type: DDR5-6000
-    peak_fp32_tflops: 7.4
+    peak_fp32_tflops: 13.8   # derived: 192 cores × 2 AVX-512 FMA × 16 FP32 × 2.25 GHz / 1000
     tdp_w: 500
     spec_file: specs/amd/cpus/epyc.yaml
 
