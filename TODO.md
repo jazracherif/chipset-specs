@@ -52,12 +52,6 @@ A machine-readable flag prevents agents from presenting paper specs as shipping 
 is_announced_not_released: true   # flip to false on GA
 ```
 
-### H6. Expand comparison documents for key chip pairs
-Currently only GB10-centric comparisons exist. Highest-value additions:
-- `h100-mi300x.md` — head-to-head training comparison (most-requested by LLM practitioners)
-- `a100-h100.md` — generational leap: Ampere → Hopper
-- `mi300x-mi350x.md` — CDNA 3 vs CDNA 4 upgrade analysis
-
 ---
 
 ## Medium Priority
@@ -117,4 +111,10 @@ For VR200, MI355X: ROCm/CUDA/PyTorch/Triton readiness flags. Low priority; info 
 ### L6. `predecessor`/`successor` navigation for CPU index entries
 CPU entries currently lack `predecessor`/`successor`. Low priority since the CPU collection is
 small and generational mapping is straightforward.
+
+### L7. Expand comparison documents for key chip pairs
+Currently only GB10-centric comparisons exist. Highest-value additions:
+- `h100-mi300x.md` — head-to-head training comparison (most-requested by LLM practitioners)
+- `a100-h100.md` — generational leap: Ampere → Hopper
+- `mi300x-mi350x.md` — CDNA 3 vs CDNA 4 upgrade analysis
 
