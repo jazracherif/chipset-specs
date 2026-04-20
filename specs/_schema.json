@@ -51,7 +51,11 @@
         "tdp_w":         { "type": ["number", "null"], "description": "TDP in watts (single chip/card)" },
         "tdp_kw":        { "type": ["number", "null"], "description": "TDP in kilowatts (rack/system total)" },
         "cost_usd_range": { "$ref": "#/$defs/cost_range" },
-        "spec_file":     { "type": "string", "description": "Relative path from repo root to the full spec YAML, e.g. specs/nvidia/gpus/blackwell.yaml" }
+        "spec_file":     { "type": "string", "description": "Relative path from repo root to the full spec YAML, e.g. specs/nvidia/gpus/blackwell.yaml" },
+        "predecessor":   { "type": ["string", "null"], "description": "Name of the directly preceding chip in the same product line (matches 'name' field of another index entry)" },
+        "successor":     { "type": ["string", "null"], "description": "Name of the directly succeeding chip in the same product line (matches 'name' field of another index entry)" },
+        "is_discontinued": { "type": "boolean", "description": "True when the chip is end-of-life / no longer manufactured" },
+        "deployed_in":   { "type": "array", "items": { "type": "string" }, "description": "Key systems or platforms that ship with this chip" }
       },
       "additionalProperties": false
     },

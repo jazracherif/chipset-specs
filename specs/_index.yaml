@@ -24,6 +24,8 @@ gpus:
     tdp_w: 140
     cost_usd_range: null
     spec_file: specs/nvidia/gpus/blackwell.yaml
+    deployed_in:
+      - "NVIDIA DGX Spark (desktop workstation)"
 
   - name: GB200_NVL72
     full_name: NVIDIA GB200 NVL72
@@ -41,6 +43,8 @@ gpus:
     tdp_kw: 132
     cost_usd_range: [2900000, 3400000]   # NVL72 rack
     spec_file: specs/nvidia/gpus/blackwell.yaml
+    deployed_in:
+      - "NVL72 liquid-cooled rack (self-contained 72-GPU system)"
 
   - name: DGX B200
     full_name: NVIDIA DGX B200
@@ -58,6 +62,9 @@ gpus:
     tdp_kw: 14.3                 # estimated (8 GPUs + system overhead)
     cost_usd_range: [515000, 515000]   # GTC26 session S81563 at 9:50 — $515K system / $64K per GPU
     spec_file: specs/nvidia/gpus/blackwell.yaml
+    predecessor: "DGXA100"
+    deployed_in:
+      - "NVIDIA DGX B200 (standalone 10U server)"
 
   - name: RTX5070
     full_name: NVIDIA GeForce RTX 5070
@@ -75,6 +82,8 @@ gpus:
     tdp_w: 220
     cost_usd_range: null
     spec_file: specs/nvidia/gpus/blackwell.yaml
+    deployed_in:
+      - "Consumer gaming desktop / workstation (discrete PCIe card)"
 
   - name: RTX_PRO_6000_SERVER
     full_name: NVIDIA RTX PRO 6000 Blackwell Server Edition
@@ -92,6 +101,8 @@ gpus:
     tdp_w: 600
     cost_usd_range: null
     spec_file: specs/nvidia/gpus/blackwell.yaml
+    deployed_in:
+      - "Workstation servers and edge inference nodes (PCIe server card)"
 
   - name: H100
     full_name: NVIDIA H100 Tensor Core GPU
@@ -109,6 +120,10 @@ gpus:
     tdp_w: 700               # max configurable, SXM5
     cost_usd_range: null
     spec_file: specs/nvidia/gpus/hopper.yaml
+    predecessor: "A100"
+    deployed_in:
+      - "NVIDIA HGX H100 8-GPU server"
+      - "NVIDIA DGX H100"
 
   - name: A100
     full_name: NVIDIA A100 Tensor Core GPU (SXM4 80GB)
@@ -126,6 +141,13 @@ gpus:
     tdp_w: 400                   # SXM4
     cost_usd_range: null
     spec_file: specs/nvidia/gpus/ampere.yaml
+    successor: "H100"
+    is_discontinued: true
+    deployed_in:
+      - "NVIDIA DGX A100"
+      - "NVIDIA HGX A100"
+      - "AWS p4 instances"
+      - "GCP a2 instances"
 
   - name: DGXA100
     full_name: NVIDIA DGX A100 (640 GB)
@@ -143,6 +165,10 @@ gpus:
     tdp_kw: 6.5
     cost_usd_range: null
     spec_file: specs/nvidia/gpus/ampere.yaml
+    successor: "DGX B200"
+    is_discontinued: true
+    deployed_in:
+      - "NVIDIA DGX A100 (standalone 6U server)"
 
   - name: T4
     full_name: NVIDIA Tesla T4
@@ -160,6 +186,11 @@ gpus:
     tdp_w: 70
     cost_usd_range: null
     spec_file: specs/nvidia/gpus/turing.yaml
+    is_discontinued: true
+    deployed_in:
+      - "NVIDIA T4 PCIe server card"
+      - "AWS g4dn instances"
+      - "GCP n1/n2 T4 VMs"
 
   - name: MI350X
     full_name: AMD Instinct MI350X
@@ -177,6 +208,10 @@ gpus:
     tdp_w: 1000              # OAM socket limit, estimated
     cost_usd_range: null
     spec_file: specs/amd/gpus/cdna4.yaml
+    predecessor: "MI300X"
+    deployed_in:
+      - "AMD Instinct MI350X OAM 8-GPU Universal Base Board nodes"
+      - "MI355X 8-Node Rack"
 
   - name: MI355X
     full_name: AMD Instinct MI355X (8-Node Rack)
@@ -194,6 +229,8 @@ gpus:
     tdp_kw: 100              # total rack, estimated
     cost_usd_range: null
     spec_file: specs/amd/gpus/cdna4.yaml
+    deployed_in:
+      - "AMD MI355X 8-Node Rack (self-contained 64-GPU system)"
 
   - name: GH200
     full_name: NVIDIA GH200 Grace Hopper Superchip
@@ -211,6 +248,9 @@ gpus:
     tdp_kw: 1.0
     cost_usd_range: [34000, 44000]   # per chip
     spec_file: specs/nvidia/gpus/hopper.yaml
+    successor: "VR200"
+    deployed_in:
+      - "NVIDIA NVL32 liquid-cooled rack (32 Grace Hopper superchips)"
 
   - name: VR200
     full_name: NVIDIA VR200 Vera Rubin Superchip
@@ -228,6 +268,9 @@ gpus:
     tdp_kw: 5.0
     cost_usd_range: [153000, 222000]   # per chip
     spec_file: specs/nvidia/gpus/rubin.yaml
+    predecessor: "GH200"
+    deployed_in:
+      - "NVIDIA NVL72 rack (36 Vera Rubin superchips)"
 
   - name: MI300X
     full_name: AMD Instinct MI300X
@@ -245,6 +288,10 @@ gpus:
     tdp_w: 750
     cost_usd_range: null
     spec_file: specs/amd/gpus/cdna3.yaml
+    successor: "MI350X"
+    deployed_in:
+      - "AMD OAM 8-GPU Universal Base Board nodes"
+      - "Azure ND MI300X VMs"
 
 cpus:
 

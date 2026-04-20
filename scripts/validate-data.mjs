@@ -154,6 +154,111 @@ if (fs.existsSync(armCpuDir)) {
   }
 }
 
+// ── Cross-field consistency checks ───────────────────────────────────────────
+//
+// These checks verify that derived numeric fields match their derivation formula.
+// Findings are printed as WARNINGs — they do not block validation (exit 0).
+// A warning means the stored value differs from the derivation by more than the
+// allowed tolerance, which may indicate either a stale value or an official
+// platform-level figure that differs from the simple formula (e.g. Intel ARK
+// max memory bandwidth can be lower than theoretical channel × speed).
+
+let warnings = 0;
+
+function warn(file, context, message) {
+  warnings++;
+  console.warn(`\n⚠  ${file}${context ? ` [${context}]` : ""}`);
+  console.warn(`    ${message}`);
+}
+
+/**
+ * Return the per-channel GB/s for a DDR speed in MT/s.
+ * Uses the standard formula: speed_mts × 8 bytes / 1000 = GB/s per channel.
+ */
+function channelSpeedGbs(mts) {
+  return (mts * 8) / 1000;
+}
+
+/**
+ * Return the per-lane GB/s for a given PCIe generation string.
+ * Values per lane (bidirectional effective bandwidth used in this repo):
+ *   PCIe 3.0 → 1 GB/s/lane   PCIe 4.0 → 2 GB/s/lane
+ *   PCIe 5.0 → 4 GB/s/lane   PCIe 6.0 → 8 GB/s/lane
+ */
+function pcieLaneSpeedGbs(revisionStr) {
+  const gen = parseFloat(revisionStr);
+  const table = { 3.0: 1, 4.0: 2, 5.0: 4, 6.0: 8 };
+  return table[gen] ?? null;
+}
+
+/**
+ * Check derived CPU fields for all CPU YAML files.
+ *   1. memory_bandwidth_gbs ≈ memory_channels × channelSpeedGbs(max_memory_speed_mts)
+ *   2. pci_max_bw_gbs       = max_pcie_lanes × pcieLaneSpeedGbs(pcie_revision)
+ *
+ * Tolerance for memory bandwidth: 10% — official platform figures can differ
+ * from the simple derivation (e.g. Intel ARK controller-limited bandwidth).
+ * Tolerance for PCIe bandwidth: 1% — this is always a direct derivation.
+ */
+function crossCheckCpuFile(filePath, rel) {
+  const doc = loadYaml(filePath);
+  if (!doc?.cpus) return;
+  for (const entry of doc.cpus) {
+    const name = entry.name ?? "?";
+    const mem  = entry.memory_specifications ?? {};
+    const exp  = entry.expansion_options ?? {};
+
+    // 1. Memory bandwidth check
+    if (mem.memory_channels && mem.max_memory_speed_mts && mem.memory_bandwidth_gbs !== null && mem.memory_bandwidth_gbs !== undefined) {
+      const derivedBw = mem.memory_channels * channelSpeedGbs(mem.max_memory_speed_mts);
+      const storedBw  = mem.memory_bandwidth_gbs;
+      const pct = Math.abs(derivedBw - storedBw) / derivedBw;
+      if (pct > 0.10) {
+        warn(rel, name,
+          `memory_bandwidth_gbs: stored=${storedBw} GB/s, ` +
+          `derived from ${mem.memory_channels} ch × ${mem.max_memory_speed_mts} MT/s = ` +
+          `${derivedBw.toFixed(1)} GB/s (${(pct * 100).toFixed(0)}% diff). ` +
+          `Stored value may reflect official platform spec or a different DIMM configuration.`
+        );
+      }
+    }
+
+    // 2. PCIe bandwidth check
+    if (exp.max_pcie_lanes && exp.pcie_revision && exp.pci_max_bw_gbs !== null && exp.pci_max_bw_gbs !== undefined) {
+      const laneSpeed = pcieLaneSpeedGbs(exp.pcie_revision);
+      if (laneSpeed !== null) {
+        const derivedPcie = exp.max_pcie_lanes * laneSpeed;
+        const storedPcie  = exp.pci_max_bw_gbs;
+        const pct = Math.abs(derivedPcie - storedPcie) / derivedPcie;
+        if (pct > 0.01) {
+          warn(rel, name,
+            `pci_max_bw_gbs: stored=${storedPcie} GB/s, ` +
+            `derived from ${exp.max_pcie_lanes} lanes × ${laneSpeed} GB/s (PCIe ${exp.pcie_revision}) = ` +
+            `${derivedPcie} GB/s (${(pct * 100).toFixed(0)}% diff).`
+          );
+        }
+      }
+    }
+  }
+}
+
+console.log("\nRunning cross-field consistency checks …");
+for (const [dir, label] of [
+  [path.join(SPECS_ROOT, "amd", "cpus"),   "amd/cpus"],
+  [path.join(SPECS_ROOT, "intel", "cpus"), "intel/cpus"],
+  [path.join(SPECS_ROOT, "arm", "cpus"),   "arm/cpus"],
+]) {
+  if (!fs.existsSync(dir)) continue;
+  for (const file of fs.readdirSync(dir).filter((f) => f.endsWith(".yaml"))) {
+    crossCheckCpuFile(path.join(dir, file), `${label}/${file}`);
+  }
+}
+if (warnings === 0) {
+  console.log("✓ No cross-field inconsistencies detected.");
+} else {
+  console.warn(`\n⚠  ${warnings} cross-field warning(s) — review the values above.`);
+}
+
 // ── Summary ───────────────────────────────────────────────────────────────────
 
 console.log(`\n${checked} entries checked.`);

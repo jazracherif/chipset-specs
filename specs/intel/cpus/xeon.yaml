@@ -320,7 +320,7 @@ cpus:
       memory_types: "DDR5-6400 / MRDIMM-8800"
       max_memory_speed_mts: 8800
       memory_channels: 12
-      memory_bandwidth_gbs: 409         # per Intel ARK official specification for Xeon 6980P
+      memory_bandwidth_gbs: 409         # [1] Intel ARK official (controller-limited; theoretical MRDIMM-8800 peak = 844.8 GB/s, DDR5-6400 peak = 614.4 GB/s)
       ecc_supported: true
 
     expansion_options:
